@@ -1,5 +1,121 @@
 import React from 'react';
+import { LexicalComposer } from "@lexical/react/LexicalComposer";
+import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
+import { ContentEditable } from "@lexical/react/LexicalContentEditable";
+import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
+import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
+import { $getRoot, $getSelection } from "lexical";
+
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { useEffect } from "react";
 import "./Notes.css"
+import { TextNode } from "lexical";
+
+
+class EmojiNode extends TextNode {
+  static getType() {
+    return "emoji";
+  }
+
+  static clone(node) {
+    return new EmojiNode(node.__className, node.__text, node.__key);
+  }
+
+  constructor(className, text, key) {
+    super(text, key);
+    this.__className = className;
+  }
+
+  createDOM(config) {
+    const dom = document.createElement("span");
+    const inner = super.createDOM(config);
+    dom.className = this.__className;
+    inner.className = "emoji-inner";
+    dom.appendChild(inner);
+    return dom;
+  }
+
+  updateDOM(prevNode, dom, config) {
+    const inner = dom.firstChild;
+    if (inner === null) {
+      return true;
+    }
+    super.updateDOM(prevNode, inner, config);
+    return false;
+  }
+}
+
+export function $isEmojiNode(node) {
+  return node instanceof EmojiNode;
+}
+
+export function $createEmojiNode(className, emojiText) {
+  return new EmojiNode(className, emojiText).setMode("token");
+}
+
+function emoticonTransform(node) {
+  const textContent = node.getTextContent().slice(-2);
+  // When you type :), we will replace it with an emoji node
+  console.log("ok", textContent)
+  if (textContent === ":)") {
+    node.replace($createEmojiNode("emoji happysmile", "🙂"));
+  }
+}
+
+function useEmoticons(editor) {
+  useEffect(() => {
+    const removeTransform = editor.registerNodeTransform(
+      TextNode,
+      emoticonTransform
+    );
+    return () => {
+      removeTransform();
+    };
+  }, [editor]);
+}
+
+function EmoticonPlugin() {
+  const [editor] = useLexicalComposerContext();
+  useEmoticons(editor);
+  return null;
+}
+
+
+// Lexical React plugins are React components, which makes them
+// highly composable. Furthermore, you can lazy load plugins if
+// desired, so you don't pay the cost for plugins until you
+// actually use them.
+function MyCustomAutoFocusPlugin() {
+  const [editor] = useLexicalComposerContext();
+
+  useEffect(() => {
+    // Focus the editor when the effect fires!
+    editor.focus();
+  }, [editor]);
+
+  return null;
+}
+
+const editorConfig = {
+    onError(error) {
+        throw error;
+    },
+    nodes: [EmojiNode]
+};
+
+function onChange(editorState) {
+    editorState.read(() => {
+        // Read the contents of the EditorState here.
+        const root = $getRoot();
+        const selection = $getSelection();
+
+        console.log(root, selection);
+    });
+}
+
+function Placeholder() {
+    return <div className="editor-placeholder">Enter some plain text...</div>;
+}
 
 function Note(props) {
     const [hover, setHover] = React.useState(false);
@@ -66,6 +182,18 @@ function Notes(props) {
                     <Note notes={notes} id={rootID} />
                 </ul>
             </div>
+            <LexicalComposer initialConfig={editorConfig}>
+                <div className="editor-container">
+                    <PlainTextPlugin
+                        contentEditable={<ContentEditable className="editor-input" />}
+                        placeholder={<Placeholder />}
+                    />
+                    <OnChangePlugin onChange={onChange} />
+                    <HistoryPlugin />
+                    <EmoticonPlugin />
+                    <MyCustomAutoFocusPlugin />
+                </div>
+            </LexicalComposer>
         </div>
     );
 }
