@@ -12,3 +12,7 @@ button.fold {
     text-align: left;
     padding: 0;
 }
+
+.editor-input {
+    outline: 1px solid blue;
+}

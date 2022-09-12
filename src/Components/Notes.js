@@ -4,13 +4,26 @@ import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { $getRoot, $getSelection } from "lexical";
-
+import { $createParagraphNode, $createTextNode, $getRoot, $getSelection } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useEffect } from "react";
 import "./Notes.css"
 import { TextNode } from "lexical";
+import { CollaborationPlugin } from '@lexical/react/LexicalCollaborationPlugin';
+import { WebsocketProvider } from 'y-websocket';
+import { Doc } from 'yjs';
 
+function createWebsocketProvider(id, yjsDocMap,) {
+  let doc = yjsDocMap.get(id);
+
+  if (doc === undefined) {
+    doc = new Doc();
+    yjsDocMap.set(id, doc);
+  } else {
+    doc.load();
+  }
+  return new WebsocketProvider('ws://athena:8080', 'notes/0/' + id, doc, { connect: false, },);
+}
 
 class EmojiNode extends TextNode {
   static getType() {
@@ -54,11 +67,15 @@ export function $createEmojiNode(className, emojiText) {
 }
 
 function emoticonTransform(node) {
-  const textContent = node.getTextContent().slice(-2);
+  let pattern = ":)";
+  const textContent = node.getTextContent().slice(-pattern.length);
   // When you type :), we will replace it with an emoji node
   console.log("ok", textContent)
-  if (textContent === ":)") {
-    node.replace($createEmojiNode("emoji happysmile", "🙂"));
+  if (textContent === pattern) {
+    let p = $createParagraphNode();
+    p.append($createTextNode(node.getTextContent().slice(0, -pattern.length)));
+    p.append($createEmojiNode("emoji happysmile", "🙂"));
+    node.replace(p);
   }
 }
 
@@ -80,6 +97,20 @@ function EmoticonPlugin() {
   return null;
 }
 
+function NotesPlugin() {
+  const [editor] = useLexicalComposerContext();
+  function update() {
+    editor.update(() => {
+      const root = $getRoot();
+      root.clear();
+      console.log("root", root)
+      const p = $createParagraphNode();
+      p.append($createTextNode('Welcome to the playground'));
+      root.append(p);
+    });
+  }
+  return <button onClick={update}>Load</button>;
+}
 
 // Lexical React plugins are React components, which makes them
 // highly composable. Furthermore, you can lazy load plugins if
@@ -96,106 +127,123 @@ function MyCustomAutoFocusPlugin() {
   return null;
 }
 
-const editorConfig = {
-    onError(error) {
-        throw error;
-    },
-    nodes: [EmojiNode]
-};
+function loadContent() {
+  const root = $getRoot();
+  root.clear();
+  const p = $createParagraphNode();
+  p.append($createTextNode('Loaded node 1'));
+  p.append($createTextNode('Loaded node 3'));
+  root.append(p);
+}
 
 function onChange(editorState) {
-    editorState.read(() => {
-        // Read the contents of the EditorState here.
-        const root = $getRoot();
-        const selection = $getSelection();
+  editorState.read(() => {
+    // Read the contents of the EditorState here.
+    const root = $getRoot();
+    const selection = $getSelection();
 
-        console.log(root, selection);
-    });
+    console.log(root, selection);
+  });
 }
 
 function Placeholder() {
-    return <div className="editor-placeholder">Enter some plain text...</div>;
+  return <div className="editor-placeholder">Enter some plain text...</div>;
 }
 
 function Note(props) {
-    const [hover, setHover] = React.useState(false);
-    const [folded, setFolded] = React.useState(false);
-    const note = props.notes[props.id];
+  const [hover, setHover] = React.useState(false);
+  const [folded, setFolded] = React.useState(false);
+  const note = props.notes[props.id];
 
-    return (<li className='note'>
-        {
-            note.children
-            &&
-            <button type="button" className="btn btn-link shadow-none fold position-absolute start-0" onClick={() => setFolded(!folded)}>
-                {folded ? "+" : "-"}
-            </button>
-        }
-        <a href='/'>
-            <i
-                className={"bi align-middle p-1 " + (hover ? "bi-circle-fill" : "bi-circle")}
-                onMouseEnter={() => setHover(true)}
-                onMouseLeave={() => setHover(false)}
-            ></i>
-        </a>
-        {note.text}
-        {
-            !folded
-            &&
-            <ul className='list-unstyled'>
-                {note.children && note.children.map((id) => <Note key={id.toString()} notes={props.notes} id={id} />)}
-            </ul>
-        }
-    </li>)
+  return (<li className='note'>
+    {
+      note.children
+      &&
+      <button type="button" className="btn btn-link shadow-none fold position-absolute start-0" onClick={() => setFolded(!folded)}>
+        {folded ? "+" : "-"}
+      </button>
+    }
+    <a href='/'>
+      <i
+        className={"bi align-middle p-1 " + (hover ? "bi-circle-fill" : "bi-circle")}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      ></i>
+    </a>
+    {note.text}
+    {
+      !folded
+      &&
+      <ul className='list-unstyled'>
+        {note.children && note.children.map((id) => <Note key={id.toString()} notes={props.notes} id={id} />)}
+      </ul>
+    }
+  </li>)
 }
 
 function Notes(props) {
-    const [notes, setNotes] = React.useState({
-        1: {
-            children: [2, 3, 4, 5],
-            text: "sample note 1",
-        },
-        2: {
-            text: "sample note 2",
-            children: [6, 7]
-        },
-        3: {
-            text: "sample note 3",
-        },
-        4: {
-            text: "sample note 4",
-        },
-        5: {
-            text: "sample note 5",
-        },
-        6: {
-            text: "sample note 5",
-        },
-        7: {
-            text: "sample note 5",
-        },
-    });
-    let rootID = 1;
-    return (
-        <div className="container">
-            <div className="position-relative ps-2">
-                <ul className='list-unstyled'>
-                    <Note notes={notes} id={rootID} />
-                </ul>
-            </div>
-            <LexicalComposer initialConfig={editorConfig}>
-                <div className="editor-container">
-                    <PlainTextPlugin
-                        contentEditable={<ContentEditable className="editor-input" />}
-                        placeholder={<Placeholder />}
-                    />
-                    <OnChangePlugin onChange={onChange} />
-                    <HistoryPlugin />
-                    <EmoticonPlugin />
-                    <MyCustomAutoFocusPlugin />
-                </div>
-            </LexicalComposer>
+  const [notes, setNotes] = React.useState({
+    1: {
+      children: [2, 3, 4, 5],
+      text: "sample note 1",
+    },
+    2: {
+      text: "sample note 2",
+      children: [6, 7]
+    },
+    3: {
+      text: "sample note 3",
+    },
+    4: {
+      text: "sample note 4",
+    },
+    5: {
+      text: "sample note 5",
+    },
+    6: {
+      text: "sample note 5",
+    },
+    7: {
+      text: "sample note 5",
+    },
+  });
+  let rootID = 1;
+
+  const editorConfig = {
+    onError(error) {
+      throw error;
+    },
+    nodes: [EmojiNode],
+    editorState: loadContent,
+  };
+
+  return (
+    <div className="container">
+      <div className="position-relative ps-2">
+        <ul className='list-unstyled'>
+          <Note notes={notes} id={rootID} />
+        </ul>
+      </div>
+      <LexicalComposer initialConfig={editorConfig}>
+        <div className="editor-container">
+          <PlainTextPlugin
+            contentEditable={<ContentEditable className="editor-input" />}
+            placeholder={<Placeholder />}
+          />
+          <OnChangePlugin onChange={onChange} />
+          <HistoryPlugin />
+          <EmoticonPlugin />
+          <NotesPlugin />
+          <MyCustomAutoFocusPlugin />
+          <CollaborationPlugin
+            id="main"
+            providerFactory={createWebsocketProvider}
+            shouldBootstrap={true}
+          />
         </div>
-    );
+      </LexicalComposer>
+    </div>
+  );
 }
 
 export default Notes;
