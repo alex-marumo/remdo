@@ -1,31 +1,10 @@
-import React from 'react';
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { $createParagraphNode, $createTextNode, $getRoot, $getSelection } from "lexical";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { useEffect } from "react";
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $insertBlockNode } from '@lexical/utils';
+import { $createLineBreakNode, $createParagraphNode, $createTextNode, $getRoot, $getSelection, COMMAND_PRIORITY_CRITICAL, COMMAND_PRIORITY_EDITOR, DecoratorNode, KEY_ENTER_COMMAND, KEY_TAB_COMMAND, TextNode } from 'lexical';
+import React, { useEffect } from 'react';
 import "./Notes.css"
-import { TextNode } from "lexical";
-import { CollaborationPlugin } from '@lexical/react/LexicalCollaborationPlugin';
-import { WebsocketProvider } from 'y-websocket';
-import { Doc } from 'yjs';
 
-function createWebsocketProvider(id, yjsDocMap,) {
-  let doc = yjsDocMap.get(id);
-
-  if (doc === undefined) {
-    doc = new Doc();
-    yjsDocMap.set(id, doc);
-  } else {
-    doc.load();
-  }
-  return new WebsocketProvider('ws://athena:8080', 'notes/0/' + id, doc, { connect: false, },);
-}
-
-class EmojiNode extends TextNode {
+export class EmojiNode extends TextNode {
   static getType() {
     return "emoji";
   }
@@ -70,7 +49,7 @@ function emoticonTransform(node) {
   let pattern = ":)";
   const textContent = node.getTextContent().slice(-pattern.length);
   // When you type :), we will replace it with an emoji node
-  console.log("ok", textContent)
+  //console.log("ok", textContent)
   if (textContent === pattern) {
     let p = $createParagraphNode();
     p.append($createTextNode(node.getTextContent().slice(0, -pattern.length)));
@@ -91,63 +70,11 @@ function useEmoticons(editor) {
   }, [editor]);
 }
 
-function EmoticonPlugin() {
+
+export function EmoticonPlugin() {
   const [editor] = useLexicalComposerContext();
   useEmoticons(editor);
   return null;
-}
-
-function NotesPlugin() {
-  const [editor] = useLexicalComposerContext();
-  function update() {
-    editor.update(() => {
-      const root = $getRoot();
-      root.clear();
-      console.log("root", root)
-      const p = $createParagraphNode();
-      p.append($createTextNode('Welcome to the playground'));
-      root.append(p);
-    });
-  }
-  return <button onClick={update}>Load</button>;
-}
-
-// Lexical React plugins are React components, which makes them
-// highly composable. Furthermore, you can lazy load plugins if
-// desired, so you don't pay the cost for plugins until you
-// actually use them.
-function MyCustomAutoFocusPlugin() {
-  const [editor] = useLexicalComposerContext();
-
-  useEffect(() => {
-    // Focus the editor when the effect fires!
-    editor.focus();
-  }, [editor]);
-
-  return null;
-}
-
-function loadContent() {
-  const root = $getRoot();
-  root.clear();
-  const p = $createParagraphNode();
-  p.append($createTextNode('Loaded node 1'));
-  p.append($createTextNode('Loaded node 3'));
-  root.append(p);
-}
-
-function onChange(editorState) {
-  editorState.read(() => {
-    // Read the contents of the EditorState here.
-    const root = $getRoot();
-    const selection = $getSelection();
-
-    console.log(root, selection);
-  });
-}
-
-function Placeholder() {
-  return <div className="editor-placeholder">Enter some plain text...</div>;
 }
 
 function Note(props) {
@@ -181,8 +108,80 @@ function Note(props) {
   </li>)
 }
 
-function Notes(props) {
-  const [notes, setNotes] = React.useState({
+export class NoteNode extends DecoratorNode {
+  static getType() {
+    return "note";
+  }
+
+  static clone(node) {
+    return new NoteNode(node.__format, node.__key);
+  }
+
+  //constructor(format, key) {
+  //  super(format, key);
+  //}
+
+  createDOM(config) {
+    return document.createElement('div');
+  }
+
+  updateDOM(prevNode, dom, config) {
+    const inner = dom.firstChild;
+    if (inner === null) {
+      return true;
+    }
+    super.updateDOM(prevNode, inner, config);
+    return false;
+  }
+
+  decorate() {
+    return <span>note6</span>;
+  }
+}
+
+function $createNoteNode(className, emojiText) {
+  return new NoteNode();
+}
+
+export function NotesPlugin() {
+  const [editor] = useLexicalComposerContext();
+
+  useEffect(() => {
+    console.log("registering");
+    return;
+    return editor.registerCommand(
+      KEY_ENTER_COMMAND,
+      (event) => {
+        const focusNode = $getSelection().focus.getNode();
+        var br = $createLineBreakNode();
+        focusNode.insertAfter(br);
+        var node = $createNoteNode();
+        br.insertAfter(node);
+        //node.select();
+        event.preventDefault();
+        return true;
+      },
+      COMMAND_PRIORITY_CRITICAL,
+    );
+  }, [editor]);
+
+  function update() {
+    editor.update(() => {
+      const root = $getRoot()
+      root.clear();
+      return;
+      console.log("root", root)
+      const p = $createParagraphNode();
+      p.append($createTextNode('Welcome to the playground'));
+      root.append(p);
+    });
+  }
+  return <button onClick={update}>Clear</button>;
+}
+
+
+export function Notes(props) {
+  const [notes] = React.useState({
     1: {
       children: [2, 3, 4, 5],
       text: "sample note 1",
@@ -209,39 +208,11 @@ function Notes(props) {
   });
   let rootID = 1;
 
-  const editorConfig = {
-    onError(error) {
-      throw error;
-    },
-    nodes: [EmojiNode],
-    editorState: loadContent,
-  };
-
   return (
-    <div className="container">
-      <div className="position-relative ps-2">
-        <ul className='list-unstyled'>
-          <Note notes={notes} id={rootID} />
-        </ul>
-      </div>
-      <LexicalComposer initialConfig={editorConfig}>
-        <div className="editor-container">
-          <PlainTextPlugin
-            contentEditable={<ContentEditable className="editor-input" />}
-            placeholder={<Placeholder />}
-          />
-          <OnChangePlugin onChange={onChange} />
-          <HistoryPlugin />
-          <EmoticonPlugin />
-          <NotesPlugin />
-          <MyCustomAutoFocusPlugin />
-          <CollaborationPlugin
-            id="main"
-            providerFactory={createWebsocketProvider}
-            shouldBootstrap={true}
-          />
-        </div>
-      </LexicalComposer>
+    <div className="position-relative ps-2">
+      <ul className='list-unstyled'>
+        <Note notes={notes} id={rootID} />
+      </ul>
     </div>
   );
 }

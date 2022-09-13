@@ -1,9 +1,9 @@
-import Notes from './Components/Notes';
+import Editor from './Components/Editor';
 
 function App() {
   return (
     <div className="App">
-        <Notes />
+        <Editor />
     </div>
   );
 }
