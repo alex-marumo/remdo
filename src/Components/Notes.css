@@ -1,8 +1,8 @@
-li.note i {
+span.note i {
     font-size: .5rem;
 }
 
-li.note ul {
+span.note ul {
     padding-left: 0.75rem;
 }
 
@@ -12,3 +12,13 @@ button.fold {
     text-align: left;
     padding: 0;
 }
+
+.note-menu {
+    transform:translateX(-100%);
+}
+
+ul {
+    list-style-type: none;
+    list-style-position: outside;
+    list-style-image: none;
+  }
