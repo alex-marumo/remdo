@@ -3,18 +3,20 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { TreeView } from "@lexical/react/LexicalTreeView";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { NotesPlugin, NoteNode } from "./Notes";
+import { NotesPlugin, HoveredNoteIcon } from "./Notes";
 
 import "./Editor.css"
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ListNode, ListItemNode } from '@lexical/list';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
+import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 
 /*
 import { CollaborationPlugin } from '@lexical/react/LexicalCollaborationPlugin';
 import { WebsocketProvider } from 'y-websocket';
 import { Doc } from 'yjs';
+import onChange from '../../../test/plain/src/onChange';
 
 function createWebsocketProvider(id, yjsDocMap,) {
     let doc = yjsDocMap.get(id);
@@ -52,16 +54,16 @@ export default function Editor() {
         onError(error) {
             throw error;
         },
-        nodes: [NoteNode, ListNode, ListItemNode],
+        nodes: [HoveredNoteIcon, ListNode, ListItemNode],
         theme: {
             list: {
                 nested: {
-                  listitem: 'position-relative',
+                    listitem: 'position-relative',
                 },
                 ol: 'editor-list-ol',
                 //ul: 'list-unstyled',
                 listitem: 'position-relative',
-              },
+            },
         },
         //editorState: loadContent,
     };
@@ -75,6 +77,7 @@ export default function Editor() {
                             <ContentEditable className="editor-input" />
                         </div>}
                         placeholder={<Placeholder />}
+                        ErrorBoundary={LexicalErrorBoundary}
                     />
                     <ListPlugin />
                     <AutoFocusPlugin />

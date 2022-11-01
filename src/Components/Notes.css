@@ -13,7 +13,7 @@ button.fold {
     padding: 0;
 }
 
-.note-menu {
+#hovered-note-icon {
     transform:translateX(-100%);
 }
 
