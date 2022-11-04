@@ -3,7 +3,7 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { TreeView } from "@lexical/react/LexicalTreeView";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { NotesPlugin, HoveredNoteIcon } from "./Notes";
+import { NotesPlugin } from "./Notes";
 
 import "./Editor.css"
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
@@ -51,9 +51,7 @@ export default function Editor() {
     const [floatingAnchorElem, setFloatingAnchorElem] = useState(null);
 
     const onRef = (_floatingAnchorElem) => {
-        console.log("test1");
         if (_floatingAnchorElem !== null) {
-            console.log("test2");
             setFloatingAnchorElem(_floatingAnchorElem);
         }
     };
@@ -62,7 +60,7 @@ export default function Editor() {
         onError(error) {
             throw error;
         },
-        nodes: [HoveredNoteIcon, ListNode, ListItemNode],
+        nodes: [ListNode, ListItemNode],
         theme: {
             list: {
                 nested: {
