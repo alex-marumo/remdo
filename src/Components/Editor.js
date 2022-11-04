@@ -12,11 +12,10 @@ import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 
-/*
 import { CollaborationPlugin } from '@lexical/react/LexicalCollaborationPlugin';
 import { WebsocketProvider } from 'y-websocket';
 import { Doc } from 'yjs';
-import onChange from '../../../test/plain/src/onChange';
+import { useState } from "react";
 
 function createWebsocketProvider(id, yjsDocMap,) {
     let doc = yjsDocMap.get(id);
@@ -29,7 +28,6 @@ function createWebsocketProvider(id, yjsDocMap,) {
     }
     return new WebsocketProvider('ws://athena:8080', 'notes/0/' + id, doc, { connect: false, },);
 }
-*/
 
 function Placeholder() {
     return <div className="editor-placeholder">Enter some plain text...</div>;
@@ -50,6 +48,16 @@ function TreeViewPlugin() {
 }
 
 export default function Editor() {
+    const [floatingAnchorElem, setFloatingAnchorElem] = useState(null);
+
+    const onRef = (_floatingAnchorElem) => {
+        console.log("test1");
+        if (_floatingAnchorElem !== null) {
+            console.log("test2");
+            setFloatingAnchorElem(_floatingAnchorElem);
+        }
+    };
+
     const editorConfig = {
         onError(error) {
             throw error;
@@ -62,10 +70,10 @@ export default function Editor() {
                 },
                 ol: 'editor-list-ol',
                 //ul: 'list-unstyled',
-                listitem: 'position-relative',
+                //listitem: 'position-relative',
             },
         },
-        //editorState: loadContent,
+        editorState: null,
     };
     return (
         <div className="container">
@@ -73,7 +81,7 @@ export default function Editor() {
             <LexicalComposer initialConfig={editorConfig}>
                 <div className="editor-container">
                     <RichTextPlugin
-                        contentEditable={<div className="editor">
+                        contentEditable={<div className="editor" ref={onRef}>
                             <ContentEditable className="editor-input" />
                         </div>}
                         placeholder={<Placeholder />}
@@ -83,14 +91,16 @@ export default function Editor() {
                     <AutoFocusPlugin />
                     <HistoryPlugin />
                     <TreeViewPlugin />
-                    <NotesPlugin />
-                    {/*<CollaborationPlugin
+                    {
+                        floatingAnchorElem &&
+                        <NotesPlugin anchorElement={floatingAnchorElem} />
+                    }
+                    <CollaborationPlugin
                         id="main"
                         providerFactory={createWebsocketProvider}
                         shouldBootstrap={true}
-                    />*/}
+                    />
                 </div>
-
             </LexicalComposer>
         </div>
     );

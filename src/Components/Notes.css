@@ -13,12 +13,12 @@ button.fold {
     padding: 0;
 }
 
-#hovered-note-icon {
-    transform:translateX(-100%);
+#hovered-note-menu {
+    position: absolute;
 }
 
 ul {
     list-style-type: none;
     list-style-position: outside;
     list-style-image: none;
-  }
+}

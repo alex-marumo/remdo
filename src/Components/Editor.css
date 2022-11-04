@@ -1,3 +1,7 @@
 .editor-input {
     outline: 1px solid blue;
 }
+
+.editor-container {
+    position: relative;
+}

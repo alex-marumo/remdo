@@ -1,11 +1,11 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $createTextNode, $getRoot, DecoratorNode, $getNodeByKey, RootNode, INSERT_PARAGRAPH_COMMAND, COMMAND_PRIORITY_HIGH, $isRangeSelection } from 'lexical';
-import React, { useEffect, useRef } from 'react';
+import { $createTextNode, $getRoot, DecoratorNode, $getNodeByKey, RootNode, INSERT_PARAGRAPH_COMMAND, COMMAND_PRIORITY_HIGH, $isRangeSelection, FOCUS_COMMAND, $getSelection } from 'lexical';
+import React, { useEffect, useRef, useState } from 'react';
 import "./Notes.css"
-import { $createListNode, $createListItemNode, ListItemNode, $isListNode, $isListItemNode } from '@lexical/list';
+import { $createListNode, $createListItemNode, ListItemNode, $isListNode, $isListItemNode, ListNode } from '@lexical/list';
 import { mergeRegister } from '@lexical/utils';
-import { $getSelection } from 'lexical';
-import { LexicalNode } from 'lexical';
+import { SELECTION_CHANGE_COMMAND, COMMAND_PRIORITY_EDITOR, BLUR_COMMAND, COMMAND_PRIORITY_CRITICAL } from 'lexical';
+import { createPortal } from 'react-dom';
 
 export class HoveredNoteIcon extends DecoratorNode {
 
@@ -30,6 +30,7 @@ export class HoveredNoteIcon extends DecoratorNode {
   }
 
   decorate() {
+    return <span />
     return (
       <span id="hovered-note-icon" className='position-absolute top-0 start-0'>
         <a href="/">...</a>
@@ -48,25 +49,89 @@ export class HoveredNoteIcon extends DecoratorNode {
   isKeyboardSelectable() {
     return false;
   }
+
+  exportJSON() {
+    return;
+    return {
+      ...super.exportJSON(),
+      type: this.getType(),
+      version: 1,
+    }
+  }
+
+  static importJSON(serializedNode) {
+    //return $createHoveredNoteIcon();
+  }
+
+  selectionTransform(prevSelection, nextSelection) {
+    return;
+  }
 }
 
 function $createHoveredNoteIcon() {
   return new HoveredNoteIcon();
 }
 
-export function NotesPlugin() {
+export function NotesPlugin({ anchorElement }) {
   const [editor] = useLexicalComposerContext();
   let hoveredNoteIconKey = useRef(null);
+  const menuRef = useRef(null);
+  const [hoveredNoteElement, setHoveredNoteElement] = useState(null);
 
   function moveHoveredNoteIconNode(noteNode) {
-    let iconNode = $getNodeByKey(hoveredNoteIconKey.current);
-    noteNode.append(iconNode);
+    let hoveredNoteIconNode;
+    if (hoveredNoteIconKey.current) {
+      hoveredNoteIconNode = $getNodeByKey(hoveredNoteIconKey.current);
+    } else {
+      hoveredNoteIconNode = $createHoveredNoteIcon()
+      hoveredNoteIconKey.current = hoveredNoteIconNode.getKey();
+    }
+    noteNode.append(hoveredNoteIconNode);
   }
 
   useEffect(() => {
-    console.log(LexicalNode);
+    function onMouseMove(event) {
+      const noteElement = event.target.closest("li");
+      if (noteElement) {
+        setHoveredNoteElement(noteElement);
+      }
+    }
+
+    function onMouseLeave() {
+      setHoveredNoteElement(null);
+    }
+
+    anchorElement?.addEventListener('mousemove', onMouseMove);
+    anchorElement?.addEventListener('mouseleave', onMouseLeave);
+
+    return () => {
+      anchorElement?.removeEventListener('mousemove', onMouseMove);
+      anchorElement?.removeEventListener('mouseleave', onMouseLeave);
+    };
+  }, [anchorElement, editor]);
+
+  useEffect(() => {
+    if (menuRef.current) {
+      setMenuPosition(hoveredNoteElement, menuRef.current, anchorElement);
+    }
+  }, [anchorElement, hoveredNoteElement]);
+
+  function setMenuPosition(targetElement, floatingElement, anchor) {
+    if (!targetElement) {
+      return;
+    }
+    const targetRectangle = targetElement.getBoundingClientRect();
+    const floatingRectangle = floatingElement.getBoundingClientRect();
+    const anchorRectangle = anchor.getBoundingClientRect();
+    const top = targetRectangle.y - anchorRectangle.y;
+    console.log(targetElement, top);
+    floatingElement.style.transform = `translate(${0}px, ${top}px)`;
+  }
+
+  useEffect(() => {
     return mergeRegister(
       editor.registerCommand(
+        //TODO add a comment
         INSERT_PARAGRAPH_COMMAND,
         () => {
           //this replaces $handleListInsertParagraph logic
@@ -78,7 +143,7 @@ export function NotesPlugin() {
           }
           // Only run this code on empty list items
           const anchor = selection.anchor.getNode();
-        
+
           if (!$isListItemNode(anchor) || anchor.getTextContent() !== '') {
             return false;
           }
@@ -109,6 +174,7 @@ export function NotesPlugin() {
         })
       }),
       editor.registerNodeTransform(RootNode, rootNode => {
+        //console.log("Root transform");
         const children = rootNode.getChildren();
         if (children.length !== 1 || !$isListNode(children[0])) {
           const listNode = $createListNode("bullet");
@@ -117,36 +183,57 @@ export function NotesPlugin() {
           listNode.append(listItemNode);
           rootNode.append(listNode);
           listItemNode.select();
-          if (!hoveredNoteIconKey.current) {
-            let hoveredNoteIconNode = $createHoveredNoteIcon()
-            hoveredNoteIconKey.current = hoveredNoteIconNode.getKey();
-            listItemNode.append(hoveredNoteIconNode);
-          }
+          moveHoveredNoteIconNode(listItemNode);
         }
       }),
-      editor.registerUpdateListener(({editorState}) => {
-        if(!hoveredNoteIconKey.current) {
+      editor.registerCommand(
+        BLUR_COMMAND,
+        (payload) => {
+          //console.log("blur change");
+          return true;
+        },
+        COMMAND_PRIORITY_CRITICAL,
+      ),
+
+      editor.registerCommand(
+        SELECTION_CHANGE_COMMAND,
+        () => {
+          const focusLIElement = editor.getElementByKey($getSelection().focus.key).closest("li");
+          setHoveredNoteElement(focusLIElement);
           return;
-        }
+          const focusNode = $getNodeByKey($getSelection().focus.key);
+          console.log(focusNode.getE);
+          return;
+          const parents = focusNode.getParents();
+          console.log(parents);
+          const focusListItemNode = [focusNode, ...focusNode.getParents()].find(parent => $isListItemNode(parent));
+          return false;
+        },
+        COMMAND_PRIORITY_CRITICAL,
+      ),
+      editor.registerUpdateListener(({ editorState }) => {
+        //console.log("update listener");
         let selectionChanged = false;
         let focusListItemNode = null;
         editorState.read(() => {
-          let focusNode = $getNodeByKey($getSelection().focus.key);
-          let parents = focusNode.getParents();
-          focusListItemNode = [focusNode, ...parents].find(parent => $isListItemNode(parent));
-          if(focusListItemNode.getKey() !== $getNodeByKey(hoveredNoteIconKey.current).getParent().getKey()) {
-            selectionChanged = true;
+          let focus = $getSelection() && $getSelection().focus;
+          if (hoveredNoteIconKey.current && focus) {
+            let focusNode = $getNodeByKey(focus.key);
+            let parents = focusNode.getParents();
+            focusListItemNode = [focusNode, ...parents].find(parent => $isListItemNode(parent));
+            if (focusListItemNode.getKey() !== $getNodeByKey(hoveredNoteIconKey.current).getParent().getKey()) {
+              selectionChanged = true;
+            }
           }
         })
 
-        if(!selectionChanged) {
-          return;
-        }
         //updating state in update listener is considered an antipattern: https://lexical.dev/docs/concepts/listeners
         //however for now there seems no other way to be notified about selection change 
-        editor.update(() => {
-          moveHoveredNoteIconNode(focusListItemNode);
-        })
+        if (selectionChanged) {
+          editor.update(() => {
+            moveHoveredNoteIconNode(focusListItemNode);
+          })
+        }
       }),
     );
   }, [editor]);
@@ -169,9 +256,13 @@ export function NotesPlugin() {
       root.append(listNode);
     });
   }
-
-  return (
-    <div>
-      <button onClick={clear}>Clear</button>
-    </div>);
+  //console.log("anchor", anchorElement);
+  return createPortal(
+    <div id="hovered-note-menu" ref={menuRef} style={{ position: "absolute", left: 0, top: 0 }}>
+      <a href="/">
+        ...
+      </a>
+    </div>,
+    anchorElement,
+  );
 }
