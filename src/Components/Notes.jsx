@@ -1,5 +1,5 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { RootNode, INSERT_PARAGRAPH_COMMAND, COMMAND_PRIORITY_HIGH, $isRangeSelection, $getSelection } from 'lexical';
+import { RootNode, INSERT_PARAGRAPH_COMMAND, COMMAND_PRIORITY_HIGH, $isRangeSelection, $getSelection, $getRoot } from 'lexical';
 import React, { useEffect, useRef, useState } from 'react';
 import "./Notes.css"
 import { $createListNode, $createListItemNode, $isListNode, $isListItemNode } from '@lexical/list';
@@ -7,10 +7,11 @@ import { mergeRegister } from '@lexical/utils';
 import { SELECTION_CHANGE_COMMAND, COMMAND_PRIORITY_CRITICAL } from 'lexical';
 import { createPortal } from 'react-dom';
 
-export function NotesPlugin({ anchorElement }) {
+export function NotesPlugin({ anchorElement, yjsDataRef }) {
   const [editor] = useLexicalComposerContext();
   const menuRef = useRef(null);
   const [hoveredNoteElement, setHoveredNoteElement] = useState(null);
+  const [yjsData, setYJSData] = useState(null);
 
   useEffect(() => {
     function onMouseMove(event) {
@@ -94,15 +95,43 @@ export function NotesPlugin({ anchorElement }) {
         },
         COMMAND_PRIORITY_CRITICAL,
       ),
+      editor.registerUpdateListener(() => {
+        console.log(yjsDataRef.current);
+        setYJSData(JSON.stringify(yjsDataRef.current));
+      })
     );
   }, [editor]);
 
-  return createPortal(
-    <div id="hovered-note-menu" ref={menuRef}>
-      <a href="/">
-        ...
-      </a>
-    </div>,
-    anchorElement,
-  );
+  function changeNode(e) {
+    e.preventDefault();
+
+    editor.update(() => {
+      let root = $getRoot();
+      console.log("root", root);
+      root.__children = ['5'];
+    })
+    /*
+    let state = editor.getEditorState();
+    let nodeMap = state._nodeMap;
+    console.log(nodeMap);
+    nodeMap['root_old'] = nodeMap['root'];
+    nodeMap['root'] = nodeMap['4'];
+    editor._dirtyType = 2; //TODO use FULL_RECONCILE
+    editor.setEditorState(state);
+    console.log(editor.getEditorState()._nodeMap);
+    */
+  }
+
+  return (
+    <div>
+      <span>{yjsData}</span>
+      {createPortal(
+      <div id="hovered-note-menu" ref={menuRef}>
+        <a href="/" onClick={changeNode}>
+          ...
+        </a>
+      </div>,
+      anchorElement,
+      )}
+  </div>);
 }

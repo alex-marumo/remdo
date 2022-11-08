@@ -15,18 +15,25 @@ import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { CollaborationPlugin } from '@lexical/react/LexicalCollaborationPlugin';
 import { WebsocketProvider } from 'y-websocket';
 import { Doc } from 'yjs';
-import { useState } from "react";
+import { useRef, useState } from "react";
 
-function createWebsocketProvider(id, yjsDocMap,) {
-    let doc = yjsDocMap.get(id);
+function providerFactory(yjsDataRef) {
+    function createWebsocketProvider(id, yjsDocMap,) {
+        let doc = yjsDocMap.get(id);
 
-    if (doc === undefined) {
-        doc = new Doc();
-        yjsDocMap.set(id, doc);
-    } else {
-        doc.load();
+        if (doc === undefined) {
+            doc = new Doc();
+            yjsDocMap.set(id, doc);
+        } else {
+            doc.load();
+        }
+        yjsDataRef.current = {
+            "map": yjsDocMap,
+            "doc": doc,
+        };
+        return new WebsocketProvider('ws://athena:8080', 'notes/0/' + id, doc, { connect: false, },);
     }
-    return new WebsocketProvider('ws://athena:8080', 'notes/0/' + id, doc, { connect: false, },);
+    return createWebsocketProvider;
 }
 
 function Placeholder() {
@@ -49,6 +56,7 @@ function TreeViewPlugin() {
 
 export default function Editor() {
     const [floatingAnchorElem, setFloatingAnchorElem] = useState(null);
+    const yjsDataRef = useRef(null);
 
     const onRef = (_floatingAnchorElem) => {
         if (_floatingAnchorElem !== null) {
@@ -88,14 +96,14 @@ export default function Editor() {
                     <ListPlugin />
                     <AutoFocusPlugin />
                     <HistoryPlugin />
-                    <TreeViewPlugin />
                     {
                         floatingAnchorElem &&
-                        <NotesPlugin anchorElement={floatingAnchorElem} />
+                        <NotesPlugin anchorElement={floatingAnchorElem} yjsDataRef={yjsDataRef} />
                     }
+                    <TreeViewPlugin />
                     <CollaborationPlugin
                         id="main"
-                        providerFactory={createWebsocketProvider}
+                        providerFactory={providerFactory(yjsDataRef)}
                         shouldBootstrap={true}
                     />
                 </div>

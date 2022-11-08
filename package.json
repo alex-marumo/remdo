@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@lexical/list": "^0.6.0",
-    "@lexical/react": "^0.6.0",
+    "@lexical/list": "file:../lexical/packages/lexical-list",
+    "@lexical/react": "file:../lexical/packages/lexical-react",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
     "bootstrap": "^5.2.0",
     "bootstrap-icons": "^1.9.1",
-    "lexical": "^0.6.0",
+    "lexical": "file:../lexical/packages/lexical",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "^4.0.3",
@@ -20,6 +20,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "dev": "vite --host",
     "websocket": "HOST=0.0.0.0 PORT=8080 npx y-websocket",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -44,6 +45,10 @@
     ]
   },
   "devDependencies": {
-    "@types/bootstrap": "^5.2.1"
+    "@types/bootstrap": "^5.2.1",
+    "vite": "^2.9.15",
+    "@vitejs/plugin-react": "^1.0.7",
+    "vite-plugin-replace": "0.1.1",
+    "@rollup/plugin-babel": "^5.3.0"
   }
 }
