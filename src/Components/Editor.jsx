@@ -15,25 +15,18 @@ import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { CollaborationPlugin } from '@lexical/react/LexicalCollaborationPlugin';
 import { WebsocketProvider } from 'y-websocket';
 import { Doc } from 'yjs';
-import { useRef, useState } from "react";
+import { useState } from "react";
 
-function providerFactory(yjsDataRef) {
-    function createWebsocketProvider(id, yjsDocMap,) {
-        let doc = yjsDocMap.get(id);
+function providerFactory(id, yjsDocMap,) {
+    let doc = yjsDocMap.get(id);
 
-        if (doc === undefined) {
-            doc = new Doc();
-            yjsDocMap.set(id, doc);
-        } else {
-            doc.load();
-        }
-        yjsDataRef.current = {
-            "map": yjsDocMap,
-            "doc": doc,
-        };
-        return new WebsocketProvider('ws://athena:8080', 'notes/0/' + id, doc, { connect: false, },);
+    if (doc === undefined) {
+        doc = new Doc();
+        yjsDocMap.set(id, doc);
+    } else {
+        doc.load();
     }
-    return createWebsocketProvider;
+    return new WebsocketProvider('ws://athena:8080', 'notes/0/' + id, doc, { connect: false, },);
 }
 
 function Placeholder() {
@@ -56,7 +49,6 @@ function TreeViewPlugin() {
 
 export default function Editor() {
     const [floatingAnchorElem, setFloatingAnchorElem] = useState(null);
-    const yjsDataRef = useRef(null);
 
     const onRef = (_floatingAnchorElem) => {
         if (_floatingAnchorElem !== null) {
@@ -72,7 +64,7 @@ export default function Editor() {
         theme: {
             list: {
                 nested: {
-                    listitem: 'position-relative',
+                    listitem: 'position-relative li-nested',
                 },
                 ol: 'editor-list-ol',
                 //ul: 'list-unstyled',
@@ -98,12 +90,12 @@ export default function Editor() {
                     <HistoryPlugin />
                     {
                         floatingAnchorElem &&
-                        <NotesPlugin anchorElement={floatingAnchorElem} yjsDataRef={yjsDataRef} />
+                        <NotesPlugin anchorElement={floatingAnchorElem} />
                     }
                     <TreeViewPlugin />
                     <CollaborationPlugin
                         id="main"
-                        providerFactory={providerFactory(yjsDataRef)}
+                        providerFactory={providerFactory}
                         shouldBootstrap={true}
                     />
                 </div>

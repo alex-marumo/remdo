@@ -1,30 +1,47 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { RootNode, INSERT_PARAGRAPH_COMMAND, COMMAND_PRIORITY_HIGH, $isRangeSelection, $getSelection, $getRoot } from 'lexical';
+import { RootNode, INSERT_PARAGRAPH_COMMAND, COMMAND_PRIORITY_HIGH, $isRangeSelection, $getSelection, $getRoot, $getNearestNodeFromDOMNode } from 'lexical';
 import React, { useEffect, useRef, useState } from 'react';
 import "./Notes.css"
-import { $createListNode, $createListItemNode, $isListNode, $isListItemNode } from '@lexical/list';
-import { mergeRegister } from '@lexical/utils';
+import { $createListNode, $createListItemNode, $isListNode, $isListItemNode, ListItemNode } from '@lexical/list';
+import { mergeRegister, addClassNamesToElement } from '@lexical/utils';
 import { SELECTION_CHANGE_COMMAND, COMMAND_PRIORITY_CRITICAL } from 'lexical';
 import { createPortal } from 'react-dom';
 
-export function NotesPlugin({ anchorElement, yjsDataRef }) {
+export function NotesPlugin({ anchorElement }) {
   const [editor] = useLexicalComposerContext();
   const menuRef = useRef(null);
   const [hoveredNoteElement, setHoveredNoteElement] = useState(null);
-  const [yjsData, setYJSData] = useState(null);
+  const [menuExpanded, setMenuExpanded] = useState(false);
 
   useEffect(() => {
     function onMouseMove(event) {
       const noteElement = event.target.closest("li");
-      if (noteElement) {
+      if (noteElement) { //show menu
         setHoveredNoteElement(noteElement);
       }
     }
 
+    function onClick(event) {
+      if (!event.target.matches("li")) {
+        return;
+      }
+      editor.update(() => {
+        //TODO store in editor instead
+        document.tempRootKey = $getNearestNodeFromDOMNode(event.target).getKey();
+        document.tempRootChanged = true;
+
+        //TODO check update args instead: https://discord.com/channels/953974421008293909/955972012541628456/1041741864879013928
+        const state = editor.getEditorState();
+        editor.setEditorState(state);
+      });
+    }
+
     anchorElement?.addEventListener('mousemove', onMouseMove);
+    anchorElement?.addEventListener('click', onClick);
 
     return () => {
       anchorElement?.removeEventListener('mousemove', onMouseMove);
+      anchorElement?.removeEventListener('click', onClick)
     };
   }, [anchorElement, editor]);
 
@@ -95,43 +112,33 @@ export function NotesPlugin({ anchorElement, yjsDataRef }) {
         },
         COMMAND_PRIORITY_CRITICAL,
       ),
-      editor.registerUpdateListener(() => {
-        console.log(yjsDataRef.current);
-        setYJSData(JSON.stringify(yjsDataRef.current));
-      })
     );
   }, [editor]);
 
-  function changeNode(e) {
+  function menuClick(e) {
     e.preventDefault();
 
-    editor.update(() => {
-      let root = $getRoot();
-      console.log("root", root);
-      root.__children = ['5'];
-    })
-    /*
-    let state = editor.getEditorState();
-    let nodeMap = state._nodeMap;
-    console.log(nodeMap);
-    nodeMap['root_old'] = nodeMap['root'];
-    nodeMap['root'] = nodeMap['4'];
-    editor._dirtyType = 2; //TODO use FULL_RECONCILE
-    editor.setEditorState(state);
-    console.log(editor.getEditorState()._nodeMap);
-    */
+    setMenuExpanded(true);
   }
 
   return (
     <div>
-      <span>{yjsData}</span>
       {createPortal(
-      <div id="hovered-note-menu" ref={menuRef}>
-        <a href="/" onClick={changeNode}>
-          ...
-        </a>
-      </div>,
-      anchorElement,
+        <div id="hovered-note-menu" ref={menuRef}>
+        { !menuExpanded ?
+          <a href="/" onClick={menuClick}>
+            ...
+          </a>
+          :
+          <ul>
+            <li>option1</li>
+            <li>option2</li>
+            <li>option3</li>
+            <li>option4</li>
+          </ul>
+        }
+        </div>,
+        anchorElement,
       )}
-  </div>);
+    </div>);
 }

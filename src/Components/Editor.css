@@ -5,3 +5,7 @@
 .editor-container {
     position: relative;
 }
+
+.li-nested {
+    list-style-type: none;
+}

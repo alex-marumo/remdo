@@ -1,5 +1,7 @@
 import Editor from './Components/Editor';
 
+console.log("App");
+
 function App() {
   return (
     <div className="App">

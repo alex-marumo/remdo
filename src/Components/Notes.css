@@ -24,3 +24,23 @@ ul {
     list-style-position: outside;
     list-style-image: none;
 }
+
+li {
+    pointer-events: none;
+}
+
+li::before {
+    content: "\2022";
+    color: black;
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+    cursor: pointer;
+    pointer-events: all;
+}
+/*
+li.li-nested::before  {
+    display: none;
+}
+*/
