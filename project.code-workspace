@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {},
+	"extensions": {
+		"recommendations": [
+			"dbaeumer.vscode-eslint",
+			"ms-playwright.playwright"
+		]
+	}
+}
