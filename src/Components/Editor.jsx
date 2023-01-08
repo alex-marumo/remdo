@@ -13,6 +13,7 @@ import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 
 import { CollaborationPlugin } from '@lexical/react/LexicalCollaborationPlugin';
+import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
 import { WebsocketProvider } from 'y-websocket';
 import { Doc } from 'yjs';
 import { useState } from "react";
@@ -77,7 +78,7 @@ export default function Editor() {
         <div className="container">
             <br />
             <LexicalComposer initialConfig={editorConfig}>
-                <div className="editor-container">
+                <div className="editor-container editor-shell">
                     <RichTextPlugin
                         contentEditable={<div className="editor" ref={onRef}>
                             <ContentEditable className="editor-input" />
@@ -85,6 +86,7 @@ export default function Editor() {
                         placeholder={<Placeholder />}
                         ErrorBoundary={LexicalErrorBoundary}
                     />
+                    <ClearEditorPlugin />
                     <ListPlugin />
                     <AutoFocusPlugin />
                     <HistoryPlugin />

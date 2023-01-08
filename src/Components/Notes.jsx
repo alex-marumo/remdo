@@ -1,5 +1,5 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { RootNode, INSERT_PARAGRAPH_COMMAND, COMMAND_PRIORITY_HIGH, $isRangeSelection, $getSelection, $getRoot, $getNearestNodeFromDOMNode } from 'lexical';
+import { RootNode, INSERT_PARAGRAPH_COMMAND, COMMAND_PRIORITY_HIGH, $isRangeSelection, $getSelection, $getRoot, $getNearestNodeFromDOMNode, CLEAR_EDITOR_COMMAND } from 'lexical';
 import React, { useEffect, useRef, useState } from 'react';
 import "./Notes.css"
 import { $createListNode, $createListItemNode, $isListNode, $isListItemNode, ListItemNode } from '@lexical/list';
@@ -104,6 +104,7 @@ export function NotesPlugin({ anchorElement }) {
         listItemNode.select();
       }),
       editor.registerCommand(
+        //TODO add a comment
         SELECTION_CHANGE_COMMAND,
         () => {
           const focusLIElement = editor.getElementByKey($getSelection().focus.key).closest("li");
@@ -115,10 +116,16 @@ export function NotesPlugin({ anchorElement }) {
     );
   }, [editor]);
 
-  function menuClick(e) {
+  const menuClick = (e) => {
     e.preventDefault();
 
     setMenuExpanded(true);
+  }
+
+  const clearContent = () => {
+    editor.update(() => {
+      editor.dispatchCommand(CLEAR_EDITOR_COMMAND);
+    })
   }
 
   return (
@@ -140,5 +147,6 @@ export function NotesPlugin({ anchorElement }) {
         </div>,
         anchorElement,
       )}
+      <button type="button" className="btn btn-primary" onClick={clearContent}>Clear</button>
     </div>);
 }

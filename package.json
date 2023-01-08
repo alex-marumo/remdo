@@ -11,6 +11,7 @@
     "bootstrap": "^5.2.0",
     "bootstrap-icons": "^1.9.1",
     "lexical": "^0.6.5",
+    "prettier": "^2.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "^4.0.3",
@@ -20,8 +21,8 @@
   },
   "scripts": {
     "start": "NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
-    "dev": "vite --host",
-    "websocket": "HOST=0.0.0.0 PORT=8080 npx y-websocket",
+    "server": "vite --host",
+    "websocket": "HOST=0.0.0.0 PORT=8080 npx y-websocket-server",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
     "test-report": "npx playwright show-report --host 0.0.0.0",

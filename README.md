@@ -1,3 +1,6 @@
+eslint for yjs, does it exist?
+headed mode instead of websocket
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
