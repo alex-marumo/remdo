@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 //TODO breaks if lexical-playground dependencies are installed
-import { assertHTML, clearEditor, click, focusEditor, html } from '../lexical/packages/lexical-playground/__tests__/utils/index.mjs';
+import { assertHTML, clearEditor, focusEditor, html } from '../lexical/packages/lexical-playground/__tests__/utils/index.mjs';
 
 async function generateContent(page) {
   await focusEditor(page);

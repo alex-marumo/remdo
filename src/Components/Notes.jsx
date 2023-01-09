@@ -1,9 +1,9 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { RootNode, INSERT_PARAGRAPH_COMMAND, COMMAND_PRIORITY_HIGH, $isRangeSelection, $getSelection, $getRoot, $getNearestNodeFromDOMNode, CLEAR_EDITOR_COMMAND } from 'lexical';
-import React, { useEffect, useRef, useState } from 'react';
+import { RootNode, INSERT_PARAGRAPH_COMMAND, COMMAND_PRIORITY_HIGH, $isRangeSelection, $getSelection, $getNearestNodeFromDOMNode, CLEAR_EDITOR_COMMAND } from 'lexical';
+import { useEffect, useRef, useState } from 'react';
 import "./Notes.css"
-import { $createListNode, $createListItemNode, $isListNode, $isListItemNode, ListItemNode } from '@lexical/list';
-import { mergeRegister, addClassNamesToElement } from '@lexical/utils';
+import { $createListNode, $createListItemNode, $isListNode, $isListItemNode } from '@lexical/list';
+import { mergeRegister } from '@lexical/utils';
 import { SELECTION_CHANGE_COMMAND, COMMAND_PRIORITY_CRITICAL } from 'lexical';
 import { createPortal } from 'react-dom';
 
