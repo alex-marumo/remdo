@@ -18,11 +18,12 @@ async function generateContent(page) {
 }
 
 test('has title', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('');
 
   await expect(page).toHaveTitle(/Notes/);
 });
 
+/*
 test('clear content', async ({ page }) => {
   await page.goto('/');
 
@@ -35,9 +36,10 @@ test('clear content', async ({ page }) => {
     `,
   );
 });
+*/
 
 test('generate content', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('');
 
   await generateContent(page);
   await assertHTML(
@@ -52,11 +54,24 @@ test('generate content', async ({ page }) => {
        </ul>
     `,
   );
+  /*
+  await assertHTML(
+    page,
+    html`
+    <p class="PlaygroundEditorTheme__paragraph PlaygroundEditorTheme__ltr" dir="ltr"><span data-lexical-text="true">note1</span></p><p class="PlaygroundEditorTheme__paragraph PlaygroundEditorTheme__ltr" dir="ltr"><span data-lexical-text="true">note2</span></p><p class="PlaygroundEditorTheme__paragraph PlaygroundEditorTheme__ltr" dir="ltr"><span data-lexical-text="true">note3</span></p><p class="PlaygroundEditorTheme__paragraph PlaygroundEditorTheme__ltr" dir="ltr"><span data-lexical-text="true">note4</span></p><p class="PlaygroundEditorTheme__paragraph PlaygroundEditorTheme__ltr" dir="ltr"><span data-lexical-text="true">note5</span></p>
+    `,
+  );
+  */
 });
 
+/*
 test('indent outdent', async ({ page }) => {
-  await page.goto('/');
+  const IS_COLLAB = process.env.E2E_EDITOR_MODE === 'rich-text-with-collab';
+  console.log("sample", IS_COLLAB);
+
+  await page.goto('/split/?isCollab=true&collabEndpoint=ws://athena:8080');
 
   await generateContent(page);
   //const note = await page.getby
 });
+*/

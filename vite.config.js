@@ -37,8 +37,6 @@ playgroundResolveAlias.push({
         ),
 })
 
-console.log();
-
 export default defineConfig({
     server: {
         port: 3000
