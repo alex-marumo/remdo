@@ -28,7 +28,7 @@
     "build": "react-scripts build",
     "eject": "react-scripts eject",
     "test-report": "npx playwright show-report --host 0.0.0.0",
-    "test": "E2E_EDITOR_MODE=rich-text-with-collab npx playwright test --project=chromium"
+    "test": "npx playwright test --project=chromium"
   },
   "eslintConfig": {
     "extends": [

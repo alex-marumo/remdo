@@ -39,8 +39,7 @@ li::before {
     cursor: pointer;
     pointer-events: all;
 }
-/*
+
 li.li-nested::before  {
     display: none;
 }
-*/

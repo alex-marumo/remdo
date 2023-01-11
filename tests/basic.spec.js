@@ -1,0 +1,140 @@
+import { test, expect } from "@playwright/test";
+//TODO breaks if lexical-playground dependencies are installed
+import {
+  assertHTML,
+  clearEditor,
+  focusEditor,
+  getHTML,
+  html,
+  prettifyHTML,
+} from "../lexical/packages/lexical-playground/__tests__/utils/index.mjs";
+
+import { getNote } from "./index";
+
+// eslint-disable-next-line no-unused-vars
+async function logHTML(page) {
+  const html = await getHTML(page);
+  console.log(prettifyHTML(html));
+}
+
+test.beforeEach(async ({page}, testInfo) => {
+  await page.goto("");
+  await focusEditor(page);
+  await clearEditor(page);
+
+  await page.keyboard.type("note1");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("note2");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("note3");
+})
+
+test("has title", async ({ page }) => {
+  await expect(page).toHaveTitle(/Notes/);
+});
+
+test("clear content", async ({ page }) => {
+  await page.locator("text=Clear").click();
+  await assertHTML(
+    page,
+    html`
+      <ul>
+        <li value="1"><br /></li>
+      </ul>
+    `
+  );
+});
+
+test("content", async ({ page }) => {
+  await assertHTML(
+    page,
+    html`
+      <ul>
+        <li value="1" dir="ltr"><span data-lexical-text="true">note1</span></li>
+        <li value="2" dir="ltr"><span data-lexical-text="true">note2</span></li>
+        <li value="3" dir="ltr"><span data-lexical-text="true">note3</span></li>
+      </ul>
+    `
+  );
+});
+
+test("indent outdent", async ({ page }) => {
+  const expectedHTMLBase = await getHTML(page);
+
+  //select note2
+  await getNote(page, "note2").selectText();
+
+  //indent
+  await page.keyboard.press("Tab");
+  const expectedHTMLIndented = html`
+    <ul>
+      <li value="1" dir="ltr"><span data-lexical-text="true">note1</span></li>
+      <li value="2" class="position-relative li-nested">
+        <ul>
+          <li value="1" dir="ltr">
+            <span data-lexical-text="true">note2</span>
+          </li>
+        </ul>
+      </li>
+      <li value="2" dir="ltr"><span data-lexical-text="true">note3</span></li>
+    </ul>
+  `;
+
+  await assertHTML(page, expectedHTMLIndented);
+
+  //indent second time the same note with no effect
+  await page.keyboard.press("Tab");
+  await assertHTML(page, expectedHTMLIndented);
+
+  //outdent
+  await page.keyboard.down("Shift");
+  await page.keyboard.press("Tab");
+  await page.keyboard.up("Shift");
+  await assertHTML(page, expectedHTMLBase);
+
+  //outdent second time with no effect
+  await page.keyboard.down("Shift");
+  await page.keyboard.press("Tab");
+  await page.keyboard.up("Shift");
+  await assertHTML(page, expectedHTMLBase);
+});
+
+test("create empty notes", async ({ page }) => {
+  await getNote(page, 'note3').selectText();
+
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Enter");
+
+  await assertHTML(
+    page,
+    html`
+      <ul>
+        <li value="1" dir="ltr"><span data-lexical-text="true">note1</span></li>
+        <li value="2" dir="ltr"><span data-lexical-text="true">note2</span></li>
+        <li value="3"><br /></li>
+        <li value="4"><br /></li>
+        <li value="5"><br /></li>
+      </ul>
+    `
+  );
+});
+
+test("menu follows selection", async ({ page }) => {  
+  const note = getNote(page, 'note2');
+  await note.selectText();
+  const noteBB = await note.boundingBox();
+  const menu = page.locator("#hovered-note-menu");
+  const menuBB = await menu.boundingBox();
+  const menuCenter = menuBB.y+menuBB.height/2;
+
+  //check if the center of the menu icon is somwhere between top and bottom of selected note
+  expect(menuCenter).toBeGreaterThanOrEqual(noteBB.y);
+  expect(menuCenter).toBeLessThanOrEqual(noteBB.y+noteBB.height);
+
+  //make sure that the menu is not expanded, then expand and collapse it
+  expect(await menu.locator("ul").count()).toEqual(0);
+  await menu.click();
+  expect(await menu.locator("ul").count()).toBeGreaterThan(0);
+  await note.selectText();
+  expect(await menu.locator("ul").count()).toEqual(0);
+});

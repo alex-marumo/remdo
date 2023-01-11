@@ -64,6 +64,7 @@ export function NotesPlugin({ anchorElement }) {
   useEffect(() => {
     return mergeRegister(
       editor.registerCommand(
+        //test case "create empty notes"
         INSERT_PARAGRAPH_COMMAND,
         () => {
           //this replaces $handleListInsertParagraph logic
@@ -92,6 +93,7 @@ export function NotesPlugin({ anchorElement }) {
         COMMAND_PRIORITY_HIGH,
       ),
       editor.registerNodeTransform(RootNode, rootNode => {
+        //test case "generate content"
         const children = rootNode.getChildren();
         if (children.length === 1 && $isListNode(children[0])) {
           return;
@@ -104,11 +106,12 @@ export function NotesPlugin({ anchorElement }) {
         listItemNode.select();
       }),
       editor.registerCommand(
-        //TODO add a comment
+        //close menu and change its position
         SELECTION_CHANGE_COMMAND,
         () => {
           const focusLIElement = editor.getElementByKey($getSelection().focus.key).closest("li");
           setHoveredNoteElement(focusLIElement);
+          setMenuExpanded(false);
           return false;
         },
         COMMAND_PRIORITY_CRITICAL,
