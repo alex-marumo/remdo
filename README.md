@@ -1,6 +1,5 @@
 TODO remove old athena VMs
 TODO create parallel version of tests withouth collab
-TODO add test for root change
 
 # Getting Started with Create React App
 

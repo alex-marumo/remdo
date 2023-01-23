@@ -174,3 +174,24 @@ test.fixme("indent note with children", async ({ page }) => {
   await page.keyboard.up("Shift");
   await assertHTML(page, expectedHTMLBase);
 });
+
+test("change root", async ({ page }) => {
+
+  //make note3 child of note2
+  await getNote(page, "note3").selectText();
+  await page.keyboard.press("Tab");
+
+  //focus on note2 and make sure that only it and it's child are visible
+  const el = await page.$('ul > li :text("note2")');
+  const box = await el.boundingBox();
+
+  //playwright locators don't support ::before pseudo elements, so this is a workaround to click it
+  await page.mouse.click(box.x - 1, box.y + box.height / 2);
+  const html = await getHTML(page);
+  expect(html).not.toContain("note1")
+  expect(html).toContain("note2");
+
+  //TODO uncomment once https://github.com/facebook/lexical/issues/2951 is fixed
+  //alternatively revert previous formalList changes
+  //expect(html).toContain("note3");  
+});
