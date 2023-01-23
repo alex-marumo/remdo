@@ -1,5 +1,5 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { RootNode, INSERT_PARAGRAPH_COMMAND, COMMAND_PRIORITY_HIGH, $isRangeSelection, $getSelection, $getNearestNodeFromDOMNode, CLEAR_EDITOR_COMMAND } from 'lexical';
+import { RootNode, INSERT_PARAGRAPH_COMMAND, COMMAND_PRIORITY_HIGH, $isRangeSelection, $getSelection, $getNearestNodeFromDOMNode, CLEAR_EDITOR_COMMAND, INDENT_CONTENT_COMMAND } from 'lexical';
 import { useEffect, useRef, useState } from 'react';
 import "./Notes.css"
 import { $createListNode, $createListItemNode, $isListNode, $isListItemNode } from '@lexical/list';
@@ -27,7 +27,9 @@ export function NotesPlugin({ anchorElement }) {
       }
       editor.update(() => {
         //TODO store in editor instead
-        document.tempRootKey = $getNearestNodeFromDOMNode(event.target).getKey();
+        const liNode = $getNearestNodeFromDOMNode(event.target);
+        document.tempRootKey = liNode.getKey();
+        document.tempRootParentKey = liNode.getParent().getKey();
         document.tempRootChanged = true;
 
         //TODO check update args instead: https://discord.com/channels/953974421008293909/955972012541628456/1041741864879013928

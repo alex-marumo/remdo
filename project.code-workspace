@@ -11,7 +11,9 @@
 	"extensions": {
 		"recommendations": [
 			"dbaeumer.vscode-eslint",
-			"ms-playwright.playwright"
+			"ms-playwright.playwright",
+			"eamodio.gitlens",
+			"ethansk.restore-terminals"
 		]
 	}
 }
