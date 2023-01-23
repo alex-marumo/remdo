@@ -17,6 +17,7 @@ import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
 import { WebsocketProvider } from 'y-websocket';
 import { Doc } from 'yjs';
 import { useState } from "react";
+import IndentOncePlugin from "../plugins/IndentOncePlugin";
 
 function providerFactory(id, yjsDocMap,) {
     let doc = yjsDocMap.get(id);
@@ -94,6 +95,7 @@ export default function Editor() {
                         floatingAnchorElem &&
                         <NotesPlugin anchorElement={floatingAnchorElem} />
                     }
+                    <IndentOncePlugin />
                     <TreeViewPlugin />
                     <CollaborationPlugin
                         id="main"
