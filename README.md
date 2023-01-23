@@ -1,11 +1,6 @@
-TODO
-add a tool that lists all TODO and FIXME, the latter could fail a test
-    check playwright warnings
-revert changes in formatList (diff with the original copy) and try to use Lexical INDENT command (returning false and checking the same condition)
-    try to do the same with tem root
-remove old athena VMs
-create parallel version of tests withouth collab
-add test for root change
+TODO remove old athena VMs
+TODO create parallel version of tests withouth collab
+TODO add test for root change
 
 # Getting Started with Create React App
 

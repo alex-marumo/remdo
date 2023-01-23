@@ -1,5 +1,5 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { RootNode, INSERT_PARAGRAPH_COMMAND, COMMAND_PRIORITY_HIGH, $isRangeSelection, $getSelection, $getNearestNodeFromDOMNode, CLEAR_EDITOR_COMMAND, INDENT_CONTENT_COMMAND } from 'lexical';
+import { RootNode, INSERT_PARAGRAPH_COMMAND, COMMAND_PRIORITY_HIGH, $isRangeSelection, $getSelection, $getNearestNodeFromDOMNode, CLEAR_EDITOR_COMMAND } from 'lexical';
 import { useEffect, useRef, useState } from 'react';
 import "./Notes.css"
 import { $createListNode, $createListItemNode, $isListNode, $isListItemNode } from '@lexical/list';

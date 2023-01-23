@@ -8,7 +8,6 @@ import {
   html,
   prettifyHTML,
 } from "../lexical/packages/lexical-playground/__tests__/utils/index.mjs";
-
 import { getNote } from "./index";
 
 // eslint-disable-next-line no-unused-vars
@@ -17,7 +16,7 @@ async function logHTML(page) {
   console.log(prettifyHTML(html));
 }
 
-test.beforeEach(async ({page}, testInfo) => {
+test.beforeEach(async ({ page }, testInfo) => {
   await page.goto("");
   await focusEditor(page);
   await clearEditor(page);
@@ -27,7 +26,7 @@ test.beforeEach(async ({page}, testInfo) => {
   await page.keyboard.type("note2");
   await page.keyboard.press("Enter");
   await page.keyboard.type("note3");
-})
+});
 
 test("has title", async ({ page }) => {
   await expect(page).toHaveTitle(/Notes/);
@@ -100,7 +99,7 @@ test("indent outdent", async ({ page }) => {
 });
 
 test("create empty notes", async ({ page }) => {
-  await getNote(page, 'note3').selectText();
+  await getNote(page, "note3").selectText();
 
   await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
@@ -119,17 +118,17 @@ test("create empty notes", async ({ page }) => {
   );
 });
 
-test("menu follows selection", async ({ page }) => {  
-  const note = getNote(page, 'note2');
+test("menu follows selection", async ({ page }) => {
+  const note = getNote(page, "note2");
   await note.selectText();
   const noteBB = await note.boundingBox();
   const menu = page.locator("#hovered-note-menu");
   const menuBB = await menu.boundingBox();
-  const menuCenter = menuBB.y+menuBB.height/2;
+  const menuCenter = menuBB.y + menuBB.height / 2;
 
   //check if the center of the menu icon is somwhere between top and bottom of selected note
   expect(menuCenter).toBeGreaterThanOrEqual(noteBB.y);
-  expect(menuCenter).toBeLessThanOrEqual(noteBB.y+noteBB.height);
+  expect(menuCenter).toBeLessThanOrEqual(noteBB.y + noteBB.height);
 
   //make sure that the menu is not expanded, then expand and collapse it
   expect(await menu.locator("ul").count()).toEqual(0);
