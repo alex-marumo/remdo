@@ -28,7 +28,8 @@
     "build": "react-scripts build",
     "eject": "react-scripts eject",
     "test-report": "npx playwright show-report --host 0.0.0.0",
-    "test": "npx playwright test --project=chromium"
+    "test": "VITE_DISABLECOLLAB=true npx playwright test --project=chromium",
+    "test-collab": "npx playwright test --project=chromium"
   },
   "eslintConfig": {
     "extends": [
