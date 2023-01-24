@@ -1,6 +1,5 @@
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { TreeView } from "@lexical/react/LexicalTreeView";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { NotesPlugin } from "./Notes";
@@ -90,7 +89,6 @@ export default function Editor() {
                     <ClearEditorPlugin />
                     <ListPlugin />
                     <AutoFocusPlugin />
-                    <HistoryPlugin />
                     {
                         floatingAnchorElem &&
                         <NotesPlugin anchorElement={floatingAnchorElem} />
