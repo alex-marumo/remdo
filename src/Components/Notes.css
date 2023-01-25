@@ -19,17 +19,17 @@ button.fold {
     top: 0;
 }
 
-ul {
+.editor ul {
     list-style-type: none;
     list-style-position: outside;
     list-style-image: none;
 }
 
-li {
+.editor li {
     pointer-events: none;
 }
 
-li::before {
+.editor li::before {
     content: "\2022";
     color: black;
     font-weight: bold;
@@ -40,6 +40,6 @@ li::before {
     pointer-events: all;
 }
 
-li.li-nested::before  {
+.editor li.li-nested::before  {
     display: none;
 }

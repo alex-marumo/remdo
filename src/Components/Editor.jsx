@@ -84,6 +84,9 @@ export default function Editor() {
       <br />
       <LexicalComposer initialConfig={editorConfig}>
         <div className="editor-container editor-shell">
+          {floatingAnchorElem && (
+            <NotesPlugin anchorElement={floatingAnchorElem} />
+          )}
           <RichTextPlugin
             contentEditable={
               <div className="editor" ref={onRef}>
@@ -96,9 +99,6 @@ export default function Editor() {
           <ClearEditorPlugin />
           <ListPlugin />
           <AutoFocusPlugin />
-          {floatingAnchorElem && (
-            <NotesPlugin anchorElement={floatingAnchorElem} />
-          )}
           <IndentOncePlugin />
           <TreeViewPlugin />
           {editorConfig.disableCollab ? (

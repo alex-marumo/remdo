@@ -13,7 +13,9 @@
 			"dbaeumer.vscode-eslint",
 			"ms-playwright.playwright",
 			"eamodio.gitlens",
-			"ethansk.restore-terminals"
+			"esbenp.prettier-vscode",
+			"bradlc.vscode-tailwindcss",
+			"tabnine.tabnine-vscode"
 		]
 	}
 }

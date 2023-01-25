@@ -1,4 +1,7 @@
 TODO create lint test case
+TODO think about hiding non root nodes on update
+TODO upgrade lexical
+reconcileNode('root', null);
 
 git submodule update --init --recursive
 
