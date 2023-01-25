@@ -7,9 +7,9 @@ import {
   $getSelection,
   $getNearestNodeFromDOMNode,
   CLEAR_EDITOR_COMMAND,
-  $isTextNode,
+  $getNodeByKey,
 } from "lexical";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import "./Notes.css";
 import {
   $createListNode,
@@ -28,23 +28,13 @@ export function NotesPlugin({ anchorElement }) {
   const [menuExpanded, setMenuExpanded] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
 
-  useEffect(() => {
-    function onMouseMove(event) {
-      const noteElement = event.target.closest("li");
-      if (noteElement) {
-        //show menu
-        setHoveredNoteElement(noteElement);
-      }
-    }
-
-    function onClick(event) {
-      if (!event.target.matches("li")) {
-        return;
-      }
+  const changeRoot = useCallback(
+    (event, key) => {
+      event.preventDefault();
       editor.update(() => {
+        const liNode = $getNodeByKey(key);
         //TODO store in editor instead
-        const liNode = $getNearestNodeFromDOMNode(event.target);
-        document.tempRootKey = liNode.getKey();
+        document.tempRootKey = key;
         document.tempRootParentKey = liNode.getParent().getKey();
         document.tempRootChanged = true;
 
@@ -68,6 +58,29 @@ export function NotesPlugin({ anchorElement }) {
         const state = editor.getEditorState();
         editor.setEditorState(state);
       });
+    },
+    [editor]
+  );
+
+  useEffect(() => {
+    function onMouseMove(event) {
+      const noteElement = event.target.closest("li");
+      if (noteElement) {
+        //show menu
+        setHoveredNoteElement(noteElement);
+      }
+    }
+
+    function onClick(event) {
+      if (!event.target.matches("li")) {
+        return;
+      }
+      let key;
+      //TODO read or just passinge editor state should be enough, re-check in the newer lexical version
+      editor.update(() => {
+        key = $getNearestNodeFromDOMNode(event.target).getKey();
+      });
+      changeRoot(event, key);
     }
 
     anchorElement?.addEventListener("mousemove", onMouseMove);
@@ -77,7 +90,7 @@ export function NotesPlugin({ anchorElement }) {
       anchorElement?.removeEventListener("mousemove", onMouseMove);
       anchorElement?.removeEventListener("click", onClick);
     };
-  }, [anchorElement, editor]);
+  }, [anchorElement, editor, changeRoot]);
 
   useEffect(() => {
     if (menuRef.current) {
@@ -181,13 +194,22 @@ export function NotesPlugin({ anchorElement }) {
           <li className="breadcrumb-item">
             <a href="/">Home</a>
           </li>
-          {breadcrumbs.map((note, idx, {length}) => {
-            return idx + 1 < length ?
-            <li className="breadcrumb-item" key={note.key}>
-              <a href="/">{note.text}</a>
-            </li>
-            :
-            <li class="breadcrumb-item active" aria-current="page">{note.text}</li>
+          {breadcrumbs.map((note, idx, { length }) => {
+            return idx + 1 < length ? (
+              <li className="breadcrumb-item" key={note.key}>
+                <a href="/" onClick={(event) => changeRoot(event, note.key)}>
+                  {note.text}
+                </a>
+              </li>
+            ) : (
+              <li
+                className="breadcrumb-item active"
+                aria-current="page"
+                key={note.key}
+              >
+                {note.text}
+              </li>
+            );
           })}
         </ol>
       </nav>

@@ -1,7 +1,9 @@
 TODO create lint test case
 TODO think about hiding non root nodes on update
 TODO upgrade lexical
-reconcileNode('root', null);
+TODO reconcileNode('root', null);
+TODO https://github.com/welldone-software/why-did-you-render
+TODO https://dmitripavlutin.com/react-usecallback/
 
 git submodule update --init --recursive
 
