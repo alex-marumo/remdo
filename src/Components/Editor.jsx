@@ -2,6 +2,7 @@ import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { TreeView } from "@lexical/react/LexicalTreeView";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { NotesPlugin } from "./Notes";
 
 import "./Editor.css";
@@ -99,6 +100,7 @@ export default function Editor() {
           <ClearEditorPlugin />
           <ListPlugin />
           <AutoFocusPlugin />
+          <TabIndentationPlugin />
           <IndentOncePlugin />
           <TreeViewPlugin />
           {editorConfig.disableCollab ? (
