@@ -1,5 +1,5 @@
+//breaks if lexical-playground dependencies are installed
 import { test, expect } from "@playwright/test";
-//TODO breaks if lexical-playground dependencies are installed
 import {
   assertHTML,
   clearEditor,

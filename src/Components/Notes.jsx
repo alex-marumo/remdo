@@ -24,7 +24,6 @@ import { createPortal } from "react-dom";
 function $setTempRoot(key, parentKey, state) {
   state._tempRootKey = key;
   state._tempRootParentKey = parentKey;
-  console.log(state);
 }
 
 export function NotesPlugin({ anchorElement }) {
@@ -40,7 +39,7 @@ export function NotesPlugin({ anchorElement }) {
       editor.update(() => {
         const state = editor.getEditorState();
         const liNode = $getNodeByKey(key);
-        $setTempRoot(key, liNode.getParent().getKey(), state);
+        $setTempRoot(key, liNode.getParent()?.getKey(), state);
 
         const getText = (node) => node.getAllTextNodes()[0]?.getTextContent();
 
@@ -195,7 +194,7 @@ export function NotesPlugin({ anchorElement }) {
         </button>
         <ol className="breadcrumb">
           <li className="breadcrumb-item">
-            <a href="/">Home</a>
+            <a href="/" onClick={(event) => changeRoot(event, 'root')}>Home</a>
           </li>
           {breadcrumbs.map((note, idx, { length }) => {
             return idx + 1 < length ? (
