@@ -6,6 +6,7 @@ TODO https://github.com/welldone-software/why-did-you-render
 TODO https://dmitripavlutin.com/react-usecallback/
 TODO add breadcrumb tests once they work correctly
 TODO check `npm run eject`
+TODO try using lexical dev tools
 
 git submodule update --init --recursive
 

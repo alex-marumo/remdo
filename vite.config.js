@@ -28,8 +28,8 @@ var playgroundResolveAlias = playgroundConfig.default.resolve.alias.map(
   }
 );
 
-//finally let's add a missing entries
-//do it at the begining of the array so list/utils entry takes priority
+//finally let's add some missing entries
+//do it at the begining of the array so they take the priority
 playgroundResolveAlias.unshift(
   {
     find: "@lexical/react/LexicalTabIndentationPlugin",

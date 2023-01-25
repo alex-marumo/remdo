@@ -21,6 +21,12 @@ import { mergeRegister } from "@lexical/utils";
 import { SELECTION_CHANGE_COMMAND, COMMAND_PRIORITY_CRITICAL } from "lexical";
 import { createPortal } from "react-dom";
 
+function $setTempRoot(key, parentKey, state) {
+  state._tempRootKey = key;
+  state._tempRootParentKey = parentKey;
+  console.log(state);
+}
+
 export function NotesPlugin({ anchorElement }) {
   const [editor] = useLexicalComposerContext();
   const menuRef = useRef(null);
@@ -32,11 +38,9 @@ export function NotesPlugin({ anchorElement }) {
     (event, key) => {
       event.preventDefault();
       editor.update(() => {
+        const state = editor.getEditorState();
         const liNode = $getNodeByKey(key);
-        //TODO store in editor instead
-        document.tempRootKey = key;
-        document.tempRootParentKey = liNode.getParent().getKey();
-        document.tempRootChanged = true;
+        $setTempRoot(key, liNode.getParent().getKey(), state);
 
         const getText = (node) => node.getAllTextNodes()[0]?.getTextContent();
 
@@ -55,7 +59,6 @@ export function NotesPlugin({ anchorElement }) {
         ]);
 
         //TODO check update args instead: https://discord.com/channels/953974421008293909/955972012541628456/1041741864879013928
-        const state = editor.getEditorState();
         editor.setEditorState(state);
       });
     },
