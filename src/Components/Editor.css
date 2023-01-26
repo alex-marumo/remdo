@@ -1,11 +1,11 @@
 .editor-input {
-    outline: 1px solid blue;
+  outline: 1px solid blue;
 }
 
 .editor {
-    position: relative;
+  position: relative;
 }
 
 .li-nested {
-    list-style-type: none;
+  list-style-type: none;
 }

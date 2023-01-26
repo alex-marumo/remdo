@@ -1,9 +1,32 @@
 TODO create lint test case
-TODO reconcileNode('root', null);
+
 TODO https://github.com/welldone-software/why-did-you-render
 TODO https://dmitripavlutin.com/react-usecallback/
 TODO add breadcrumb tests once they work correctly
 TODO try using lexical dev tools
+
+root change improvements
+    TODO work on the following line in LexicalReconcilation
+        if (nextNode.updateDOM(prevNode, dom, activeEditorConfig) || key !== 'root') {
+    current - reconciliation changes
+        debug TODO reconcileNode('root', null); and see how it works
+            the goal is to skip adding unnecessary divs or avoid using setState
+    try using JS to play with dom structure
+    use css
+        .editor-input > ul {
+        visibility: hidden;
+        position: absolute;
+        top: 0px;
+        }
+
+        .temp-root {
+        visibility: visible;
+        margin-left: 50px;
+        position: absolute;
+        }
+        requires fixing the space that tem-root takes (currently it's size is ignored because of position:absolute)
+            https://github.com/react-component/resize-observer/ could be used for that purpose
+    
 
 git submodule update --init --recursive
 

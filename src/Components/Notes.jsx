@@ -41,6 +41,7 @@ export function NotesPlugin({ anchorElement }) {
         const liNode = $getNodeByKey(key);
         $setTempRoot(key, liNode.getParent()?.getKey(), state);
 
+        //use $dfs if this cause any problems
         const getText = (node) => node.getAllTextNodes()[0]?.getTextContent();
 
         setBreadcrumbs([
@@ -194,7 +195,9 @@ export function NotesPlugin({ anchorElement }) {
         </button>
         <ol className="breadcrumb">
           <li className="breadcrumb-item">
-            <a href="/" onClick={(event) => changeRoot(event, 'root')}>Home</a>
+            <a href="/" onClick={(event) => changeRoot(event, "root")}>
+              Home
+            </a>
           </li>
           {breadcrumbs.map((note, idx, { length }) => {
             return idx + 1 < length ? (
