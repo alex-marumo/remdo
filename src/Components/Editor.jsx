@@ -19,6 +19,7 @@ import { Doc } from "yjs";
 import { useState } from "react";
 import IndentOncePlugin from "../plugins/IndentOncePlugin";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
+import { TypeaheadPlugin } from "./Typeahead";
 
 function providerFactory(id, yjsDocMap) {
   let doc = yjsDocMap.get(id);
@@ -88,10 +89,11 @@ export default function Editor() {
           {floatingAnchorElem && (
             <NotesPlugin anchorElement={floatingAnchorElem} />
           )}
+          <TypeaheadPlugin />
           <RichTextPlugin
             contentEditable={
               <div className="editor" ref={onRef}>
-                <ContentEditable className="editor-input" />
+                <ContentEditable className="editor-input form-control" />
               </div>
             }
             placeholder={<Placeholder />}

@@ -4,6 +4,13 @@ TODO https://github.com/welldone-software/why-did-you-render
 TODO https://dmitripavlutin.com/react-usecallback/
 TODO add breadcrumb tests once they work correctly
 TODO try using lexical dev tools
+TODO https://lexical.dev/docs/concepts/dom-events#3-use-nodeeventplugin
+TODO https://lexical.dev/docs/concepts/node-replacement
+TODO https://github.com/facebook/lexical/discussions
+    use that in own project
+TODO doxygen or something similar
+TODO https://code.visualstudio.com/Docs/languages/javascript#_code-actions-on-save
+$nodesOfType + it's flat search
 
 root change improvements
     TODO work on the following line in LexicalReconcilation

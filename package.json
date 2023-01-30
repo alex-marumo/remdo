@@ -14,8 +14,10 @@
     "playwright": "^1.29.2",
     "prettier": "^2.8.1",
     "react": "^18.2.0",
+    "react-bootstrap-typeahead": "^6.0.0",
     "react-dom": "^18.2.0",
     "react-scripts": "^4.0.3",
+    "warning": "github:piotrlewalski/warning",
     "web-vitals": "^2.1.4",
     "y-websocket": "^1.4.4",
     "yjs": "^13.5.41"
