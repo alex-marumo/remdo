@@ -1,5 +1,6 @@
 .editor-input {
-  outline: 1px solid blue;
+  outline: 1px solid lightblue;
+  margin-top: 3px;
 }
 
 .editor {
@@ -8,4 +9,9 @@
 
 .li-nested {
   list-style-type: none;
+}
+
+/* hide time travel */
+.tree-view-output > button {
+  display: none;
 }
