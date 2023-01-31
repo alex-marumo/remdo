@@ -9,6 +9,7 @@ import {
   CLEAR_EDITOR_COMMAND,
   $getNodeByKey,
 } from "lexical";
+import { FULL_RECONCILE } from "@lexical/LexicalConstants";
 import { useEffect, useRef, useState, useCallback } from "react";
 import "./Notes.css";
 import {
@@ -20,10 +21,12 @@ import {
 import { mergeRegister } from "@lexical/utils";
 import { SELECTION_CHANGE_COMMAND, COMMAND_PRIORITY_CRITICAL } from "lexical";
 import { createPortal } from "react-dom";
+import { getActiveEditorState } from "@lexical/LexicalUpdates";
 
 function $setTempRoot(key, parentKey, state) {
   state._tempRootKey = key;
   state._tempRootParentKey = parentKey;
+  state._tempRootChanged = true;
 }
 
 export function NotesPlugin({ anchorElement }) {
@@ -36,12 +39,14 @@ export function NotesPlugin({ anchorElement }) {
   const changeRoot = useCallback(
     (event, key) => {
       event.preventDefault();
-      editor.update(() => {
-        const state = editor.getEditorState();
+      editor._dirtyType = FULL_RECONCILE;
+      editor.update((...args) => {
+        //getActiveEditorState() returns a different state than editor.getEditorState() ¯\_(ツ)_/¯
+        const state = getActiveEditorState();
         const liNode = $getNodeByKey(key);
         $setTempRoot(key, liNode.getParent()?.getKey(), state);
 
-        //use $dfs if this cause any problems
+        //use $dfs if this causes any problems
         const getText = (node) => node.getAllTextNodes()[0]?.getTextContent();
 
         setBreadcrumbs([
@@ -57,9 +62,6 @@ export function NotesPlugin({ anchorElement }) {
             text: getText(liNode),
           },
         ]);
-
-        //TODO check update args instead: https://discord.com/channels/953974421008293909/955972012541628456/1041741864879013928
-        editor.setEditorState(state);
       });
     },
     [editor]
@@ -183,6 +185,15 @@ export function NotesPlugin({ anchorElement }) {
     });
   };
 
+  const testAction = (event) => {
+    event.preventDefault();
+    console.clear();
+    editor._dirtyType = FULL_RECONCILE;
+    editor.update(() => {
+      console.log("testing");
+    });
+  };
+
   return (
     <div>
       <nav aria-label="breadcrumb">
@@ -192,6 +203,13 @@ export function NotesPlugin({ anchorElement }) {
           onClick={clearContent}
         >
           Clear
+        </button>
+        <button
+          type="button"
+          className="btn btn-link float-end"
+          onClick={testAction}
+        >
+          Test
         </button>
         <ol className="breadcrumb">
           <li className="breadcrumb-item">

@@ -35,6 +35,16 @@ root change improvements
             https://github.com/react-component/resize-observer/ could be used for that purpose
     
 
+TODO lexical bugs
+getActiveEditorState() (not available publicly) returns a different state than editor.getEditorState() which can cause problems if someone modifies state in editor.update()
+
+think about nested lists and CSS
+
+//TODO read or just passinge editor state should be enough, re-check in the newer lexical version
+      editor.update(() => {
+        key = $getNearestNodeFromDOMNode(event.target).getKey();
+      });
+
 git submodule update --init --recursive
 
 Watched lexical issues:

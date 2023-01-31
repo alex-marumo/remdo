@@ -20,6 +20,8 @@ import { useState } from "react";
 import IndentOncePlugin from "../plugins/IndentOncePlugin";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { TypeaheadPlugin } from "./Typeahead";
+import { getActiveEditorState } from "@lexical/LexicalUpdates";
+import { $getNodeByKey, TextNode } from "lexical";
 
 function providerFactory(id, yjsDocMap) {
   let doc = yjsDocMap.get(id);
@@ -53,6 +55,53 @@ function TreeViewPlugin() {
   );
 }
 
+function createNodeReplacement(replacedType, cloneFunction) {
+  class NotesNode extends replacedType {
+    static getType() {
+      return "Notes" + super.getType();
+    }
+    static clone(node) {
+      return cloneFunction({ node: node, type: NotesNode, skipKey: false });
+    }
+    static importJSON(serializedNode) {
+      return super.importJSON(serializedNode);
+    }
+    exportJSON() {
+      return super.exportJSON();
+    }
+    createDOM(config, editor) {
+      const state = editor.getEditorState();
+      const key = this.getKey();
+      const tempRootKey = state._tempRootKey || "root";
+      const tempRootParentKey = state._tempRootParentKey || null;
+
+      if (
+        tempRootKey === "root" ||
+        key === tempRootKey ||
+        key === tempRootParentKey
+      ) {
+        return super.createDOM(config, editor);
+      } else if ($getNodeByKey(key)?.getParentKeys().includes(tempRootKey)) {
+        return super.createDOM(config, editor);
+      }
+      return document.createElement("div");
+    }
+    updateDOM(prevNode, dom, config) {
+      const state = getActiveEditorState();
+      //updateDOM has to be placed first as it may have some side effects
+      return super.updateDOM(prevNode, dom, config) || state._tempRootChanged;
+    }
+  }
+  return [
+    NotesNode,
+    {
+      replace: replacedType,
+      with: (node) =>
+        cloneFunction({ node: node, type: NotesNode, skipKey: true }),
+    },
+  ];
+}
+
 export default function Editor() {
   const [floatingAnchorElem, setFloatingAnchorElem] = useState(null);
 
@@ -66,7 +115,31 @@ export default function Editor() {
     onError(error) {
       throw error;
     },
-    nodes: [ListNode, ListItemNode],
+    nodes: [
+      ...createNodeReplacement(
+        ListItemNode,
+        ({ node, type, skipKey }) =>
+          new type(
+            node.__value,
+            node.__checked,
+            skipKey ? undefined : node.__key
+          )
+      ),
+      ...createNodeReplacement(
+        ListNode,
+        ({ node, type, skipKey }) =>
+          new type(
+            node.__listType,
+            node.__start,
+            skipKey ? undefined : node.__key
+          )
+      ),
+      ...createNodeReplacement(
+        TextNode,
+        ({ node, type, skipKey }) =>
+          new type(node.__text, skipKey ? undefined : node.__key)
+      ),
+    ],
     theme: {
       list: {
         nested: {
