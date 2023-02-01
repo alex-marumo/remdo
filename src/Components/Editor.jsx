@@ -8,7 +8,6 @@ import { NotesPlugin } from "./Notes";
 import "./Editor.css";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ListNode, ListItemNode } from "@lexical/list";
-import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 
@@ -19,9 +18,8 @@ import { Doc } from "yjs";
 import { useState } from "react";
 import IndentOncePlugin from "../plugins/IndentOncePlugin";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { TypeaheadPlugin } from "./Typeahead";
 import { getActiveEditorState } from "@lexical/LexicalUpdates";
-import { $getNodeByKey, TextNode } from "lexical";
+import { TextNode } from "lexical";
 
 function providerFactory(id, yjsDocMap) {
   let doc = yjsDocMap.get(id);
@@ -71,17 +69,7 @@ function createNodeReplacement(replacedType, cloneFunction) {
     }
     createDOM(config, editor) {
       const state = editor.getEditorState();
-      const key = this.getKey();
-      const tempRootKey = state._tempRootKey || "root";
-      const tempRootParentKey = state._tempRootParentKey || null;
-
-      if (
-        tempRootKey === "root" ||
-        key === tempRootKey ||
-        key === tempRootParentKey
-      ) {
-        return super.createDOM(config, editor);
-      } else if ($getNodeByKey(key)?.getParentKeys().includes(tempRootKey)) {
+      if (!state._notesFilter || state._notesFilter(this)) {
         return super.createDOM(config, editor);
       }
       return document.createElement("div");
@@ -89,7 +77,7 @@ function createNodeReplacement(replacedType, cloneFunction) {
     updateDOM(prevNode, dom, config) {
       const state = getActiveEditorState();
       //updateDOM has to be placed first as it may have some side effects
-      return super.updateDOM(prevNode, dom, config) || state._tempRootChanged;
+      return super.updateDOM(prevNode, dom, config) || state._notesFilter;
     }
   }
   return [
@@ -162,7 +150,6 @@ export default function Editor() {
           {floatingAnchorElem && (
             <NotesPlugin anchorElement={floatingAnchorElem} />
           )}
-          <TypeaheadPlugin />
           <RichTextPlugin
             contentEditable={
               <div className="editor" ref={onRef}>
@@ -174,7 +161,6 @@ export default function Editor() {
           />
           <ClearEditorPlugin />
           <ListPlugin />
-          <AutoFocusPlugin />
           <TabIndentationPlugin />
           <IndentOncePlugin />
           <TreeViewPlugin />

@@ -176,7 +176,6 @@ test.fixme("indent note with children", async ({ page }) => {
 });
 
 test("change root", async ({ page }) => {
-
   //make note3 child of note2
   await getNote(page, "note3").selectText();
   await page.keyboard.press("Tab");
@@ -195,3 +194,19 @@ test("change root", async ({ page }) => {
   //alternatively revert previous formalList changes
   //expect(html).toContain("note3");  
 });
+
+test("search", async ({ page }) => {
+  const searchInput = page.locator("#search");
+
+  await searchInput.type("note");
+  let html = await getHTML(page);
+  expect(html).toContain("note1")
+  expect(html).toContain("note2");
+  expect(html).toContain("note3");
+
+  await searchInput.type("2");
+  html = await getHTML(page);
+  expect(html).not.toContain("note1")
+  expect(html).toContain("note2");
+  expect(html).not.toContain("note3");
+})

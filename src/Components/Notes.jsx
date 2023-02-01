@@ -19,14 +19,19 @@ import {
   $isListItemNode,
 } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
-import { SELECTION_CHANGE_COMMAND, COMMAND_PRIORITY_CRITICAL } from "lexical";
+import { SELECTION_CHANGE_COMMAND, COMMAND_PRIORITY_CRITICAL, $isTextNode, $setSelection } from "lexical";
 import { createPortal } from "react-dom";
 import { getActiveEditorState } from "@lexical/LexicalUpdates";
 
-function $setTempRoot(key, parentKey, state) {
-  state._tempRootKey = key;
-  state._tempRootParentKey = parentKey;
-  state._tempRootChanged = true;
+function $setTempRoot(tempRootKey, tempRootParentKey, state) {
+  state._notesFilter = (node) => {
+    const key = node.getKey();
+    return (
+      key == tempRootKey ||
+      key === tempRootParentKey ||
+      node.getParentKeys().includes(tempRootKey)
+    );
+  };
 }
 
 export function NotesPlugin({ anchorElement }) {
@@ -35,12 +40,13 @@ export function NotesPlugin({ anchorElement }) {
   const [hoveredNoteElement, setHoveredNoteElement] = useState(null);
   const [menuExpanded, setMenuExpanded] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
+  const [nodeFilter, setNodeFilter] = useState("");
 
   const changeRoot = useCallback(
     (event, key) => {
       event.preventDefault();
       editor._dirtyType = FULL_RECONCILE;
-      editor.update((...args) => {
+      editor.update(() => {
         //getActiveEditorState() returns a different state than editor.getEditorState() ¯\_(ツ)_/¯
         const state = getActiveEditorState();
         const liNode = $getNodeByKey(key);
@@ -49,6 +55,7 @@ export function NotesPlugin({ anchorElement }) {
         //use $dfs if this causes any problems
         const getText = (node) => node.getAllTextNodes()[0]?.getTextContent();
 
+        //TODO won't update if path changes elsewhere
         setBreadcrumbs([
           ...liNode
             .getParents()
@@ -66,6 +73,30 @@ export function NotesPlugin({ anchorElement }) {
     },
     [editor]
   );
+
+  useEffect(() => {
+    editor._dirtyType = FULL_RECONCILE;
+    editor.update(() => {
+      //getActiveEditorState() returns a different state than editor.getEditorState() ¯\_(ツ)_/¯
+      const state = getActiveEditorState();
+      console.log(nodeFilter);
+      state._notesFilter = (node) => {
+        if (nodeFilter.length === 0) {
+          return true;
+        }
+        let text = null;
+        if ($isListItemNode(node)) {
+          text = node.getAllTextNodes()[0]?.getTextContent();
+        } else if ($isTextNode(node)) {
+          text = node.getTextContent();
+        }
+        
+        return !text || text.includes(nodeFilter);
+      };
+      //prevent editor from re-gaining focus
+      $setSelection(null);
+    });
+  }, [nodeFilter]); //TODO
 
   useEffect(() => {
     function onMouseMove(event) {
@@ -236,6 +267,15 @@ export function NotesPlugin({ anchorElement }) {
           })}
         </ol>
       </nav>
+
+      <input
+        type="text"
+        value={nodeFilter}
+        onChange={(e) => setNodeFilter(e.target.value)}
+        className="form-control"
+        placeholder="Search..."
+        id="search"
+      />
       {createPortal(
         <div id="hovered-note-menu" ref={menuRef}>
           {!menuExpanded ? (
