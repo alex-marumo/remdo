@@ -20,6 +20,7 @@ import IndentOncePlugin from "../plugins/IndentOncePlugin";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { getActiveEditorState } from "@lexical/LexicalUpdates";
 import { TextNode } from "lexical";
+import React from "react";
 
 function providerFactory(id, yjsDocMap) {
   let doc = yjsDocMap.get(id);
@@ -77,6 +78,7 @@ function createNodeReplacement(replacedType, cloneFunction) {
     updateDOM(prevNode, dom, config) {
       const state = getActiveEditorState();
       //updateDOM has to be placed first as it may have some side effects
+      // @ts-ignore
       return super.updateDOM(prevNode, dom, config) || state._notesFilter;
     }
   }
@@ -103,6 +105,7 @@ export default function Editor() {
     onError(error) {
       throw error;
     },
+    namespace: "notes",
     nodes: [
       ...createNodeReplacement(
         ListItemNode,
@@ -139,13 +142,16 @@ export default function Editor() {
       },
     },
     editorState: null,
+    // @ts-ignore
     disableCollab: !!import.meta.env.VITE_DISABLECOLLAB,
   };
 
   return (
     <div className="container">
       <br />
-      <LexicalComposer initialConfig={editorConfig}>
+      <LexicalComposer 
+      // @ts-ignore
+      initialConfig={editorConfig}>
         <div className="editor-container editor-shell">
           {floatingAnchorElem && (
             <NotesPlugin anchorElement={floatingAnchorElem} />

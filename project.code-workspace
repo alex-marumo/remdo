@@ -2,15 +2,17 @@
 	"folders": [
 		{
 			"path": "."
-		},
-		{
-			"path": "temp/lexical"
 		}
 	],
 	"settings": {
 		"files.exclude": {
 			"**/*.d.ts": true
-		}
+		},
+		"js/ts.implicitProjectConfig.checkJs": false,
+		"javascript.inlayHints.functionLikeReturnTypes.enabled": false,
+		"javascript.inlayHints.parameterTypes.enabled": false,
+		"js/ts.implicitProjectConfig.strictFunctionTypes": false,
+		"js/ts.implicitProjectConfig.strictNullChecks": false
 	},
 	"extensions": {
 		"recommendations": [

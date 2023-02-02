@@ -22,6 +22,8 @@ import { mergeRegister } from "@lexical/utils";
 import { SELECTION_CHANGE_COMMAND, COMMAND_PRIORITY_CRITICAL, $isTextNode, $setSelection } from "lexical";
 import { createPortal } from "react-dom";
 import { getActiveEditorState } from "@lexical/LexicalUpdates";
+import React from "react";
+import PropTypes from 'prop-types';
 
 function $setTempRoot(tempRootKey, tempRootParentKey, state) {
   state._notesFilter = (node) => {
@@ -80,6 +82,7 @@ export function NotesPlugin({ anchorElement }) {
       //getActiveEditorState() returns a different state than editor.getEditorState() ¯\_(ツ)_/¯
       const state = getActiveEditorState();
       console.log(nodeFilter);
+      // @ts-ignore
       state._notesFilter = (node) => {
         if (nodeFilter.length === 0) {
           return true;
@@ -96,7 +99,7 @@ export function NotesPlugin({ anchorElement }) {
       //prevent editor from re-gaining focus
       $setSelection(null);
     });
-  }, [nodeFilter]); //TODO
+  }, [editor, nodeFilter]);
 
   useEffect(() => {
     function onMouseMove(event) {
@@ -193,6 +196,7 @@ export function NotesPlugin({ anchorElement }) {
         SELECTION_CHANGE_COMMAND,
         () => {
           const focusLIElement = editor
+            // @ts-ignore
             .getElementByKey($getSelection().focus.key)
             .closest("li");
           setHoveredNoteElement(focusLIElement);
@@ -212,7 +216,7 @@ export function NotesPlugin({ anchorElement }) {
 
   const clearContent = () => {
     editor.update(() => {
-      editor.dispatchCommand(CLEAR_EDITOR_COMMAND);
+      editor.dispatchCommand(CLEAR_EDITOR_COMMAND, null);
     });
   };
 
@@ -295,4 +299,8 @@ export function NotesPlugin({ anchorElement }) {
       )}
     </div>
   );
+}
+
+NotesPlugin.propTypes = {
+  anchorElement: PropTypes.string.isRequired,
 }

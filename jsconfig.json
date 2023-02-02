@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "module": "ES2022",
+    "target": "ES2022",
+    "checkJs": true,
+    "noImplicitAny": false,
+    "baseUrl": "./",
+    "moduleResolution": "node",
+    "paths": {
+      "@lexical/*": ["lexical/packages/lexical/src/*"],
+      "@lexical/react/*": ["lexical/packages/lexical-react/src/*"]
+    }
+  }
+}

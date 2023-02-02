@@ -2,6 +2,7 @@ import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
 import { useState } from "react";
+import React from "react";
 
 export function TypeaheadPlugin() {
   const [singleSelections, setSingleSelections] = useState([]);
