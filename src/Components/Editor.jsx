@@ -71,32 +71,23 @@ export default function Editor() {
       throw error;
     },
     namespace: "notes",
-    nodes: [
-      ListItemNode,
-      ListNode,
-    ],
+    nodes: [ListItemNode, ListNode],
     theme: {
       list: {
         nested: {
           listitem: "position-relative li-nested",
         },
         ol: "editor-list-ol",
-        //ul: 'list-unstyled',
-        //listitem: 'position-relative',
       },
     },
     editorState: null,
-    // @ts-ignore
     disableCollab: !!import.meta.env.VITE_DISABLECOLLAB,
   };
 
   return (
     <div className="container">
       <br />
-      <LexicalComposer
-        // @ts-ignore
-        initialConfig={editorConfig}
-      >
+      <LexicalComposer initialConfig={editorConfig}>
         <div className="editor-container editor-shell">
           {floatingAnchorElem && (
             <NotesPlugin anchorElement={floatingAnchorElem} />

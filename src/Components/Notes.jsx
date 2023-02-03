@@ -36,7 +36,8 @@ export function applyNodePatches(NodeType) {
   /*
   this function customizes updateDOM and createDOM (see below) in an existing lexical node class
   an alternative would be to use lexical node replacement mechanism, but turns off TextNode merging (see TextNote.isSimpleText() ) 
-  it could be fixed, but an additional benefit is that this method is simpler, shorter and doesn't rename original types
+  it could be fixed, but an additional benefit is that this method is simpler, shorter (doesn't require to implement importJSON, clone, etc.)
+  and doesn't rename original types
   */
   patch(NodeType, "updateDOM", function (oldMethod, prevNode, dom, config) {
     //oldMethod has to be placed first as it may have some side effects
