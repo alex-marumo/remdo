@@ -45,6 +45,8 @@ think about nested lists and CSS
         key = $getNearestNodeFromDOMNode(event.target).getKey();
       });
 
+throw Error("error") in update works, but throw "error" is silently eaten
+
 git submodule update --init --recursive
 
 Watched lexical issues:

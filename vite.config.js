@@ -48,6 +48,10 @@ playgroundResolveAlias.unshift(
   {
     find: "@lexical/LexicalUpdates",
     replacement: path.resolve("./lexical/packages/lexical/src/LexicalUpdates.ts"),
+  },
+  {
+    find: "@lexical/LexicalUtils",
+    replacement: path.resolve("./lexical/packages/lexical/src/LexicalUtils.ts"),
   }
 );
 

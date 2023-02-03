@@ -176,6 +176,11 @@ test.fixme("indent note with children", async ({ page }) => {
 });
 
 test("change root", async ({ page }) => {
+  //check breadcrumbs
+  await expect(page.locator("li.breadcrumb-item")).toHaveCount(1);
+  await expect(page.locator("li.breadcrumb-item.active")).toContainText("Home");
+
+
   //make note3 child of note2
   await getNote(page, "note3").selectText();
   await page.keyboard.press("Tab");
@@ -183,8 +188,9 @@ test("change root", async ({ page }) => {
   //focus on note2 and make sure that only it and it's child are visible
   const el = await page.$('ul > li :text("note2")');
   const box = await el.boundingBox();
+  const preFocusHTML = await getHTML(page);
 
-  //playwright locators don't support ::before pseudo elements, so this is a workaround to click it
+  //playwright locators don't support ::before pseudo element, so this is a workaround to click it
   await page.mouse.click(box.x - 1, box.y + box.height / 2);
   const html = await getHTML(page);
   expect(html).not.toContain("note1")
@@ -193,6 +199,14 @@ test("change root", async ({ page }) => {
   //TODO uncomment once https://github.com/facebook/lexical/issues/2951 is fixed
   //alternatively revert previous formalList changes
   //expect(html).toContain("note3");  
+
+  //check breadcrumbs after changing root
+  await expect(page.locator("li.breadcrumb-item")).toHaveCount(2);
+  await expect(page.locator("li.breadcrumb-item.active")).toContainText("note2");
+
+  //go back to the root element
+  await page.locator("li.breadcrumb-item a").click()
+  await assertHTML(page, preFocusHTML);
 });
 
 test("search", async ({ page }) => {

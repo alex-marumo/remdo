@@ -19,13 +19,24 @@ import {
   $isListItemNode,
 } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
-import { SELECTION_CHANGE_COMMAND, COMMAND_PRIORITY_CRITICAL, $isTextNode, $setSelection } from "lexical";
+import {
+  SELECTION_CHANGE_COMMAND,
+  COMMAND_PRIORITY_CRITICAL,
+  $isTextNode,
+  $setSelection,
+} from "lexical";
 import { createPortal } from "react-dom";
 import { getActiveEditorState } from "@lexical/LexicalUpdates";
 import React from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
+import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
 
-function $setTempRoot(tempRootKey, tempRootParentKey, state) {
+function $setTempRoot(note) {
+  const tempRootKey = note.lexicalKey;
+  const tempRootParentKey = note.lexicalNode?.getParent()?.getKey();
+  //getActiveEditorState() returns a different state than editor.getEditorState() ¯\_(ツ)_/¯
+  const state = getActiveEditorState();
+
   state._notesFilter = (node) => {
     const key = node.getKey();
     return (
@@ -36,12 +47,87 @@ function $setTempRoot(tempRootKey, tempRootParentKey, state) {
   };
 }
 
+function closestLINode(lexicalNode) {
+  let node = lexicalNode;
+  while (node !== null) {
+    if ($isListItemNode(node)) {
+      return node;
+    }
+    node = node.getParent();
+  }
+  return null;
+}
+
+const ROOT_TEXT = "Home";
+
+//TODO add unit tests and move this to a separate file
+class Note {
+  static create(key) {
+    let lexicalNode = closestLINode($getNodeByKey(key));
+    if (!lexicalNode) {
+      return new Note("root");
+    }
+    let nested = lexicalNode
+      .getChildren()
+      .some((child) => $isListNode(child));
+    if (nested) {
+      return new Note(lexicalNode.getPreviousSibling().getKey());
+    }
+    return new Note(lexicalNode.getKey());
+  }
+
+  constructor(key) {
+    this._lexicalKey = key;
+  }
+
+  get lexicalNode() {
+    return $getNodeByKeyOrThrow(this._lexicalKey);
+  }
+
+  get lexicalKey() {
+    return this._lexicalKey;
+  }
+
+  get parent() {
+    if (this.lexicalKey === "root") {
+      return null;
+    }
+    let lexicalParentNode = this.lexicalNode.getParent();
+    return Note.create(lexicalParentNode.getKey());
+  }
+
+  get parents() {
+    const that = this;
+    return {
+      *[Symbol.iterator]() {
+        let parent = that.parent;
+        while (parent) {
+          yield parent;
+          parent = parent.parent;
+        }
+      },
+    };
+  }
+
+  get plainText() {
+    if (this.lexicalKey === "root") {
+      return ROOT_TEXT;
+    }
+    const textNode = this.lexicalNode
+      .getChildren()
+      .find((child) => $isTextNode(child));
+    return textNode ? textNode.getTextContent() : "";
+  }
+}
+
 export function NotesPlugin({ anchorElement }) {
   const [editor] = useLexicalComposerContext();
   const menuRef = useRef(null);
   const [hoveredNoteElement, setHoveredNoteElement] = useState(null);
   const [menuExpanded, setMenuExpanded] = useState(false);
-  const [breadcrumbs, setBreadcrumbs] = useState([]);
+  const [breadcrumbs, setBreadcrumbs] = useState([
+    { key: "root", text: ROOT_TEXT },
+  ]);
   const [nodeFilter, setNodeFilter] = useState("");
 
   const changeRoot = useCallback(
@@ -49,28 +135,16 @@ export function NotesPlugin({ anchorElement }) {
       event.preventDefault();
       editor._dirtyType = FULL_RECONCILE;
       editor.update(() => {
-        //getActiveEditorState() returns a different state than editor.getEditorState() ¯\_(ツ)_/¯
-        const state = getActiveEditorState();
-        const liNode = $getNodeByKey(key);
-        $setTempRoot(key, liNode.getParent()?.getKey(), state);
+        const note = Note.create(key);
+        $setTempRoot(note);
 
-        //use $dfs if this causes any problems
-        const getText = (node) => node.getAllTextNodes()[0]?.getTextContent();
-
-        //TODO won't update if path changes elsewhere
-        setBreadcrumbs([
-          ...liNode
-            .getParents()
-            .filter((node) => $isListItemNode(node))
-            .map((note) => ({
-              key: note.getKey(),
-              text: getText(note),
-            })),
-          {
-            key: liNode.getKey(),
-            text: getText(liNode),
-          },
-        ]);
+        //TODO won't update if path is changed elsewhere
+        setBreadcrumbs(
+          [note, ...note.parents].reverse().map((p) => ({
+            key: p.lexicalNode.getKey(),
+            text: p.plainText,
+          }))
+        );
       });
     },
     [editor]
@@ -81,8 +155,6 @@ export function NotesPlugin({ anchorElement }) {
     editor.update(() => {
       //getActiveEditorState() returns a different state than editor.getEditorState() ¯\_(ツ)_/¯
       const state = getActiveEditorState();
-      console.log(nodeFilter);
-      // @ts-ignore
       state._notesFilter = (node) => {
         if (nodeFilter.length === 0) {
           return true;
@@ -93,7 +165,7 @@ export function NotesPlugin({ anchorElement }) {
         } else if ($isTextNode(node)) {
           text = node.getTextContent();
         }
-        
+
         return !text || text.includes(nodeFilter);
       };
       //prevent editor from re-gaining focus
@@ -115,7 +187,7 @@ export function NotesPlugin({ anchorElement }) {
         return;
       }
       let key;
-      //TODO read or just passinge editor state should be enough, re-check in the newer lexical version
+      //TODO read or just passinge editor state should be enough, re-check in a newer lexical version
       editor.update(() => {
         key = $getNearestNodeFromDOMNode(event.target).getKey();
       });
@@ -196,7 +268,6 @@ export function NotesPlugin({ anchorElement }) {
         SELECTION_CHANGE_COMMAND,
         () => {
           const focusLIElement = editor
-            // @ts-ignore
             .getElementByKey($getSelection().focus.key)
             .closest("li");
           setHoveredNoteElement(focusLIElement);
@@ -247,11 +318,6 @@ export function NotesPlugin({ anchorElement }) {
           Test
         </button>
         <ol className="breadcrumb">
-          <li className="breadcrumb-item">
-            <a href="/" onClick={(event) => changeRoot(event, "root")}>
-              Home
-            </a>
-          </li>
           {breadcrumbs.map((note, idx, { length }) => {
             return idx + 1 < length ? (
               <li className="breadcrumb-item" key={note.key}>
@@ -302,5 +368,5 @@ export function NotesPlugin({ anchorElement }) {
 }
 
 NotesPlugin.propTypes = {
-  anchorElement: PropTypes.string.isRequired,
-}
+  anchorElement: PropTypes.object.isRequired,
+};
