@@ -3,7 +3,7 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { TreeView } from "@lexical/react/LexicalTreeView";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
-import { NotesPlugin } from "./Notes";
+import { NotesPlugin, applyNodePatches } from "./Notes";
 
 import "./Editor.css";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
@@ -18,7 +18,6 @@ import { Doc } from "yjs";
 import { useState } from "react";
 import IndentOncePlugin from "../plugins/IndentOncePlugin";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { getActiveEditorState } from "@lexical/LexicalUpdates";
 import { TextNode } from "lexical";
 import React from "react";
 
@@ -54,43 +53,9 @@ function TreeViewPlugin() {
   );
 }
 
-function createNodeReplacement(replacedType, cloneFunction) {
-  class NotesNode extends replacedType {
-    static getType() {
-      return "Notes" + super.getType();
-    }
-    static clone(node) {
-      return cloneFunction({ node: node, type: NotesNode, skipKey: false });
-    }
-    static importJSON(serializedNode) {
-      return super.importJSON(serializedNode);
-    }
-    exportJSON() {
-      return super.exportJSON();
-    }
-    createDOM(config, editor) {
-      const state = editor.getEditorState();
-      if (!state._notesFilter || state._notesFilter(this)) {
-        return super.createDOM(config, editor);
-      }
-      return document.createElement("div");
-    }
-    updateDOM(prevNode, dom, config) {
-      const state = getActiveEditorState();
-      //updateDOM has to be placed first as it may have some side effects
-      // @ts-ignore
-      return super.updateDOM(prevNode, dom, config) || state._notesFilter;
-    }
-  }
-  return [
-    NotesNode,
-    {
-      replace: replacedType,
-      with: (node) =>
-        cloneFunction({ node: node, type: NotesNode, skipKey: true }),
-    },
-  ];
-}
+applyNodePatches(TextNode);
+applyNodePatches(ListNode);
+applyNodePatches(ListItemNode);
 
 export default function Editor() {
   const [floatingAnchorElem, setFloatingAnchorElem] = useState(null);
@@ -107,29 +72,8 @@ export default function Editor() {
     },
     namespace: "notes",
     nodes: [
-      ...createNodeReplacement(
-        ListItemNode,
-        ({ node, type, skipKey }) =>
-          new type(
-            node.__value,
-            node.__checked,
-            skipKey ? undefined : node.__key
-          )
-      ),
-      ...createNodeReplacement(
-        ListNode,
-        ({ node, type, skipKey }) =>
-          new type(
-            node.__listType,
-            node.__start,
-            skipKey ? undefined : node.__key
-          )
-      ),
-      ...createNodeReplacement(
-        TextNode,
-        ({ node, type, skipKey }) =>
-          new type(node.__text, skipKey ? undefined : node.__key)
-      ),
+      ListItemNode,
+      ListNode,
     ],
     theme: {
       list: {
@@ -149,9 +93,10 @@ export default function Editor() {
   return (
     <div className="container">
       <br />
-      <LexicalComposer 
-      // @ts-ignore
-      initialConfig={editorConfig}>
+      <LexicalComposer
+        // @ts-ignore
+        initialConfig={editorConfig}
+      >
         <div className="editor-container editor-shell">
           {floatingAnchorElem && (
             <NotesPlugin anchorElement={floatingAnchorElem} />

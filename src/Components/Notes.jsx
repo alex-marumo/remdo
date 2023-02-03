@@ -30,6 +30,24 @@ import { getActiveEditorState } from "@lexical/LexicalUpdates";
 import React from "react";
 import PropTypes from "prop-types";
 import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
+import { patch } from "../utils";
+
+export function applyNodePatches(NodeType) {
+  //TODO explain why not node replacement
+  patch(NodeType, "updateDOM", function (oldMethod, prevNode, dom, config) {
+    //oldMethod has to be placed first as it may have some side effects
+    return (
+      oldMethod(prevNode, dom, config) || getActiveEditorState()._notesFilter
+    );
+  });
+  patch(NodeType, "createDOM", function (oldMethod, config, editor) {
+    const state = editor.getEditorState();
+    if (!state._notesFilter || state._notesFilter(this)) {
+      return oldMethod(config, editor);
+    }
+    return document.createElement("div");
+  });
+}
 
 function $setTempRoot(note) {
   const tempRootKey = note.lexicalKey;
