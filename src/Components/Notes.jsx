@@ -67,9 +67,7 @@ class Note {
     if (!lexicalNode) {
       return new Note("root");
     }
-    let nested = lexicalNode
-      .getChildren()
-      .some((child) => $isListNode(child));
+    let nested = lexicalNode.getChildren().some((child) => $isListNode(child));
     if (nested) {
       return new Note(lexicalNode.getPreviousSibling().getKey());
     }
@@ -113,10 +111,12 @@ class Note {
     if (this.lexicalKey === "root") {
       return ROOT_TEXT;
     }
-    const textNode = this.lexicalNode
-      .getChildren()
-      .find((child) => $isTextNode(child));
-    return textNode ? textNode.getTextContent() : "";
+    return [
+      ...this.lexicalNode
+        .getChildren()
+        .filter((child) => $isTextNode(child))
+        .map((child) => child.getTextContent()),
+    ].join("");
   }
 }
 
