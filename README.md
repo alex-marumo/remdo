@@ -2,38 +2,14 @@ TODO create lint test case
 
 TODO https://github.com/welldone-software/why-did-you-render
 TODO https://dmitripavlutin.com/react-usecallback/
-TODO add breadcrumb tests once they work correctly
 TODO try using lexical dev tools
 TODO https://lexical.dev/docs/concepts/dom-events#3-use-nodeeventplugin
-TODO https://lexical.dev/docs/concepts/node-replacement
 TODO https://github.com/facebook/lexical/discussions
     use that in own project
 TODO doxygen or something similar
 TODO https://code.visualstudio.com/Docs/languages/javascript#_code-actions-on-save
 $nodesOfType + it's flat search
-
-root change improvements
-    TODO work on the following line in LexicalReconcilation
-        if (nextNode.updateDOM(prevNode, dom, activeEditorConfig) || key !== 'root') {
-    current - reconciliation changes
-        debug TODO reconcileNode('root', null); and see how it works
-            the goal is to skip adding unnecessary divs or avoid using setState
-    try using JS to play with dom structure
-    use css
-        .editor-input > ul {
-        visibility: hidden;
-        position: absolute;
-        top: 0px;
-        }
-
-        .temp-root {
-        visibility: visible;
-        margin-left: 50px;
-        position: absolute;
-        }
-        requires fixing the space that tem-root takes (currently it's size is ignored because of position:absolute)
-            https://github.com/react-component/resize-observer/ could be used for that purpose
-    
+TODO work on listeners (for example to update content and structure of breadcrumbs)
 
 TODO lexical bugs
 getActiveEditorState() (not available publicly) returns a different state than editor.getEditorState() which can cause problems if someone modifies state in editor.update()
