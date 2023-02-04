@@ -11,9 +11,9 @@ const port = 3001;
 const disableCollab = process.env.VITE_DISABLECOLLAB;
 
 const config: PlaywrightTestConfig = {
-  testDir: "./tests",
+  testDir: "./tests/browser",
   /* Maximum time one test can run for. */
-  timeout: 3 * 1000,
+  timeout: 5 * 1000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
@@ -98,7 +98,9 @@ const config: PlaywrightTestConfig = {
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: `PORT=${port} VITE_DISABLECOLLAB=${disableCollab || ''} npm run server`,
+    command: `PORT=${port} VITE_DISABLECOLLAB=${
+      disableCollab || ""
+    } npm run server`,
     port: port,
   },
 };

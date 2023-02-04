@@ -7,7 +7,7 @@ import {
   getHTML,
   html,
   prettifyHTML,
-} from "../lexical/packages/lexical-playground/__tests__/utils/index.mjs";
+} from "../../lexical/packages/lexical-playground/__tests__/utils/index.mjs";
 import { getNote } from "./index";
 
 // eslint-disable-next-line no-unused-vars

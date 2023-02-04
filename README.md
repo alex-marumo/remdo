@@ -1,11 +1,15 @@
 TODO create lint test case
 
+TODO /home/dev/project/lexical/packages/lexical-playground/vite.config.js contains problematic **DEV** replacement
+try to remove and reinstall warning
+TODO remove autocomplete
+
 TODO https://github.com/welldone-software/why-did-you-render
 TODO https://dmitripavlutin.com/react-usecallback/
 TODO try using lexical dev tools
 TODO https://lexical.dev/docs/concepts/dom-events#3-use-nodeeventplugin
 TODO https://github.com/facebook/lexical/discussions
-    use that in own project
+use that in own project
 TODO doxygen or something similar
 TODO https://code.visualstudio.com/Docs/languages/javascript#_code-actions-on-save
 $nodesOfType + it's flat search
@@ -17,9 +21,9 @@ getActiveEditorState() (not available publicly) returns a different state than e
 think about nested lists and CSS
 
 //TODO read or just passinge editor state should be enough, re-check in the newer lexical version
-      editor.update(() => {
-        key = $getNearestNodeFromDOMNode(event.target).getKey();
-      });
+editor.update(() => {
+key = $getNearestNodeFromDOMNode(event.target).getKey();
+});
 
 throw Error("error") in update works, but throw "error" is silently eaten
 
