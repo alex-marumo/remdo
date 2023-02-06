@@ -1,9 +1,8 @@
 import React from "react";
-
-console.log("App");
+import Editor from '../../src/Components/Editor';
 
 function App() {
-  return <div className="App">Learn React</div>;
+  return <div className="App"><Editor /></div>;
 }
 
 export default App;

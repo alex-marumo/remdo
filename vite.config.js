@@ -5,7 +5,6 @@ import react from "@vitejs/plugin-react";
 import babel from "@rollup/plugin-babel";
 
 /* TODO copied from lexical playground vite config */
-console.log("aaa", new URL("./index.html", import.meta.url).pathname);
 const moduleResolution = [
   {
     find: /lexical$/,
@@ -242,7 +241,7 @@ export default defineConfig({
     outDir: "build",
     rollupOptions: {
       input: {
-        main: new URL("./index.html", import.meta.url).pathname,
+        main: "./index.html",
       },
     },
   },

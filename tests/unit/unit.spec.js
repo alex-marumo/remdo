@@ -4,7 +4,8 @@ import React from "react";
 
 test.use({ viewport: { width: 500, height: 500 } });
 
-test("should work", async ({ mount }) => {
+test("should work", async ({ page, mount }) => {
   const component = await mount(<App />);
-  await expect(component).toContainText("Learn React");
+  await expect(page).toHaveScreenshot();
+  await expect(component).toContainText("Home");
 });

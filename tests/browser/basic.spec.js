@@ -16,7 +16,7 @@ async function logHTML(page) {
   console.log(prettifyHTML(html));
 }
 
-test.beforeEach(async ({ page }, testInfo) => {
+test.beforeEach(async ({ page }) => {
   await page.goto("");
   await focusEditor(page);
   await clearEditor(page);
@@ -68,7 +68,7 @@ test("indent outdent", async ({ page }) => {
   const expectedHTMLIndented = html`
     <ul>
       <li value="1" dir="ltr"><span data-lexical-text="true">note1</span></li>
-      <li value="2" class="position-relative li-nested">
+      <li class="position-relative li-nested" value="2">
         <ul>
           <li value="1" dir="ltr">
             <span data-lexical-text="true">note2</span>
@@ -155,7 +155,7 @@ test.fixme("indent note with children", async ({ page }) => {
   const expectedHTMLIndented = html`
     <ul>
       <li value="1" dir="ltr"><span data-lexical-text="true">note1</span></li>
-      <li value="2" class="position-relative li-nested">
+      <li class="position-relative li-nested" value="2">
         <ul>
           <li value="1" dir="ltr">
             <span data-lexical-text="true">note2</span>
@@ -180,7 +180,6 @@ test("change root", async ({ page }) => {
   await expect(page.locator("li.breadcrumb-item")).toHaveCount(1);
   await expect(page.locator("li.breadcrumb-item.active")).toContainText("Home");
 
-
   //make note3 child of note2
   await getNote(page, "note3").selectText();
   await page.keyboard.press("Tab");
@@ -193,19 +192,21 @@ test("change root", async ({ page }) => {
   //playwright locators don't support ::before pseudo element, so this is a workaround to click it
   await page.mouse.click(box.x - 1, box.y + box.height / 2);
   const html = await getHTML(page);
-  expect(html).not.toContain("note1")
+  expect(html).not.toContain("note1");
   expect(html).toContain("note2");
 
   //TODO uncomment once https://github.com/facebook/lexical/issues/2951 is fixed
   //alternatively revert previous formalList changes
-  //expect(html).toContain("note3");  
+  //expect(html).toContain("note3");
 
   //check breadcrumbs after changing root
   await expect(page.locator("li.breadcrumb-item")).toHaveCount(2);
-  await expect(page.locator("li.breadcrumb-item.active")).toContainText("note2");
+  await expect(page.locator("li.breadcrumb-item.active")).toContainText(
+    "note2"
+  );
 
   //go back to the root element
-  await page.locator("li.breadcrumb-item a").click()
+  await page.locator("li.breadcrumb-item a").click();
   await assertHTML(page, preFocusHTML);
 });
 
@@ -214,13 +215,13 @@ test("search", async ({ page }) => {
 
   await searchInput.type("note");
   let html = await getHTML(page);
-  expect(html).toContain("note1")
+  expect(html).toContain("note1");
   expect(html).toContain("note2");
   expect(html).toContain("note3");
 
   await searchInput.type("2");
   html = await getHTML(page);
-  expect(html).not.toContain("note1")
+  expect(html).not.toContain("note1");
   expect(html).toContain("note2");
   expect(html).not.toContain("note3");
-})
+});

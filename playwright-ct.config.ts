@@ -1,15 +1,22 @@
-import type { PlaywrightTestConfig } from "@playwright/test";
-import { devices } from "@playwright/test";
 import browserConfig from "./playwright.config";
-import { defineConfig } from "@playwright/experimental-ct-react";
-
+import * as viteConfig from "./vite.config";
 
 //require('dotenv').config();
 
 const config = {
   ...browserConfig,
   testDir: "./tests/unit",
-  ctPort: 3100,
+  use: {
+    ctTemplateDir: "./tests/unit/playwright",
+    ctViteConfig: {
+      resolve: {
+        //@ts-ignore
+        alias: viteConfig.default.resolve.alias,
+      },
+      //@ts-ignore
+      plugins: [...viteConfig.default.plugins],
+    },
+  },
 };
 
 export default config;

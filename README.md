@@ -43,3 +43,8 @@ https://github.com/facebook/lexical/issues/2127
 https://github.com/facebook/lexical/issues/1707
 https://github.com/facebook/lexical/issues/1604
 https://github.com/facebook/lexical/issues/1311
+
+
+playwright
+DEBUG=* 
+DEBUG=pw:browser,pw:api
