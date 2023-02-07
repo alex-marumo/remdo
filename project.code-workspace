@@ -1,30 +1,64 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {
-		"files.exclude": {
-			"**/*.d.ts": true
-		},
-		"js/ts.implicitProjectConfig.checkJs": false,
-		"javascript.inlayHints.functionLikeReturnTypes.enabled": false,
-		"javascript.inlayHints.parameterTypes.enabled": false,
-		"js/ts.implicitProjectConfig.strictFunctionTypes": false,
-		"js/ts.implicitProjectConfig.strictNullChecks": false,
-		"search.exclude": {
-			"**/package-lock.json": true
-		}
-	},
-	"extensions": {
-		"recommendations": [
-			"dbaeumer.vscode-eslint",
-			"ms-playwright.playwright",
-			"eamodio.gitlens",
-			"esbenp.prettier-vscode",
-			"bradlc.vscode-tailwindcss",
-			"tabnine.tabnine-vscode"
-		]
-	}
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/*.d.ts": true
+    },
+    "js/ts.implicitProjectConfig.checkJs": false,
+    "javascript.inlayHints.functionLikeReturnTypes.enabled": false,
+    "javascript.inlayHints.parameterTypes.enabled": false,
+    "js/ts.implicitProjectConfig.strictFunctionTypes": false,
+    "js/ts.implicitProjectConfig.strictNullChecks": false,
+    "search.exclude": {
+      "**/package-lock.json": true
+    },
+    "prettier.arrowParens": "avoid",
+    "editor.rulers": [80],
+    "cSpell.words": ["collab"]
+  },
+  "extensions": {
+    "recommendations": [
+      "zixuanchen.vitest-explorer",
+      "dbaeumer.vscode-eslint",
+      "zignd.html-css-class-completion",
+      "ms-playwright.playwright",
+      "esbenp.prettier-vscode",
+      "streetsidesoftware.code-spell-checker"
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "type": "npm",
+        "script": "test",
+        "group": "test",
+        "problemMatcher": [],
+        "label": "npm: test"
+      },
+      {
+        "type": "npm",
+        "script": "test-unit-watch",
+        "group": "test",
+        "label": "unit tests"
+      },
+      {
+        "type": "npm",
+        "script": "server",
+        "problemMatcher": [],
+        "group": "none",
+        "label": "server"
+      },
+      {
+        "type": "npm",
+        "script": "websocket",
+        "problemMatcher": [],
+        "label": "websocket"
+      }
+    ]
+  }
 }
