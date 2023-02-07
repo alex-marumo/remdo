@@ -177,6 +177,7 @@ export function NotesPlugin({ anchorElement }) {
     editor._dirtyType = FULL_RECONCILE;
     editor.update(() => {
       //getActiveEditorState() returns a different state than editor.getEditorState() ¯\_(ツ)_/¯
+      //TODO try editor from argument list
       const state = getActiveEditorState();
       state._notesFilter = (node) => {
         if (nodeFilter.length === 0) {

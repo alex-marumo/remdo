@@ -1,12 +1,10 @@
-import React from 'react';
-import Editor from './Components/Editor';
-
-console.log("App");
+import React from "react";
+import Editor from "./Components/Editor";
 
 function App() {
   return (
     <div className="App">
-        <Editor />
+      <Editor />
     </div>
   );
 }

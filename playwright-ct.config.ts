@@ -5,9 +5,9 @@ import * as viteConfig from "./vite.config";
 
 const config = {
   ...browserConfig,
-  testDir: "./tests/unit",
+  testDir: "./tests/component",
   use: {
-    ctTemplateDir: "./tests/unit/playwright",
+    ctTemplateDir: "./tests/component/playwright",
     ctViteConfig: {
       resolve: {
         //@ts-ignore

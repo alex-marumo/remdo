@@ -4,6 +4,7 @@ import { TreeView } from "@lexical/react/LexicalTreeView";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { NotesPlugin, applyNodePatches } from "./Notes";
+import { ComponentTestPlugin } from "./ComponentTest";
 
 import "./Editor.css";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
@@ -20,6 +21,7 @@ import IndentOncePlugin from "../plugins/IndentOncePlugin";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { TextNode } from "lexical";
 import React from "react";
+import PropTypes from "prop-types";
 
 function providerFactory(id, yjsDocMap) {
   let doc = yjsDocMap.get(id);
@@ -57,10 +59,10 @@ applyNodePatches(TextNode);
 applyNodePatches(ListNode);
 applyNodePatches(ListItemNode);
 
-export default function Editor() {
+export default function Editor({ testHandler }) {
   const [floatingAnchorElem, setFloatingAnchorElem] = useState(null);
 
-  const onRef = (_floatingAnchorElem) => {
+  const onRef = _floatingAnchorElem => {
     if (_floatingAnchorElem !== null) {
       setFloatingAnchorElem(_floatingAnchorElem);
     }
@@ -101,6 +103,7 @@ export default function Editor() {
             placeholder={<Placeholder />}
             ErrorBoundary={LexicalErrorBoundary}
           />
+          {testHandler && <ComponentTestPlugin testHandler={testHandler} />}
           <ClearEditorPlugin />
           <ListPlugin />
           <TabIndentationPlugin />
@@ -120,3 +123,7 @@ export default function Editor() {
     </div>
   );
 }
+
+Editor.propTypes = {
+  testHandler: PropTypes.object,
+};
