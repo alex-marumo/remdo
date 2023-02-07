@@ -8,14 +8,7 @@ const config = {
   testDir: "./tests/component",
   use: {
     ctTemplateDir: "./tests/component/playwright",
-    ctViteConfig: {
-      resolve: {
-        //@ts-ignore
-        alias: viteConfig.default.resolve.alias,
-      },
-      //@ts-ignore
-      plugins: [...viteConfig.default.plugins],
-    },
+    ctViteConfig: viteConfig.default,
   },
 };
 

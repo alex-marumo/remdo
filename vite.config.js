@@ -135,7 +135,7 @@ const moduleResolution = [
   "LexicalAutoEmbedPlugin",
   "LexicalOnChangePlugin",
   "LexicalNodeEventPlugin",
-].forEach((module) => {
+].forEach(module => {
   let resolvedPath = path.resolve(`../lexical-react/src/${module}.ts`);
 
   if (fs.existsSync(resolvedPath)) {
@@ -156,7 +156,7 @@ const moduleResolution = [
 
 //playground vite configuration contains a lot of module replacements
 //the idea is to reuse them after adjusting to a different dir structure
-var playgroundResolveAlias = moduleResolution.map((module) => {
+var playgroundResolveAlias = moduleResolution.map(module => {
   //playground is nested in lexical/packages while this file exist outside
   //of lexical dir structure, let's change this
   var resolvedPath = module.replacement.replace(
@@ -211,6 +211,10 @@ export default defineConfig({
   server: {
     port: parseInt(process.env.PORT) || 3000,
     strictPort: true,
+  },
+
+  define: {
+    __DEV__: true,
   },
 
   //TODO copied from lexical playground
