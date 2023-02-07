@@ -1,64 +1,99 @@
 {
+  "extensions": {
+    "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "ms-playwright.playwright",
+      "streetsidesoftware.code-spell-checker",
+      "zignd.html-css-class-completion",
+      "zixuanchen.vitest-explorer"
+    ]
+  },
   "folders": [
     {
       "path": "."
     }
   ],
   "settings": {
+    "[css]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[jsonc]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "cSpell.words": ["collab"],
+    "editor.minimap.enabled": false,
+    "editor.rulers": [80],
+    "eslint.codeActionsOnSave.rules": [
+      "no-floating-promise/no-floating-promise",
+      "react/jsx-uses-react",
+      "react/jsx-uses-vars"
+    ],
     "files.exclude": {
       "**/*.d.ts": true
     },
-    "js/ts.implicitProjectConfig.checkJs": false,
+    "html-css-class-completion.CSSLanguages": ["css", "sass", "scss"],
+    "html-css-class-completion.JavaScriptLanguages": [
+      "javascript",
+      "javascriptreact",
+      "typescriptreact"
+    ],
     "javascript.inlayHints.functionLikeReturnTypes.enabled": false,
     "javascript.inlayHints.parameterTypes.enabled": false,
+    "js/ts.implicitProjectConfig.checkJs": false,
     "js/ts.implicitProjectConfig.strictFunctionTypes": false,
     "js/ts.implicitProjectConfig.strictNullChecks": false,
+    "playwright.reuseBrowser": false,
+    "prettier.arrowParens": "avoid",
     "search.exclude": {
       "**/package-lock.json": true
     },
-    "prettier.arrowParens": "avoid",
-    "editor.rulers": [80],
-    "cSpell.words": ["collab"]
-  },
-  "extensions": {
-    "recommendations": [
-      "zixuanchen.vitest-explorer",
-      "dbaeumer.vscode-eslint",
-      "zignd.html-css-class-completion",
-      "ms-playwright.playwright",
-      "esbenp.prettier-vscode",
-      "streetsidesoftware.code-spell-checker"
-    ]
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    "terminal.integrated.shellIntegration.decorationsEnabled": "never",
+    "terminal.integrated.tabs.enableAnimation": false,
+    "workbench.colorTheme": "Default Dark+"
   },
   "tasks": {
-    "version": "2.0.0",
     "tasks": [
       {
-        "type": "npm",
-        "script": "test",
-        "group": "test",
-        "problemMatcher": [],
-        "label": "npm: test"
-      },
-      {
-        "type": "npm",
-        "script": "test-unit-watch",
-        "group": "test",
-        "label": "unit tests"
-      },
-      {
-        "type": "npm",
-        "script": "server",
-        "problemMatcher": [],
         "group": "none",
-        "label": "server"
+        "label": "server",
+        "problemMatcher": [],
+        "script": "server",
+        "type": "npm"
       },
       {
-        "type": "npm",
-        "script": "websocket",
+        "group": "test",
+        "label": "npm: test",
         "problemMatcher": [],
-        "label": "websocket"
+        "script": "test",
+        "type": "npm"
+      },
+      {
+        "group": "test",
+        "label": "unit tests",
+        "script": "test-unit-watch",
+        "type": "npm"
+      },
+      {
+        "label": "websocket",
+        "problemMatcher": [],
+        "script": "websocket",
+        "type": "npm"
       }
-    ]
+    ],
+    "version": "2.0.0"
   }
 }
