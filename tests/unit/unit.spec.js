@@ -21,23 +21,29 @@ vi.mock("react-dom", () => ({
   createPortal: node => node,
 }));
 
+async function render_editor() {
+  const component = render(
+    <div className="App">
+      <Editor testHandler={msg => console.log("test handler", msg)} />
+    </div>
+  );
+  do {
+    await new Promise(r => setTimeout(r, 10));
+  } while (
+    component.container.querySelector("div.editor-input").children.length == 0
+  );
+  return component;
+}
+
 describe("suite name", async () => {
   it("rtl", async () => {
+    const component = await render_editor();
     console.log("rtl");
-    let component = render(
-      <div className="App">
-        <Editor testHandler={msg => console.log("test handler", msg)} />
-      </div>
-    );
-    do {
-      await new Promise(r => setTimeout(r, 10));
-    } while (
-      component.container.querySelector("div.editor-input").children.length == 0
-    );
     console.log(
       "log1: ",
       component.container.querySelector("div.editor-input").children.length
     );
     await new Promise(r => setTimeout(r, 10));
+    expect(2+2).toBe(4);
   });
 });

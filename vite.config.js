@@ -251,6 +251,11 @@ export default defineConfig({
   },
   test: {
     include: ["tests/unit/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    environment: "jsdom"
+    environment: "jsdom",
+    open: false,
+    api: {
+      port: 9323,
+      host: "0.0.0.0",
+    },
   },
 });

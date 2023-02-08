@@ -30,7 +30,7 @@
     "test-collab": "npx playwright test --project=chromium",
     "test-ct": "playwright test -c playwright-ct.config.ts --project=chromium",
     "test-unit": "npx vitest run",
-    "test-unit-watch": "npx vitest watch",
+    "test-unit-watch": "npx vitest --ui",
     "test": "npm run test-unit && npm run test-ct && npm run test-browser"
   },
   "browserslist": {
@@ -52,6 +52,7 @@
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "@typescript-eslint/parser": "^5.50.0",
     "@vitejs/plugin-react": "^1.0.7",
+    "@vitest/ui": "^0.28.4",
     "esbuild": "^0.17.5",
     "eslint": "^8.33.0",
     "eslint-config-react-app": "^7.0.1",
