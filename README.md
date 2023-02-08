@@ -33,6 +33,8 @@ TODO move to yarn
 
 git submodule update --init --recursive
 
+TODO improve tiny-invariant in production
+
 Watched lexical issues:
 https://github.com/facebook/lexical/issues/3763
 https://github.com/facebook/lexical/issues/3670

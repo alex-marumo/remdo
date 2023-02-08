@@ -12,30 +12,8 @@ export function ComponentTestPlugin({ testHandler }) {
     if (!testHandler) {
       return;
     }
-    console.log("in the browser");
-    testHandler("sample");
-    return editor.registerUpdateListener(({ editorState }) => {
-      editorState.read(() => {
-        console.log("reading");
-        testUpdateListener();
-      });
-    });
+    testHandler(editor);
   }, [editor, testHandler]);
-
-  useEffect(() => {
-    return editor.registerCommand(
-      CONNECTED_COMMAND,
-      payload => {
-        console.log("connected", payload);
-        editor.update(() => {
-          console.log("reading after connection");
-          testUpdateListener();
-        });  
-        return false;
-      },
-      COMMAND_PRIORITY_EDITOR
-    );
-  }, [editor]);
 }
 
 ComponentTestPlugin.propTypes = {

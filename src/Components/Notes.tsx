@@ -31,6 +31,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
 import { patch } from "../utils";
+import invariant from 'tiny-invariant'
+import type { ElementNode } from "lexical";
 
 export function applyNodePatches(NodeType) {
   /*
@@ -83,15 +85,21 @@ function closestLINode(lexicalNode) {
 
 const ROOT_TEXT = "Home";
 
+function isNestedLINode(node) {
+  return node && node.getChildren().some(child => $isListNode(child));
+}
+
 //TODO add unit tests and move this to a separate file
 export class Note {
-  static create(key) {
+  _lexicalKey: string;
+  _lexicalNode: ElementNode;
+  
+  static from(key) {
     let lexicalNode = closestLINode($getNodeByKey(key));
     if (!lexicalNode) {
       return new Note("root");
     }
-    let nested = lexicalNode.getChildren().some(child => $isListNode(child));
-    if (nested) {
+    if (isNestedLINode(lexicalNode)) {
       return new Note(lexicalNode.getPreviousSibling().getKey());
     }
     return new Note(lexicalNode.getKey());
@@ -101,7 +109,27 @@ export class Note {
     this._lexicalKey = key;
   }
 
-  get lexicalNode() {
+  createChild() {
+    if (this.isRoot) {
+      const liNode = $createListItemNode();
+      const listNode: ElementNode = this.lexicalNode.getFirstChild();
+      invariant($isListNode(listNode), "Root's direct child should be a list node");
+      listNode.append(liNode);
+      return;
+    }
+    if (!isNestedLINode(this.lexicalNode.getNextSibling())) {
+      const liNode = $createListItemNode();
+      this.lexicalNode.insertAfter(liNode);
+      const listNode = $createListNode("bullet");
+      liNode.append(liNode);
+    }
+  }
+
+  get isRoot(): boolean {
+    return this.lexicalKey === "root";
+  }
+
+  get lexicalNode(): ElementNode {
     return $getNodeByKeyOrThrow(this._lexicalKey);
   }
 
@@ -110,11 +138,11 @@ export class Note {
   }
 
   get parent() {
-    if (this.lexicalKey === "root") {
+    if (this.isRoot) {
       return null;
     }
     let lexicalParentNode = this.lexicalNode.getParent();
-    return Note.create(lexicalParentNode.getKey());
+    return Note.from(lexicalParentNode.getKey());
   }
 
   get parents() {
@@ -146,13 +174,12 @@ export class Note {
           child = child.getNextSibling();
         }
         return textNodes;
-    
       },
     };
   }
 
   get plainText() {
-    if (this.lexicalKey === "root") {
+    if (this.isRoot) {
       return ROOT_TEXT;
     }
     return [
@@ -179,7 +206,7 @@ export function NotesPlugin({ anchorElement }) {
       event.preventDefault();
       editor._dirtyType = FULL_RECONCILE;
       editor.update(() => {
-        const note = Note.create(key);
+        const note = Note.from(key);
         $setTempRoot(note);
 
         //TODO won't update if path is changed elsewhere

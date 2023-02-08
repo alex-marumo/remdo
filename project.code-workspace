@@ -5,8 +5,7 @@
       "esbenp.prettier-vscode",
       "ms-playwright.playwright",
       "streetsidesoftware.code-spell-checker",
-      "zignd.html-css-class-completion",
-      "zixuanchen.vitest-explorer"
+      "zignd.html-css-class-completion"
     ]
   },
   "folders": [
@@ -42,7 +41,7 @@
       "react/jsx-uses-vars"
     ],
     "files.exclude": {
-      "**/*.d.ts": true
+      "lexical/**/*.d.ts": true
     },
     "html-css-class-completion.CSSLanguages": ["css", "sass", "scss"],
     "html-css-class-completion.JavaScriptLanguages": [

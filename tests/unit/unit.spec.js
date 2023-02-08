@@ -1,49 +1,59 @@
-import { assert, describe, expect, it, vi } from "vitest";
-import React from "react";
+import {
+  describe,
+  it,
+  vi,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} from "vitest";
+import React, { Component } from "react";
 import Editor from "../../src/Components/Editor";
 import { Note } from "../../src/Components/Notes";
-import { $getRoot } from "lexical";
+import { $getRoot, LexicalEditor } from "lexical";
 import { render } from "@testing-library/react";
 
-globalThis.testUpdateListener = function (editor) {
-  console.log("in update listener");
-  console.log(
-    $getRoot()
-      .getAllTextNodes()
-      .map(node => node.getTextContent())
-      .join(", ")
-  );
-  console.log(Note.create($getRoot()).lexicalKey);
-};
+let _editor = null;
+let _component = null;
 
 vi.mock("react-dom", () => ({
   ...vi.importActual("react-dom"),
   createPortal: node => node,
 }));
 
-async function render_editor() {
-  const component = render(
+beforeAll(async () => {
+  function testHandler(editor) {
+    _editor = editor;
+  }
+  _component = render(
     <div className="App">
-      <Editor testHandler={msg => console.log("test handler", msg)} />
+      <Editor testHandler={testHandler} />
     </div>
   );
-  do {
-    await new Promise(r => setTimeout(r, 10));
-  } while (
-    component.container.querySelector("div.editor-input").children.length == 0
-  );
-  return component;
-}
 
-describe("suite name", async () => {
-  it("rtl", async () => {
-    const component = await render_editor();
-    console.log("rtl");
-    console.log(
-      "log1: ",
-      component.container.querySelector("div.editor-input").children.length
-    );
+  //wait for yjs to connect via websocket and init the editor content
+  while (
+    _component.container.querySelector("div.editor-input").children.length == 0
+  ) {
     await new Promise(r => setTimeout(r, 10));
-    expect(2+2).toBe(4);
+  }
+});
+
+beforeEach(async context => {
+  context.editor = _editor;
+  context.component = _component;
+});
+
+afterAll(async () => {
+  //an ugly workaround - otherwise we may loose some messages written to console
+  await new Promise(r => setTimeout(r, 10));
+});
+
+describe("API", async () => {
+  it("rtl", async context => {
+    context.editor.update(() => {
+      const note = Note.from($getRoot());
+      console.log(note.lexicalKey);
+      note.createChild();
+    });
   });
 });
