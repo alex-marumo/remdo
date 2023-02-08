@@ -249,4 +249,8 @@ export default defineConfig({
       },
     },
   },
+  test: {
+    include: ["tests/unit/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    environment: "jsdom"
+  },
 });

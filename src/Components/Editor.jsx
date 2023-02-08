@@ -125,5 +125,5 @@ export default function Editor({ testHandler }) {
 }
 
 Editor.propTypes = {
-  testHandler: PropTypes.object,
+  testHandler: PropTypes.func,
 };

@@ -60,7 +60,7 @@ function $setTempRoot(note) {
   //getActiveEditorState() returns a different state than editor.getEditorState() ¯\_(ツ)_/¯
   const state = getActiveEditorState();
 
-  state._notesFilter = (node) => {
+  state._notesFilter = node => {
     const key = node.getKey();
     return (
       key == tempRootKey ||
@@ -84,13 +84,13 @@ function closestLINode(lexicalNode) {
 const ROOT_TEXT = "Home";
 
 //TODO add unit tests and move this to a separate file
-class Note {
+export class Note {
   static create(key) {
     let lexicalNode = closestLINode($getNodeByKey(key));
     if (!lexicalNode) {
       return new Note("root");
     }
-    let nested = lexicalNode.getChildren().some((child) => $isListNode(child));
+    let nested = lexicalNode.getChildren().some(child => $isListNode(child));
     if (nested) {
       return new Note(lexicalNode.getPreviousSibling().getKey());
     }
@@ -130,6 +130,27 @@ class Note {
     };
   }
 
+  get descendants() {
+    const that = this;
+    return {
+      *[Symbol.iterator]() {
+        let child = that.getFirstChild();
+        while (child !== null) {
+          if ($isListItemNode(child)) {
+            yield Node.create(child);
+          }
+          if ($isElementNode(child)) {
+            const subChildrenNodes = child.getAllTextNodes();
+            textNodes.push(...subChildrenNodes);
+          }
+          child = child.getNextSibling();
+        }
+        return textNodes;
+    
+      },
+    };
+  }
+
   get plainText() {
     if (this.lexicalKey === "root") {
       return ROOT_TEXT;
@@ -137,8 +158,8 @@ class Note {
     return [
       ...this.lexicalNode
         .getChildren()
-        .filter((child) => $isTextNode(child))
-        .map((child) => child.getTextContent()),
+        .filter(child => $isTextNode(child))
+        .map(child => child.getTextContent()),
     ].join("");
   }
 }
@@ -163,7 +184,7 @@ export function NotesPlugin({ anchorElement }) {
 
         //TODO won't update if path is changed elsewhere
         setBreadcrumbs(
-          [note, ...note.parents].reverse().map((p) => ({
+          [note, ...note.parents].reverse().map(p => ({
             key: p.lexicalNode.getKey(),
             text: p.plainText,
           }))
@@ -179,7 +200,7 @@ export function NotesPlugin({ anchorElement }) {
       //getActiveEditorState() returns a different state than editor.getEditorState() ¯\_(ツ)_/¯
       //TODO try editor from argument list
       const state = getActiveEditorState();
-      state._notesFilter = (node) => {
+      state._notesFilter = node => {
         if (nodeFilter.length === 0) {
           return true;
         }
@@ -274,7 +295,7 @@ export function NotesPlugin({ anchorElement }) {
         },
         COMMAND_PRIORITY_HIGH
       ),
-      editor.registerNodeTransform(RootNode, (rootNode) => {
+      editor.registerNodeTransform(RootNode, rootNode => {
         //test case "generate content"
         const children = rootNode.getChildren();
         if (children.length === 1 && $isListNode(children[0])) {
@@ -303,7 +324,7 @@ export function NotesPlugin({ anchorElement }) {
     );
   }, [editor]);
 
-  const menuClick = (e) => {
+  const menuClick = e => {
     e.preventDefault();
 
     setMenuExpanded(true);
@@ -315,7 +336,7 @@ export function NotesPlugin({ anchorElement }) {
     });
   };
 
-  const testAction = (event) => {
+  const testAction = event => {
     event.preventDefault();
     console.clear();
     editor._dirtyType = FULL_RECONCILE;
@@ -345,7 +366,7 @@ export function NotesPlugin({ anchorElement }) {
           {breadcrumbs.map((note, idx, { length }) => {
             return idx + 1 < length ? (
               <li className="breadcrumb-item" key={note.key}>
-                <a href="/" onClick={(event) => changeRoot(event, note.key)}>
+                <a href="/" onClick={event => changeRoot(event, note.key)}>
                   {note.text}
                 </a>
               </li>
@@ -365,7 +386,7 @@ export function NotesPlugin({ anchorElement }) {
       <input
         type="text"
         value={nodeFilter}
-        onChange={(e) => setNodeFilter(e.target.value)}
+        onChange={e => setNodeFilter(e.target.value)}
         className="form-control"
         placeholder="Search..."
         id="search"

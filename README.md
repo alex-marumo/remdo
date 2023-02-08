@@ -27,6 +27,11 @@ key = $getNearestNodeFromDOMNode(event.target).getKey();
 
 throw Error("error") in update works, but throw "error" is silently eaten
 
+go through a fresh install to check if .devcontainer folder is needed at all (possibly test playwright headed mode at the same time)
+
+TODO remove testing-library and review other deps
+TODO remove react-test-renderer
+
 git submodule update --init --recursive
 
 Watched lexical issues:
