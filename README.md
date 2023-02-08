@@ -20,7 +20,7 @@ getActiveEditorState() (not available publicly) returns a different state than e
 
 think about nested lists and CSS
 
-//TODO read or just passinge editor state should be enough, re-check in the newer lexical version
+//TODO reading or just passing editor state should be enough, re-check in the newer lexical version
 editor.update(() => {
 key = $getNearestNodeFromDOMNode(event.target).getKey();
 });
@@ -29,8 +29,7 @@ throw Error("error") in update works, but throw "error" is silently eaten
 
 go through a fresh install to check if .devcontainer folder is needed at all (possibly test playwright headed mode at the same time)
 
-TODO remove testing-library and review other deps
-TODO remove react-test-renderer
+TODO move to yarn
 
 git submodule update --init --recursive
 
