@@ -31,8 +31,9 @@ import React from "react";
 import PropTypes from "prop-types";
 import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
 import { patch } from "../utils";
-import invariant from 'tiny-invariant'
-import type { ElementNode } from "lexical";
+import invariant from "tiny-invariant";
+import { ElementNode } from "lexical";
+import { LexicalNode } from "@lexical/LexicalNode";
 
 export function applyNodePatches(NodeType) {
   /*
@@ -85,17 +86,21 @@ function closestLINode(lexicalNode) {
 
 const ROOT_TEXT = "Home";
 
-function isNestedLINode(node) {
-  return node && node.getChildren().some(child => $isListNode(child));
+function isNestedLINode(node: ElementNode): boolean {
+  return !!(node && node.getChildren().some(child => $isListNode(child)));
 }
 
 //TODO add unit tests and move this to a separate file
 export class Note {
   _lexicalKey: string;
   _lexicalNode: ElementNode;
-  
-  static from(key) {
-    let lexicalNode = closestLINode($getNodeByKey(key));
+
+  static from(keyOrNode: LexicalNode | string) {
+    let baseNode =
+      keyOrNode instanceof LexicalNode
+        ? keyOrNode
+        : $getNodeByKey(keyOrNode as string);
+    let lexicalNode = closestLINode(baseNode);
     if (!lexicalNode) {
       return new Note("root");
     }
@@ -113,11 +118,14 @@ export class Note {
     if (this.isRoot) {
       const liNode = $createListItemNode();
       const listNode: ElementNode = this.lexicalNode.getFirstChild();
-      invariant($isListNode(listNode), "Root's direct child should be a list node");
+      invariant(
+        $isListNode(listNode),
+        "Root's direct child should be a list node"
+      );
       listNode.append(liNode);
       return;
     }
-    if (!isNestedLINode(this.lexicalNode.getNextSibling())) {
+    if (!this.hasChildren) {
       const liNode = $createListItemNode();
       this.lexicalNode.insertAfter(liNode);
       const listNode = $createListNode("bullet");
@@ -158,22 +166,29 @@ export class Note {
     };
   }
 
-  get descendants() {
+  get hasChildren(): boolean {
+    return (
+      isNestedLINode(this.lexicalNode.getNextSibling()) ||
+      (this.isRoot && !this.lexicalNode.getFirstChild().isEmpty())
+    );
+  }
+
+  get children() {
+    if (!this.hasChildren) {
+      return;
+    }
     const that = this;
     return {
       *[Symbol.iterator]() {
-        let child = that.getFirstChild();
+        let listNode = that.isRoot
+          ? that.lexicalNode.getFirstChild() // div > ul
+          : that.lexicalNode.getNextSibling().getFirstChild(); // li.li-nested > ul
+
+        let child = listNode.getFirstChild();
         while (child !== null) {
-          if ($isListItemNode(child)) {
-            yield Node.create(child);
-          }
-          if ($isElementNode(child)) {
-            const subChildrenNodes = child.getAllTextNodes();
-            textNodes.push(...subChildrenNodes);
-          }
+          yield Note.from(child);
           child = child.getNextSibling();
         }
-        return textNodes;
       },
     };
   }
@@ -416,6 +431,7 @@ export function NotesPlugin({ anchorElement }) {
         onChange={e => setNodeFilter(e.target.value)}
         className="form-control"
         placeholder="Search..."
+        role="searchbox"
         id="search"
       />
       {createPortal(

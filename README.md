@@ -25,6 +25,8 @@ editor.update(() => {
 key = $getNearestNodeFromDOMNode(event.target).getKey();
 });
 
+there is no $isLexicalNode function and there is no way to implement is on your own
+
 throw Error("error") in update works, but throw "error" is silently eaten
 
 go through a fresh install to check if .devcontainer folder is needed at all (possibly test playwright headed mode at the same time)
@@ -34,6 +36,9 @@ TODO move to yarn
 git submodule update --init --recursive
 
 TODO improve tiny-invariant in production
+TODO install lexical from npm to improve intelisense, add only missing path files, add a test that compare installed version and the one from
+potentially use https://github.com/speedskater/babel-plugin-rewire
+TODO add a warning about jsdom/querySelectorAll, potentially also using rewire
 
 Watched lexical issues:
 https://github.com/facebook/lexical/issues/3763
@@ -50,7 +55,6 @@ https://github.com/facebook/lexical/issues/1707
 https://github.com/facebook/lexical/issues/1604
 https://github.com/facebook/lexical/issues/1311
 
-
 playwright
-DEBUG=* 
+DEBUG=\*
 DEBUG=pw:browser,pw:api

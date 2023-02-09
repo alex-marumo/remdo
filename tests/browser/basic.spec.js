@@ -68,7 +68,7 @@ test("indent outdent", async ({ page }) => {
   const expectedHTMLIndented = html`
     <ul>
       <li value="1" dir="ltr"><span data-lexical-text="true">note1</span></li>
-      <li class="position-relative li-nested" value="2">
+      <li value="2" class="position-relative li-nested">
         <ul>
           <li value="1" dir="ltr">
             <span data-lexical-text="true">note2</span>

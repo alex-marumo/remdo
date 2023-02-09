@@ -5,7 +5,8 @@
       "esbenp.prettier-vscode",
       "ms-playwright.playwright",
       "streetsidesoftware.code-spell-checker",
-      "zignd.html-css-class-completion"
+      "zignd.html-css-class-completion",
+      "zixuanchen.vitest-explorer"
     ]
   },
   "folders": [
@@ -62,7 +63,8 @@
     "terminal.integrated.defaultProfile.linux": "zsh",
     "terminal.integrated.shellIntegration.decorationsEnabled": "never",
     "terminal.integrated.tabs.enableAnimation": false,
-    "workbench.colorTheme": "Default Dark+"
+    "workbench.colorTheme": "Default Dark+",
+    "files.autoSave": "onFocusChange"
   },
   "tasks": {
     "tasks": [
