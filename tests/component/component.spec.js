@@ -11,7 +11,7 @@ test.beforeEach(async ({ page }) => {
 test("should work", async ({ page, mount }) => {
   function testHandler(test) {
     try {
-      console.log("in test handler with a parameter", test);
+      console.log("in test handler with a parameter", typeof test);
     } catch (e) {
       //we have to catch the exception as otherwise it will be silently eaten
       console.error("error: ", e);

@@ -77,14 +77,36 @@ describe("editor init", async () => {
 });
 
 describe("API", async () => {
-  testUpdate("create note", async () => {
-    const note = Note.from($getRoot());
-    expect(note.hasChildren).toBeTruthy();
-    expect([...note.children][0]).toBeInstanceOf(Note);
+  testUpdate("create notes", async () => {
+    const root = Note.from($getRoot());
+    const child_1 = [...root.children][0];
+    expect(root.hasChildren).toBeTruthy();
+    expect([...root.children].length).toEqual(1);
+    expect([...root.children][0]).toStrictEqual(child_1);
+    expect(child_1).toBeInstanceOf(Note);
+    expect(child_1.hasChildren).toBeFalsy();
 
-    note.createChild();
-    expect(note.hasChildren).toBeTruthy();
-    expect([...note.children].length).toEqual(2);
-    expect([...note.children][1]).toBeInstanceOf(Note);
+    const child_1_1 = child_1.createChild();
+    expect(child_1.hasChildren).toBeTruthy();
+    expect([...child_1.children].length).toEqual(1);
+    expect([...child_1.children][0]).toStrictEqual(child_1_1);
+
+    const child_1_2 = child_1.createChild();
+    expect(child_1.hasChildren).toBeTruthy();
+    expect([...child_1.children].length).toEqual(2);
+    expect([...child_1.children][0]).toStrictEqual(child_1_1);
+    expect([...child_1.children][1]).toStrictEqual(child_1_2);
+  });
+
+  testUpdate("indent", async () => {
+    const root = Note.from($getRoot());
+
+    expect([...root.children].length).toEqual(1);
+
+    let child = root.createChild();
+    expect([...root.children].length).toEqual(2);
+
+    expect(() => child.indent()).toThrowError();
+    //expect([...root.children].length).toEqual(1);
   });
 });
