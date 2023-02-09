@@ -1,4 +1,3 @@
-import { findNearestListItemNode } from "@lexical/list/utils";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
   $getSelection,
@@ -7,6 +6,7 @@ import {
   INDENT_CONTENT_COMMAND,
 } from "lexical";
 import { useEffect } from "react";
+import { Note } from "../api"; //TODO
 
 export function isIndentPermitted() {
   const selection = $getSelection();
@@ -16,9 +16,8 @@ export function isIndentPermitted() {
   }
 
   const nodesInSelection = selection.getNodes();
-  const listItemNode = findNearestListItemNode(nodesInSelection[0])
-  const listNode = listItemNode.getParent();
-  return !listItemNode.is(listNode.getFirstChild());
+  const note = Note.from(nodesInSelection[0]);
+  return note.canIndent();
 }
 
 export default function IndentOncePlugin() {

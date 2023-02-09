@@ -92,7 +92,7 @@ export function NotesPlugin({ anchorElement }) {
         setBreadcrumbs(
           [note, ...note.parents].reverse().map(p => ({
             key: p.lexicalNode.getKey(),
-            text: p.plainText,
+            text: p.text,
           }))
         );
       });

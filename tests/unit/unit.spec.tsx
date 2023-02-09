@@ -30,6 +30,23 @@ function testUpdate(title: string, fn) {
   });
 }
 
+function checkChildren(
+  notes: Array<Note>,
+  expectedChildrenArrays: Array<Array<Note>>
+) {
+  let expectedCount = 0;
+  notes.forEach((note, idx) => {
+    const expectedChildren = expectedChildrenArrays[idx] || [];
+    expectedCount += expectedChildren.length;
+    expect([...note.children]).toStrictEqual(expectedChildren);
+    expect(note.hasChildren).toEqual(expectedChildren.length > 0);
+    for (let child of note.children) {
+      expect(child).toBeInstanceOf(Note);
+    }
+  });
+  expect(notes).toHaveLength(expectedCount + 1); //+1 for root which is not listed as a child
+}
+
 beforeAll(async () => {
   function testHandler(editor) {
     _editor = editor;
@@ -79,23 +96,20 @@ describe("editor init", async () => {
 describe("API", async () => {
   testUpdate("create notes", async () => {
     const root = Note.from($getRoot());
-    const child_1 = [...root.children][0];
-    expect(root.hasChildren).toBeTruthy();
-    expect([...root.children].length).toEqual(1);
-    expect([...root.children][0]).toStrictEqual(child_1);
-    expect(child_1).toBeInstanceOf(Note);
-    expect(child_1.hasChildren).toBeFalsy();
+    const note0 = [...root.children][0];
+    const notes = [root, note0];
 
-    const child_1_1 = child_1.createChild();
-    expect(child_1.hasChildren).toBeTruthy();
-    expect([...child_1.children].length).toEqual(1);
-    expect([...child_1.children][0]).toStrictEqual(child_1_1);
+    checkChildren(notes, [[note0]]);
 
-    const child_1_2 = child_1.createChild();
-    expect(child_1.hasChildren).toBeTruthy();
-    expect([...child_1.children].length).toEqual(2);
-    expect([...child_1.children][0]).toStrictEqual(child_1_1);
-    expect([...child_1.children][1]).toStrictEqual(child_1_2);
+    const note1 = note0.createChild("note1");
+    notes.push(note1);
+    checkChildren(notes, [[note0], [note1]]);
+    expect(note1.text).toEqual("note1");
+
+    const note2 = note0.createChild();
+    notes.push(note2);
+    checkChildren(notes, [[note0], [note1, note2]]);
+    expect(note2.text).toEqual("");
   });
 
   testUpdate("indent", async () => {
@@ -103,10 +117,25 @@ describe("API", async () => {
 
     expect([...root.children].length).toEqual(1);
 
-    let child = root.createChild();
-    expect([...root.children].length).toEqual(2);
+    const note0 = [...root.children][0];
+    const note1 = root.createChild("node1");
+    const note2 = root.createChild("node2");
+    const notes = [root, note0, note1, note2];
+    checkChildren(notes, [[note0, note1, note2]]);
 
-    expect(() => child.indent()).toThrowError();
-    //expect([...root.children].length).toEqual(1);
+    note1.indent();
+    checkChildren(notes, [[note0, note2], [note1]]);
+
+    note1.indent();
+    checkChildren(notes, [[note0, note2], [note1]]);
+
+    note2.indent();
+    checkChildren(notes, [[note0], [note1, note2]]);
+
+    note2.indent();
+    checkChildren(notes, [[note0], [note1], [note2]]);
+
+    note2.indent();
+    checkChildren(notes, [[note0], [note1], [note2]]);
   });
 });

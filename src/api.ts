@@ -1,26 +1,25 @@
-import { ElementNode, $getNodeByKey, $isTextNode } from "lexical";
+import {
+  ElementNode,
+  $getNodeByKey,
+  $isTextNode,
+  $createTextNode,
+} from "lexical";
 import { LexicalNode } from "@lexical/LexicalNode";
 import {
-  $isListItemNode,
   $createListItemNode,
   $createListNode,
   $isListNode,
 } from "@lexical/list";
-import type { ListNode } from "@lexical/list";
+import type { ListNode, ListItemNode } from "@lexical/list";
 import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
-
-function closestLINode(lexicalNode) {
-  let node = lexicalNode;
-  while (node !== null) {
-    if ($isListItemNode(node)) {
-      return node;
-    }
-    node = node.getParent();
-  }
-  return null;
-}
+import { findNearestListItemNode } from "@lexical/list/utils";
 
 const ROOT_TEXT = "Home";
+
+function _isNested(liNode: ElementNode) {
+  //mind that root is also treated as nested note
+  return liNode.getChildren().some(child => $isListNode(child));
+}
 
 export class Note {
   _lexicalKey: string;
@@ -31,12 +30,12 @@ export class Note {
       keyOrNode instanceof LexicalNode
         ? keyOrNode
         : $getNodeByKey(keyOrNode as string);
-    let liNode = closestLINode(baseNode);
+    let liNode = findNearestListItemNode(baseNode);
 
     if (!liNode) {
       return new Note("root");
     }
-    return liNode.getChildren().some(child => $isListNode(child)) //nested
+    return _isNested(liNode)
       ? new Note(liNode.getPreviousSibling().getKey())
       : new Note(liNode.getKey());
   }
@@ -45,9 +44,12 @@ export class Note {
     this._lexicalKey = key;
   }
 
-  createChild(): Note {
+  createChild(text = null): Note {
     const childNode = $createListItemNode();
     let listNode = this._listNode(true).append(childNode);
+    if (text) {
+      childNode.append($createTextNode(text));
+    }
     return Note.from(childNode);
   }
 
@@ -93,8 +95,10 @@ export class Note {
     return {
       *[Symbol.iterator]() {
         let child = that._listNode()?.getFirstChild();
-        while (child !== null) {
-          yield Note.from(child);
+        while (child) {
+          if (!_isNested(child as ListItemNode)) {
+            yield Note.from(child);
+          }
           child = child.getNextSibling();
         }
       },
@@ -105,7 +109,13 @@ export class Note {
     if (this.isRoot) {
       return this.lexicalNode.getFirstChild();
     }
-    let listNode = this.lexicalNode.getNextSibling()?.getFirstChild(); // li.li-nested > ul
+    // li <- this._lexicalNode
+    // li.li-nested
+    //   ul <- searched list node
+    let listNode = this.lexicalNode
+      .getNextSibling()
+      ?.getChildren()
+      .find($isListNode);
     if (!listNode && createIfNeeded) {
       const liNode = $createListItemNode();
       this.lexicalNode.insertAfter(liNode);
@@ -115,7 +125,7 @@ export class Note {
     return listNode;
   }
 
-  get plainText() {
+  get text() {
     if (this.isRoot) {
       return ROOT_TEXT;
     }
@@ -127,7 +137,15 @@ export class Note {
     ].join("");
   }
 
+  canIndent() {
+    return !!this.lexicalNode.getPreviousSibling();
+  }
+
   indent() {
-    throw Error("still in dev...");
+    if (this.canIndent()) {
+      const prevSibling = this.lexicalNode.getPreviousSibling();
+      const prevNote = Note.from(prevSibling);
+      prevNote._listNode(true).append(this.lexicalNode);
+    }
   }
 }
