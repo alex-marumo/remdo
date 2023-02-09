@@ -7,7 +7,6 @@ import {
   $getSelection,
   $getNearestNodeFromDOMNode,
   CLEAR_EDITOR_COMMAND,
-  $getNodeByKey,
 } from "lexical";
 import { FULL_RECONCILE } from "@lexical/LexicalConstants";
 import { useEffect, useRef, useState, useCallback } from "react";
@@ -29,11 +28,9 @@ import { createPortal } from "react-dom";
 import { getActiveEditorState } from "@lexical/LexicalUpdates";
 import React from "react";
 import PropTypes from "prop-types";
-import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
+
 import { patch } from "../utils";
-import { ElementNode } from "lexical";
-import { LexicalNode } from "@lexical/LexicalNode";
-import type { ListNode } from "@lexical/list";
+import {Note} from "../api" //TODO
 
 export function applyNodePatches(NodeType) {
   /*
@@ -73,143 +70,19 @@ function $setTempRoot(note) {
   };
 }
 
-function closestLINode(lexicalNode) {
-  let node = lexicalNode;
-  while (node !== null) {
-    if ($isListItemNode(node)) {
-      return node;
-    }
-    node = node.getParent();
-  }
-  return null;
-}
-
-const ROOT_TEXT = "Home";
-
-//TODO add unit tests and move this to a separate file
-export class Note {
-  _lexicalKey: string;
-  _lexicalNode: ElementNode;
-
-  static from(keyOrNode: LexicalNode | string) {
-    let baseNode =
-      keyOrNode instanceof LexicalNode
-        ? keyOrNode
-        : $getNodeByKey(keyOrNode as string);
-    let liNode = closestLINode(baseNode);
-
-    if (!liNode) {
-      return new Note("root");
-    }
-    return liNode.getChildren().some(child => $isListNode(child)) //nested
-      ? new Note(liNode.getPreviousSibling().getKey())
-      : new Note(liNode.getKey());
-  }
-
-  constructor(key: string) {
-    this._lexicalKey = key;
-  }
-
-  createChild(): Note {
-    const childNode = $createListItemNode();
-    let listNode = this._listNode(true).append(childNode);
-    return Note.from(childNode);
-  }
-
-  get isRoot(): boolean {
-    return this.lexicalKey === "root";
-  }
-
-  get lexicalNode(): ElementNode {
-    return $getNodeByKeyOrThrow(this._lexicalKey);
-  }
-
-  get lexicalKey() {
-    return this._lexicalKey;
-  }
-
-  get parent() {
-    if (this.isRoot) {
-      return null;
-    }
-    let lexicalParentNode = this.lexicalNode.getParent();
-    return Note.from(lexicalParentNode.getKey());
-  }
-
-  get parents() {
-    const that = this;
-    return {
-      *[Symbol.iterator]() {
-        let parent = that.parent;
-        while (parent) {
-          yield parent;
-          parent = parent.parent;
-        }
-      },
-    };
-  }
-
-  get hasChildren(): boolean {
-    return this._listNode()?.getChildrenSize() > 0;
-  }
-
-  get children() {
-    const that = this;
-    return {
-      *[Symbol.iterator]() {
-        let child = that._listNode()?.getFirstChild();
-        while (child !== null) {
-          yield Note.from(child);
-          child = child.getNextSibling();
-        }
-      },
-    };
-  }
-
-  _listNode(createIfNeeded = false): ListNode | null {
-    if (this.isRoot) {
-      return this.lexicalNode.getFirstChild();
-    }
-    let listNode = this.lexicalNode.getNextSibling()?.getFirstChild(); // li.li-nested > ul
-    if (!listNode && createIfNeeded) {
-      const liNode = $createListItemNode();
-      this.lexicalNode.insertAfter(liNode);
-      listNode = $createListNode("bullet");
-      liNode.append(listNode);
-    }
-    return listNode;
-  }
-
-  get plainText() {
-    if (this.isRoot) {
-      return ROOT_TEXT;
-    }
-    return [
-      ...this.lexicalNode
-        .getChildren()
-        .filter(child => $isTextNode(child))
-        .map(child => child.getTextContent()),
-    ].join("");
-  }
-
-  indent() {
-    throw Error("still in dev...")
-  }
-}
-
 export function NotesPlugin({ anchorElement }) {
   const [editor] = useLexicalComposerContext();
   const menuRef = useRef(null);
   const [hoveredNoteElement, setHoveredNoteElement] = useState(null);
   const [menuExpanded, setMenuExpanded] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState([
-    { key: "root", text: ROOT_TEXT },
+    { key: "root", text: "ToDo" },
   ]);
   const [nodeFilter, setNodeFilter] = useState("");
 
   const changeRoot = useCallback(
     (event, key) => {
-      event.preventDefault();
+      event && event.preventDefault();
       editor._dirtyType = FULL_RECONCILE;
       editor.update(() => {
         const note = Note.from(key);
@@ -226,6 +99,10 @@ export function NotesPlugin({ anchorElement }) {
     },
     [editor]
   );
+
+  useEffect(() => {
+    changeRoot(null, "root");
+  }, [changeRoot])
 
   useEffect(() => {
     editor._dirtyType = FULL_RECONCILE;

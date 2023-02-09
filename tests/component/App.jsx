@@ -1,5 +1,5 @@
 import React from "react";
-import Editor from "../../src/Components/Editor";
+import Editor from "../../src/components/Editor";
 import PropTypes from "prop-types";
 
 export default function App({ testHandler }) {

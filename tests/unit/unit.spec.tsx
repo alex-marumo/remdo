@@ -8,8 +8,8 @@ import {
   expect,
 } from "vitest";
 import React from "react";
-import Editor from "../../src/Components/Editor";
-import { Note } from "../../src/Components/Notes";
+import Editor from "../../src/components/Editor";
+import { Note } from "../../src/api";
 import { $getRoot, LexicalEditor } from "lexical";
 import { $isListNode, $isListItemNode } from "@lexical/list";
 import { render } from "@testing-library/react";

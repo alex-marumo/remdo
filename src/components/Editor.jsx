@@ -3,8 +3,8 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { TreeView } from "@lexical/react/LexicalTreeView";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
-import { NotesPlugin, applyNodePatches } from "./Notes";
-import { ComponentTestPlugin } from "./ComponentTest";
+import { NotesPlugin, applyNodePatches } from "../plugins/Notes";
+import { ComponentTestPlugin } from "../plugins/ComponentTest";
 
 import "./Editor.css";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";

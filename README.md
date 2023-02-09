@@ -40,6 +40,8 @@ TODO install lexical from npm to improve intelisense, add only missing path file
 potentially use https://github.com/speedskater/babel-plugin-rewire
 TODO add a warning about jsdom/querySelectorAll, potentially also using rewire
 
+TODO fail all kinds of tests if there is an exception in browser's console
+
 Watched lexical issues:
 https://github.com/facebook/lexical/issues/3763
 https://github.com/facebook/lexical/issues/3670
