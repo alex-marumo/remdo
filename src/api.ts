@@ -148,4 +148,11 @@ export class Note {
       prevNote._listNode(true).append(this.lexicalNode);
     }
   }
+
+  moveDown() {
+    const nextNode = this.lexicalNode.getNextSibling()
+    if(nextNode) {
+        nextNode.insertAfter(this.lexicalNode);
+    }
+  }
 }
