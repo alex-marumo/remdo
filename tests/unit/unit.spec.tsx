@@ -81,6 +81,16 @@ afterAll(async () => {
   await new Promise(r => setTimeout(r, 10));
 });
 
+it.skip("playground", () => {
+  getActiveEditor().update(() => {
+    $getRoot().clear();
+  });
+  getActiveEditor().update(() => {
+    const root = Note.from($getRoot());
+    const [notes, note0, note1, note2] = createChildren(root, 2);
+  });
+});
+
 describe("editor init", async () => {
   testUpdate("create notes", () => {
     const rootNode = $getRoot();
@@ -164,7 +174,7 @@ describe("API", async () => {
       $getRoot().clear();
     });
     for (let i = 0; i < N; ++i) {
-      console.log("i", i);
+      //console.log("i", i);
       getActiveEditor().update(() => {
         const root = Note.from($getRoot());
         createChildren(root, M);
@@ -172,5 +182,5 @@ describe("API", async () => {
       await new Promise(r => setTimeout(r, 10));
     }
   });
-  60 * 1000
+  60 * 1000;
 });
