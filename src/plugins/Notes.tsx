@@ -142,7 +142,7 @@ export function NotesPlugin({ anchorElement }) {
         return;
       }
       let key;
-      //TODO read or just passinge editor state should be enough, re-check in a newer lexical version
+      //TODO read or just passing editor state should be enough, re-check in a newer lexical version
       editor.update(() => {
         key = $getNearestNodeFromDOMNode(event.target).getKey();
       });
