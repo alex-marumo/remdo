@@ -28,13 +28,11 @@ import {
 import { createPortal } from "react-dom";
 import { getActiveEditorState } from "@lexical/LexicalUpdates";
 import React from "react";
-import PropTypes, { number } from "prop-types";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import PropTypes from "prop-types";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { patch } from "../utils";
-import { Note } from "../api"; //TODO
-
-import type { LexicalEditor } from "lexical";
+import { Note } from "@/api";
 
 export function applyNodePatches(NodeType) {
   /*
@@ -75,7 +73,7 @@ function $setTempRoot(note) {
 }
 
 export function NotesPlugin({ anchorElement }) {
-  const [editor]: [LexicalEditor] = useLexicalComposerContext();
+  const [editor] = useLexicalComposerContext();
   const menuRef = useRef(null);
   const [hoveredNoteElement, setHoveredNoteElement] = useState(null);
   const [menuExpanded, setMenuExpanded] = useState(false);

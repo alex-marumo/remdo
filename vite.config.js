@@ -4,7 +4,8 @@ import fs from "fs";
 import react from "@vitejs/plugin-react";
 import babel from "@rollup/plugin-babel";
 
-/* TODO copied from lexical playground vite config */
+// TODO copied from lexical playground vite config + duplicated with tsconfig
+
 const moduleResolution = [
   {
     find: /lexical$/,
@@ -208,6 +209,10 @@ playgroundResolveAlias.unshift(
   {
     find: "@lexical/LexicalNode",
     replacement: path.resolve("./lexical/packages/lexical/src/LexicalNode.ts"),
+  },
+  {
+    find: "@",
+    replacement: path.resolve("./src"),
   }
 );
 
