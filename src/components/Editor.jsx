@@ -59,7 +59,7 @@ applyNodePatches(TextNode);
 applyNodePatches(ListNode);
 applyNodePatches(ListItemNode);
 
-export default function Editor({ testHandler }) {
+export default function Editor() {
   const [floatingAnchorElem, setFloatingAnchorElem] = useState(null);
 
   const onRef = _floatingAnchorElem => {
@@ -87,7 +87,7 @@ export default function Editor({ testHandler }) {
   };
 
   return (
-    <div className="container">
+    <>
       <br />
       <LexicalComposer initialConfig={editorConfig}>
         <div className="editor-container editor-shell">
@@ -103,7 +103,7 @@ export default function Editor({ testHandler }) {
             placeholder={<Placeholder />}
             ErrorBoundary={LexicalErrorBoundary}
           />
-          {testHandler && <ComponentTestPlugin testHandler={testHandler} />}
+          <ComponentTestPlugin />
           <ClearEditorPlugin />
           <ListPlugin />
           <TabIndentationPlugin />
@@ -120,10 +120,6 @@ export default function Editor({ testHandler }) {
           )}
         </div>
       </LexicalComposer>
-    </div>
+    </>
   );
 }
-
-Editor.propTypes = {
-  testHandler: PropTypes.func,
-};

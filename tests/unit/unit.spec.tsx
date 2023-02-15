@@ -1,11 +1,12 @@
 import { describe, it, beforeAll, afterAll, expect } from "vitest";
 import React from "react";
-import Editor from "../../src/components/Editor";
+import App from "../../src/App";
 import { Note } from "../../src/api";
 import { $getRoot, LexicalEditor } from "lexical";
 import { $isListNode, $isListItemNode } from "@lexical/list";
 import { render } from "@testing-library/react";
 import type { LexicalNode, ElementNode } from "lexical";
+import { TestContext } from "../../src/plugins/ComponentTest";
 
 let _editor: LexicalEditor | null = null;
 
@@ -62,10 +63,11 @@ beforeAll(async () => {
   function testHandler(editor) {
     _editor = editor;
   }
+  //TODO test only editor, without router, layout, etc. required editor to abstract from routes
   const component = render(
-    <div className="App">
-      <Editor testHandler={testHandler} />
-    </div>
+    <TestContext.Provider value={{ testHandler }}>
+      <App />
+    </TestContext.Provider>
   );
 
   let editorElement = component.getByRole("textbox");

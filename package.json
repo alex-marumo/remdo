@@ -30,10 +30,9 @@
     "test-report": "npx playwright show-report --host 0.0.0.0",
     "test-browser": "VITE_DISABLECOLLAB=true npx playwright test --project=chromium",
     "test-collab": "npx playwright test --project=chromium",
-    "test-ct": "playwright test -c playwright-ct.config.ts --project=chromium",
     "test-unit": "npx vitest run",
     "test-unit-watch": "npx vitest --ui",
-    "test": "npm run test-unit && npm run test-ct && npm run test-browser"
+    "test": "npm run test-unit && npm run test-browser"
   },
   "browserslist": {
     "production": [

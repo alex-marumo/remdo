@@ -16,6 +16,7 @@ import {
   $createListItemNode,
   $isListNode,
   $isListItemNode,
+  ListItemNode,
 } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
 import {
@@ -27,10 +28,13 @@ import {
 import { createPortal } from "react-dom";
 import { getActiveEditorState } from "@lexical/LexicalUpdates";
 import React from "react";
-import PropTypes from "prop-types";
+import PropTypes, { number } from "prop-types";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { patch } from "../utils";
-import {Note} from "../api" //TODO
+import { Note } from "../api"; //TODO
+
+import type { LexicalEditor } from "lexical";
 
 export function applyNodePatches(NodeType) {
   /*
@@ -71,7 +75,7 @@ function $setTempRoot(note) {
 }
 
 export function NotesPlugin({ anchorElement }) {
-  const [editor] = useLexicalComposerContext();
+  const [editor]: [LexicalEditor] = useLexicalComposerContext();
   const menuRef = useRef(null);
   const [hoveredNoteElement, setHoveredNoteElement] = useState(null);
   const [menuExpanded, setMenuExpanded] = useState(false);
@@ -79,30 +83,36 @@ export function NotesPlugin({ anchorElement }) {
     { key: "root", text: "ToDo" },
   ]);
   const [nodeFilter, setNodeFilter] = useState("");
+  const navigate = useNavigate();
+  const locationParams = useParams();
+  const rootRef = useRef("");
 
   const changeRoot = useCallback(
-    (event, key) => {
-      event && event.preventDefault();
+    (key: string) => {
       editor._dirtyType = FULL_RECONCILE;
-      editor.update(() => {
-        const note = Note.from(key);
-        $setTempRoot(note);
+      editor.update(
+        () => {
+          const note = Note.from(key);
+          rootRef.current = note.lexicalKey;
+          $setTempRoot(note);
 
-        //TODO won't update if path is changed elsewhere
-        setBreadcrumbs(
-          [note, ...note.parents].reverse().map(p => ({
-            key: p.lexicalNode.getKey(),
-            text: p.text,
-          }))
-        );
-      });
+          //TODO won't update if path is changed elsewhere
+          setBreadcrumbs(
+            [note, ...note.parents].reverse().map(p => ({
+              key: p.lexicalNode.getKey(),
+              text: p.text,
+            }))
+          );
+        },
+        { discrete: true }
+      );
     },
     [editor]
   );
 
   useEffect(() => {
-    changeRoot(null, "root");
-  }, [changeRoot])
+    changeRoot(locationParams["noteID"]);
+  }, [changeRoot, locationParams]);
 
   useEffect(() => {
     editor._dirtyType = FULL_RECONCILE;
@@ -146,7 +156,7 @@ export function NotesPlugin({ anchorElement }) {
       editor.update(() => {
         key = $getNearestNodeFromDOMNode(event.target).getKey();
       });
-      changeRoot(event, key);
+      navigate(`/note/${key}`);
     }
 
     anchorElement?.addEventListener("mousemove", onMouseMove);
@@ -156,7 +166,7 @@ export function NotesPlugin({ anchorElement }) {
       anchorElement?.removeEventListener("mousemove", onMouseMove);
       anchorElement?.removeEventListener("click", onClick);
     };
-  }, [anchorElement, editor, changeRoot]);
+  }, [anchorElement, editor, navigate]);
 
   useEffect(() => {
     if (menuRef.current) {
@@ -176,6 +186,15 @@ export function NotesPlugin({ anchorElement }) {
 
   useEffect(() => {
     return mergeRegister(
+      editor.registerMutationListener(ListItemNode, mutatedNodes => {
+        const { noteID } = locationParams;
+        if (
+          rootRef.current !== noteID &&
+          mutatedNodes.get(noteID) === "created"
+        ) {
+          changeRoot(noteID);
+        }
+      }),
       editor.registerCommand(
         //test case "create empty notes"
         INSERT_PARAGRAPH_COMMAND,
@@ -232,7 +251,7 @@ export function NotesPlugin({ anchorElement }) {
         COMMAND_PRIORITY_CRITICAL
       )
     );
-  }, [editor]);
+  }, [changeRoot, editor, locationParams]);
 
   const menuClick = e => {
     e.preventDefault();
@@ -276,9 +295,7 @@ export function NotesPlugin({ anchorElement }) {
           {breadcrumbs.map((note, idx, { length }) => {
             return idx + 1 < length ? (
               <li className="breadcrumb-item" key={note.key}>
-                <a href="/" onClick={event => changeRoot(event, note.key)}>
-                  {note.text}
-                </a>
+                <Link to={`/note/${note.key}`}>{note.text}</Link>
               </li>
             ) : (
               <li

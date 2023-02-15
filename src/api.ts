@@ -14,7 +14,7 @@ import type { ListNode, ListItemNode } from "@lexical/list";
 import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
 import { findNearestListItemNode } from "@lexical/list/utils";
 
-const ROOT_TEXT = "Home";
+const ROOT_TEXT = "Document";
 
 function _isNested(liNode: ElementNode) {
   //mind that root is also treated as nested note

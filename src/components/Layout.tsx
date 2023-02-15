@@ -3,18 +3,17 @@ import { NavLink, Outlet } from "react-router-dom";
 
 export function Layout() {
   return (
-    <div>
-      <nav>
-        <ul>
-          <li>
-            <NavLink to="/">Home</NavLink>
+    <div className="container">
+      <nav className="navbar navbar-expand-lg">
+        <ul className="navbar-nav">
+          <li className="nav-item">
+            <NavLink className="nav-link" to="/">Home</NavLink>
           </li>
-          <li>
-            <NavLink to="/about">About</NavLink>
+          <li className="nav-item">
+            <NavLink className="nav-link" to="/about">About</NavLink>
           </li>
         </ul>
       </nav>
-      <hr />
       <Outlet />
     </div>
   );
