@@ -41,10 +41,6 @@ there is no $isLexicalNode function and there is no way to implement is on your 
 
 throw Error("error") in update works, but throw "error" is silently eaten
 
-go through a fresh install to check if .devcontainer folder is needed at all (possibly test playwright headed mode at the same time)
-
-
-
 git submodule update --init --recursive
 
 TODO improve tiny-invariant in production
