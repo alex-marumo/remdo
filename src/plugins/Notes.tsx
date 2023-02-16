@@ -34,17 +34,23 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { patch } from "../utils";
 import { Note } from "@/api";
 
+function getNotesEditorState() {
+  return {_notesFilter: null, ...getActiveEditorState()}
+}
+
 export function applyNodePatches(NodeType) {
   /*
-  this function customizes updateDOM and createDOM (see below) in an existing lexical node class
-  an alternative would be to use lexical node replacement mechanism, but turns off TextNode merging (see TextNote.isSimpleText() ) 
-  it could be fixed, but an additional benefit is that this method is simpler, shorter (doesn't require to implement importJSON, clone, etc.)
+  This function customizes updateDOM and createDOM (see below) in an existing
+  lexical node class. An alternative would be to use lexical node replacement
+  mechanism, but this turns off TextNode merging (see TextNote.isSimpleText() ) 
+  it could be fixed, but an additional benefit is that this method is simpler, 
+  shorter (doesn't require to implement importJSON, clone, etc.)
   and doesn't rename original types
   */
   patch(NodeType, "updateDOM", function (oldMethod, prevNode, dom, config) {
     //oldMethod has to be placed first as it may have some side effects
     return (
-      oldMethod(prevNode, dom, config) || getActiveEditorState()._notesFilter
+      oldMethod(prevNode, dom, config) || getNotesEditorState()._notesFilter
     );
   });
   patch(NodeType, "createDOM", function (oldMethod, config, editor) {
@@ -60,7 +66,7 @@ function $setTempRoot(note) {
   const tempRootKey = note.lexicalKey;
   const tempRootParentKey = note.lexicalNode?.getParent()?.getKey();
   //getActiveEditorState() returns a different state than editor.getEditorState() ¯\_(ツ)_/¯
-  const state = getActiveEditorState();
+  const state = getNotesEditorState();
 
   state._notesFilter = node => {
     const key = node.getKey();
@@ -115,9 +121,7 @@ export function NotesPlugin({ anchorElement }) {
   useEffect(() => {
     editor._dirtyType = FULL_RECONCILE;
     editor.update(() => {
-      //getActiveEditorState() returns a different state than editor.getEditorState() ¯\_(ツ)_/¯
-      //TODO try editor from argument list
-      const state = getActiveEditorState();
+      const state = getNotesEditorState();
       state._notesFilter = node => {
         if (nodeFilter.length === 0) {
           return true;
@@ -239,8 +243,12 @@ export function NotesPlugin({ anchorElement }) {
         //close menu and change its position
         SELECTION_CHANGE_COMMAND,
         () => {
+          const selection = $getSelection();
+          if(!$isRangeSelection(selection)) {
+            return false;
+          }
           const focusLIElement = editor
-            .getElementByKey($getSelection().focus.key)
+            .getElementByKey(selection.focus.key)
             .closest("li");
           setHoveredNoteElement(focusLIElement);
           setMenuExpanded(false);
