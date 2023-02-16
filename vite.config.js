@@ -220,6 +220,9 @@ export default defineConfig({
   server: {
     port: parseInt(process.env.PORT) || 3000,
     strictPort: true,
+    hmr: {
+      port: 3002,
+    }
   },
 
   define: {
@@ -267,5 +270,6 @@ export default defineConfig({
       port: 9323,
       host: "0.0.0.0",
     },
+    css: true,
   },
 });

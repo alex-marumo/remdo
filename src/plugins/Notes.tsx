@@ -26,17 +26,12 @@ import {
   $setSelection,
 } from "lexical";
 import { createPortal } from "react-dom";
-import { getActiveEditorState } from "@lexical/LexicalUpdates";
 import React from "react";
 import PropTypes from "prop-types";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { patch } from "../utils";
-import { Note } from "@/api";
-
-function getNotesEditorState() {
-  return {_notesFilter: null, ...getActiveEditorState()}
-}
+import { Note, getNotesEditorState } from "@/api";
 
 export function applyNodePatches(NodeType) {
   /*

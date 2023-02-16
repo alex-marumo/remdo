@@ -13,6 +13,7 @@ import {
 import type { ListNode, ListItemNode } from "@lexical/list";
 import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
 import { findNearestListItemNode } from "@lexical/list/utils";
+import { getActiveEditorState } from "@lexical/LexicalUpdates";
 
 const ROOT_TEXT = "Document";
 
@@ -155,4 +156,24 @@ export class Note {
         nextNode.insertAfter(this.lexicalNode);
     }
   }
+
+  focus() {
+    const tempRootKey = this.lexicalKey;
+    const tempRootParentKey = this.lexicalNode?.getParent()?.getKey();
+    //getActiveEditorState() returns a different state than editor.getEditorState() ¯\_(ツ)_/¯
+    const state = getNotesEditorState();
+  
+    state._notesFilter = node => {
+      const key = node.getKey();
+      return (
+        key == tempRootKey ||
+        key === tempRootParentKey ||
+        node.getParentKeys().includes(tempRootKey)
+      );
+    };  
+  }
+}
+
+export function getNotesEditorState() {
+  return {_notesFilter: null, ...getActiveEditorState()}
 }

@@ -1,14 +1,29 @@
-import { describe, it, beforeAll, afterAll, expect } from "vitest";
+import {
+  describe,
+  it,
+  beforeAll,
+  afterAll,
+  expect,
+  beforeEach,
+  afterEach,
+  TestContext,
+} from "vitest";
 import React from "react";
 import App from "../../src/App";
 import { Note } from "../../src/api";
 import { $getRoot, LexicalEditor } from "lexical";
 import { $isListNode, $isListItemNode } from "@lexical/list";
-import { render } from "@testing-library/react";
+import { render, RenderResult } from "@testing-library/react";
 import type { LexicalNode, ElementNode } from "lexical";
-import { TestContext } from "../../src/plugins/ComponentTest";
+import { TestContext as ComponentTestContext } from "../../src/plugins/ComponentTest";
+import { debug } from 'vitest-preview';
 
-let _editor: LexicalEditor | null = null;
+declare module "vitest" {
+  export interface TestContext {
+    component?: RenderResult;
+    editor?: LexicalEditor;
+  }
+}
 
 /** Runs test in Lexical editor update context */
 function testUpdate(title: string, fn) {
@@ -16,17 +31,20 @@ function testUpdate(title: string, fn) {
     throw Error("Async functions can't be wrapped with update");
   }
   return it(title, context => {
-    getActiveEditor().update(() => {
+    context.editor.update(() => {
       $getRoot().clear();
     });
     //this is intentionally a separate update to make sure that editor state will be fixed by appropriate listener
-    return getActiveEditor().update(() => {
+    return context.editor.update(() => {
       fn(context);
     });
   });
 }
 
-//TODO consider using vitest API
+function logHTML(context: TestContext) {
+  console.log(context.component);
+}
+
 function checkChildren(
   notes: Array<Note>,
   expectedChildrenArrays: Array<Array<Note>>
@@ -44,10 +62,6 @@ function checkChildren(
   expect(notes).toHaveLength(expectedCount + 1); //+1 for root which is not listed as a child
 }
 
-function getActiveEditor() {
-  return _editor;
-}
-
 function createChildren(note: Note, count: number): [Array<Note>, ...Note[]] {
   const start = [...note.children].length;
   for (let i = 0; i < count; ++i) {
@@ -59,16 +73,19 @@ function createChildren(note: Note, count: number): [Array<Note>, ...Note[]] {
   return [n, ...n1];
 }
 
-beforeAll(async () => {
+beforeEach(async context => {
   function testHandler(editor) {
-    _editor = editor;
+    context.editor = editor;
   }
   //TODO test only editor, without router, layout, etc. required editor to abstract from routes
   const component = render(
-    <TestContext.Provider value={{ testHandler }}>
+    <ComponentTestContext.Provider value={{ testHandler }}>
+      <h1 className="text-center text-warning">Unit tests</h1>
       <App />
-    </TestContext.Provider>
+    </ComponentTestContext.Provider>
   );
+
+  context.component = component;
 
   let editorElement = component.getByRole("textbox");
 
@@ -78,16 +95,20 @@ beforeAll(async () => {
   }
 });
 
+afterEach(async context => {
+  context.component.unmount();
+});
+
 afterAll(async () => {
   //an ugly workaround - otherwise we may loose some messages written to console
   await new Promise(r => setTimeout(r, 10));
 });
 
-it.skip("playground", () => {
-  getActiveEditor().update(() => {
+it.skip("playground", (context) => {
+  context.editor.update(() => {
     $getRoot().clear();
   });
-  getActiveEditor().update(() => {
+  context.editor.update(() => {
     const root = Note.from($getRoot());
     const [notes, note0, note1, note2] = createChildren(root, 2);
   });
@@ -168,21 +189,34 @@ describe("API", async () => {
     checkChildren(notes, [[note1, note2, note0]]);
   });
 
-  /** creates N times M children in a root */
-  it("performance", async () => {
-    const N = 2;
-    const M = 2;
-    getActiveEditor().update(() => {
-      $getRoot().clear();
-    });
-    for (let i = 0; i < N; ++i) {
-      //console.log("i", i);
-      getActiveEditor().update(() => {
-        const root = Note.from($getRoot());
-        createChildren(root, M);
+  /** creates N times M children in the root */
+  it(
+    "performance",
+    async (context) => {
+      const N = 2;
+      const M = 2;
+      context.editor.update(() => {
+        $getRoot().clear();
       });
-      await new Promise(r => setTimeout(r, 10));
-    }
+      for (let i = 0; i < N; ++i) {
+        //console.log("i", i);
+        context.editor.update(() => {
+          const root = Note.from($getRoot());
+          createChildren(root, M);
+        });
+        await new Promise(r => setTimeout(r, 10));
+      }
+    },
+    60 * 1000
+  );
+
+  testUpdate("indent1", (context) => {
+    const root = Note.from($getRoot());
+
+    const [notes, note0, note1, note2] = createChildren(root, 2);
+    note1.indent();
+    note1.focus();
+
+    debug();
   });
-  60 * 1000;
 });

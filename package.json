@@ -32,6 +32,7 @@
     "test-collab": "npx playwright test --project=chromium",
     "test-unit": "npx vitest run",
     "test-unit-watch": "npx vitest --ui",
+    "test-unit-preview": "PORT=3001 npx vitest-preview",
     "test": "npm run test-unit && npm run test-browser"
   },
   "browserslist": {
@@ -60,6 +61,7 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "vite": "^4.1.1",
-    "vitest": "^0.28.4"
+    "vitest": "^0.28.4",
+    "vitest-preview": "^0.0.1"
   }
 }
