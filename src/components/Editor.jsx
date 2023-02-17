@@ -21,7 +21,6 @@ import IndentOncePlugin from "../plugins/IndentOncePlugin";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { TextNode } from "lexical";
 import React from "react";
-import PropTypes from "prop-types";
 
 function providerFactory(id, yjsDocMap) {
   let doc = yjsDocMap.get(id);
@@ -88,7 +87,6 @@ export default function Editor() {
 
   return (
     <>
-      <br />
       <LexicalComposer initialConfig={editorConfig}>
         <div className="editor-container editor-shell">
           {floatingAnchorElem && (

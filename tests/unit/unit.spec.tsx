@@ -1,49 +1,64 @@
 import {
   describe,
   it,
-  beforeAll,
   afterAll,
   expect,
   beforeEach,
   afterEach,
-  TestContext,
 } from "vitest";
 import React from "react";
 import App from "../../src/App";
 import { Note } from "../../src/api";
-import { $getRoot, LexicalEditor } from "lexical";
+import {
+  $createTextNode,
+  $getRoot,
+  $setSelection,
+} from "lexical";
 import { $isListNode, $isListItemNode } from "@lexical/list";
-import { render, RenderResult } from "@testing-library/react";
-import type { LexicalNode, ElementNode } from "lexical";
+import {
+  BoundFunctions,
+  getAllByRole,
+  queries,
+  render,
+  RenderResult,
+  within,
+} from "@testing-library/react";
+import type { ElementNode } from "lexical";
 import { TestContext as ComponentTestContext } from "../../src/plugins/ComponentTest";
-import { debug } from 'vitest-preview';
+import { debug } from "vitest-preview";
+import { FULL_RECONCILE } from "@lexical/LexicalConstants";
 
 declare module "vitest" {
   export interface TestContext {
-    component?: RenderResult;
-    editor?: LexicalEditor;
+    _component?: RenderResult;
+    queries?: BoundFunctions<
+      typeof queries & { getAllNotNestedIListItems: typeof getAllByRole.bind }
+    >;
+    lexicalUpdate: Function;
+    lexicalClear: Function;
   }
 }
 
 /** Runs test in Lexical editor update context */
-function testUpdate(title: string, fn) {
+function testUpdate(title: string, fn, runner: Function = it) {
   if (fn.constructor.name == "AsyncFunction") {
     throw Error("Async functions can't be wrapped with update");
   }
-  return it(title, context => {
-    context.editor.update(() => {
-      $getRoot().clear();
-    });
-    //this is intentionally a separate update to make sure that editor state will be fixed by appropriate listener
-    return context.editor.update(() => {
+  return runner(title, context => {
+    context.lexicalUpdate(() => {
       fn(context);
     });
+    debug();
   });
 }
 
-function logHTML(context: TestContext) {
-  console.log(context.component);
-}
+testUpdate.only = (title: string, fn) => {
+  testUpdate(title, fn, it.only);
+};
+
+testUpdate.skip = (title: string, fn) => {
+  testUpdate(title, fn, it.skip);
+};
 
 function checkChildren(
   notes: Array<Note>,
@@ -74,8 +89,9 @@ function createChildren(note: Note, count: number): [Array<Note>, ...Note[]] {
 }
 
 beforeEach(async context => {
-  function testHandler(editor) {
-    context.editor = editor;
+  let editor = null;
+  function testHandler(ed) {
+    editor = ed;
   }
   //TODO test only editor, without router, layout, etc. required editor to abstract from routes
   const component = render(
@@ -85,33 +101,51 @@ beforeEach(async context => {
     </ComponentTestContext.Provider>
   );
 
-  context.component = component;
+  const editorElement = component.getByRole("textbox");
 
-  let editorElement = component.getByRole("textbox");
+  context._component = component;
+  context.queries = within(editorElement, {
+    ...queries,
+    getAllNotNestedIListItems: () =>
+      context.queries
+        .getAllByRole("listitem")
+        .filter(li => !li.classList.contains("li-nested")),
+  });
+
+  context.lexicalUpdate = updateFunction => {
+    editor._dirtyType = FULL_RECONCILE;
+    editor.update(updateFunction, { discrete: true });
+  };
 
   //wait for yjs to connect via websocket and init the editor content
   while (editorElement.children.length == 0) {
     await new Promise(r => setTimeout(r, 10));
   }
+
+  context.lexicalUpdate(() => {
+    $getRoot().clear();
+  });
+  //this have to be a separate, discrete update, so appropriate listener can
+  //be fired afterwards and create the default root note
+  context.lexicalUpdate(() => {
+    $getRoot()
+      .getFirstChildOrThrow()
+      .getFirstChildOrThrow()
+      .append($createTextNode("note0"));
+
+    //otherwise we can get some errors about missing functions in the used
+    //DOM implementation
+    $setSelection(null);
+  });
 });
 
 afterEach(async context => {
-  context.component.unmount();
+  context._component.unmount();
 });
 
 afterAll(async () => {
   //an ugly workaround - otherwise we may loose some messages written to console
   await new Promise(r => setTimeout(r, 10));
-});
-
-it.skip("playground", (context) => {
-  context.editor.update(() => {
-    $getRoot().clear();
-  });
-  context.editor.update(() => {
-    const root = Note.from($getRoot());
-    const [notes, note0, note1, note2] = createChildren(root, 2);
-  });
 });
 
 describe("editor init", async () => {
@@ -126,7 +160,7 @@ describe("editor init", async () => {
     expect(listNode.getChildren()[0]).toSatisfy($isListItemNode);
 
     const liNode: ElementNode = listNode.getFirstChild();
-    expect(liNode.getChildrenSize()).toBe(0);
+    expect(liNode.getChildrenSize()).toBe(1);
   });
 });
 
@@ -192,31 +226,65 @@ describe("API", async () => {
   /** creates N times M children in the root */
   it(
     "performance",
-    async (context) => {
+    async context => {
       const N = 2;
       const M = 2;
-      context.editor.update(() => {
-        $getRoot().clear();
-      });
       for (let i = 0; i < N; ++i) {
         //console.log("i", i);
-        context.editor.update(() => {
+        context.lexicalUpdate(() => {
           const root = Note.from($getRoot());
           createChildren(root, M);
         });
+        //TODO test is it still needed with discrete === true
         await new Promise(r => setTimeout(r, 10));
       }
     },
     60 * 1000
   );
 
-  testUpdate("indent1", (context) => {
-    const root = Note.from($getRoot());
+  it("focus", context => {
+    context.lexicalUpdate(() => {
+      const root = Note.from($getRoot());
 
-    const [notes, note0, note1, note2] = createChildren(root, 2);
-    note1.indent();
-    note1.focus();
+      const [, , note1, note2] = createChildren(root, 3);
+      note1.indent();
+      note2.indent();
+      note2.indent();
+    });
 
+    //note0, note1, note2, note3 (root doesn't count as it's a div not li)
+    expect(context.queries.getAllNotNestedIListItems()).toHaveLength(4);
+
+    context.lexicalUpdate(() => {
+      const root = Note.from($getRoot());
+      const note0 = [...root.children][0];
+      note0.focus();
+    });
+
+    //note0, note1, note2
+    expect(context.queries.getAllNotNestedIListItems()).toHaveLength(3);
+  });
+
+  it.fails("focus and add children", context => {
+    context.lexicalUpdate(() => {
+      const root = Note.from($getRoot());
+      const note0 = [...root.children][0];
+      note0.focus();
+    });
+
+    //note0
+    expect(context.queries.getAllNotNestedIListItems()).toHaveLength(1);
+
+    context.lexicalUpdate(() => {
+      const root = Note.from($getRoot());
+      const note0 = [...root.children][0];
+      note0.createChild("note1");
+      root.createChild("note2");
+    });
     debug();
+
+    //note0, note1 
+    //note2 should be filtered out as it's not a child of focused node
+    expect(context.queries.getAllNotNestedIListItems()).toHaveLength(2);
   });
 });

@@ -3,6 +3,7 @@ import {
   $getNodeByKey,
   $isTextNode,
   $createTextNode,
+  EditorState,
 } from "lexical";
 import { LexicalNode } from "@lexical/LexicalNode";
 import {
@@ -16,6 +17,14 @@ import { findNearestListItemNode } from "@lexical/list/utils";
 import { getActiveEditorState } from "@lexical/LexicalUpdates";
 
 const ROOT_TEXT = "Document";
+
+interface NotesEditorState extends EditorState {
+  _notesFilter?: Function;
+}
+
+export function getNotesEditorState() {
+  return getActiveEditorState() as NotesEditorState;
+}
 
 function _isNested(liNode: ElementNode) {
   //mind that root is also treated as nested note
@@ -151,9 +160,9 @@ export class Note {
   }
 
   moveDown() {
-    const nextNode = this.lexicalNode.getNextSibling()
-    if(nextNode) {
-        nextNode.insertAfter(this.lexicalNode);
+    const nextNode = this.lexicalNode.getNextSibling();
+    if (nextNode) {
+      nextNode.insertAfter(this.lexicalNode);
     }
   }
 
@@ -162,18 +171,13 @@ export class Note {
     const tempRootParentKey = this.lexicalNode?.getParent()?.getKey();
     //getActiveEditorState() returns a different state than editor.getEditorState() ¯\_(ツ)_/¯
     const state = getNotesEditorState();
-  
-    state._notesFilter = node => {
-      const key = node.getKey();
-      return (
-        key == tempRootKey ||
-        key === tempRootParentKey ||
-        node.getParentKeys().includes(tempRootKey)
-      );
-    };  
-  }
-}
 
-export function getNotesEditorState() {
-  return {_notesFilter: null, ...getActiveEditorState()}
+    state._notesFilter = node => {
+      const note = Note.from(node);
+      return (
+        node.getKey() === tempRootParentKey ||
+        [note, ...note.parents].some(p => tempRootKey === p.lexicalKey)
+      );
+    };
+  }
 }

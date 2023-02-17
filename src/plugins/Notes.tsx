@@ -57,22 +57,6 @@ export function applyNodePatches(NodeType) {
   });
 }
 
-function $setTempRoot(note) {
-  const tempRootKey = note.lexicalKey;
-  const tempRootParentKey = note.lexicalNode?.getParent()?.getKey();
-  //getActiveEditorState() returns a different state than editor.getEditorState() ¯\_(ツ)_/¯
-  const state = getNotesEditorState();
-
-  state._notesFilter = node => {
-    const key = node.getKey();
-    return (
-      key == tempRootKey ||
-      key === tempRootParentKey ||
-      node.getParentKeys().includes(tempRootKey)
-    );
-  };
-}
-
 export function NotesPlugin({ anchorElement }) {
   const [editor] = useLexicalComposerContext();
   const menuRef = useRef(null);
@@ -93,7 +77,7 @@ export function NotesPlugin({ anchorElement }) {
         () => {
           const note = Note.from(key);
           rootRef.current = note.lexicalKey;
-          $setTempRoot(note);
+          note.focus();
 
           //TODO won't update if path is changed elsewhere
           setBreadcrumbs(
@@ -186,6 +170,7 @@ export function NotesPlugin({ anchorElement }) {
       editor.registerMutationListener(ListItemNode, mutatedNodes => {
         const { noteID } = locationParams;
         if (
+          //TODO re-check
           rootRef.current !== noteID &&
           mutatedNodes.get(noteID) === "created"
         ) {
@@ -197,10 +182,12 @@ export function NotesPlugin({ anchorElement }) {
         INSERT_PARAGRAPH_COMMAND,
         () => {
           //this replaces $handleListInsertParagraph logic
-          //the default implementation replaces and empty list element to a paragraph efectively ending a list
+          //the default implementation replaces an empty list item with a 
+          //paragraph effectively ending the list
           //this version just creates a new empty list item
           //
-          //the code below is directly copied from the beggining of $handleListInsertParagraph function from lexical's code
+          //the code below is directly copied from the beginning of 
+          //$handleListInsertParagraph function from lexical's code
           const selection = $getSelection();
 
           if (!$isRangeSelection(selection) || !selection.isCollapsed()) {

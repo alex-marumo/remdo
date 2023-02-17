@@ -26,3 +26,4 @@ yarn-error.log*
 .cache/
 
 temp/*
+.vitest-preview/
