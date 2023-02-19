@@ -17,7 +17,7 @@ TODO work on listeners (for example to update content and structure of breadcrum
 
 TODO lexical bugs
 getActiveEditorState() (not available publicly) returns a different state than editor.getEditorState() which can cause problems if someone modifies state in editor.update()
-
+Vite and it's HMR cause errorOnKlassMismatch when saving custom's node source file
 think about nested lists and CSS
 
 tsconfig options: https://vitejs.dev/guide/features.html#typescript 

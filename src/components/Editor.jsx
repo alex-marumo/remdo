@@ -3,7 +3,6 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { TreeView } from "@lexical/react/LexicalTreeView";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
-import { NotesPlugin, applyNodePatches } from "../plugins/Notes";
 import { ComponentTestPlugin } from "../plugins/ComponentTest";
 
 import "./Editor.css";
@@ -21,6 +20,8 @@ import IndentOncePlugin from "../plugins/IndentOncePlugin";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { TextNode } from "lexical";
 import React from "react";
+import { NotesPlugin, applyNodePatches } from "@/plugins/Notes";
+import { StateNode } from "@/lexicalNodes/StateNode";
 
 function providerFactory(id, yjsDocMap) {
   let doc = yjsDocMap.get(id);
@@ -72,7 +73,7 @@ export default function Editor() {
       throw error;
     },
     namespace: "notes",
-    nodes: [ListItemNode, ListNode],
+    nodes: [ListItemNode, ListNode, StateNode],
     theme: {
       list: {
         nested: {

@@ -22,17 +22,18 @@ import { mergeRegister } from "@lexical/utils";
 import {
   SELECTION_CHANGE_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
-  $isTextNode,
   $setSelection,
 } from "lexical";
 import { createPortal } from "react-dom";
 import React from "react";
 import PropTypes from "prop-types";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { $createStateNode, $isStateNode } from "@/lexicalNodes/StateNode";
 
-import { patch } from "../utils";
-import { Note, getNotesEditorState } from "@/api";
+import { patch } from "@/utils";
+import { Note, getNotesEditorState, getState, NotesState } from "@/api";
 
+//TODO move somewhere else
 export function applyNodePatches(NodeType) {
   /*
   This function customizes updateDOM and createDOM (see below) in an existing
@@ -43,17 +44,21 @@ export function applyNodePatches(NodeType) {
   and doesn't rename original types
   */
   patch(NodeType, "updateDOM", function (oldMethod, prevNode, dom, config) {
-    //oldMethod has to be placed first as it may have some side effects
-    return (
-      oldMethod(prevNode, dom, config) || getNotesEditorState()._notesFilter
+    return NotesState.getActive().lexicalUpdateDOM(
+      this,
+      oldMethod,
+      prevNode,
+      dom,
+      config
     );
   });
   patch(NodeType, "createDOM", function (oldMethod, config, editor) {
-    const state = editor.getEditorState();
-    if (!state._notesFilter || state._notesFilter(this)) {
-      return oldMethod(config, editor);
-    }
-    return document.createElement("div");
+    return NotesState.getActive().lexicalCreateDOM(
+      this,
+      oldMethod,
+      config,
+      editor
+    );
   });
 }
 
@@ -65,7 +70,7 @@ export function NotesPlugin({ anchorElement }) {
   const [breadcrumbs, setBreadcrumbs] = useState([
     { key: "root", text: "ToDo" },
   ]);
-  const [nodeFilter, setNodeFilter] = useState("");
+  const [noteFilter, setNoteFilter] = useState("");
   const navigate = useNavigate();
   const locationParams = useParams();
   const rootRef = useRef("");
@@ -100,24 +105,11 @@ export function NotesPlugin({ anchorElement }) {
   useEffect(() => {
     editor._dirtyType = FULL_RECONCILE;
     editor.update(() => {
-      const state = getNotesEditorState();
-      state._notesFilter = node => {
-        if (nodeFilter.length === 0) {
-          return true;
-        }
-        let text = null;
-        if ($isListItemNode(node)) {
-          text = node.getAllTextNodes()[0]?.getTextContent();
-        } else if ($isTextNode(node)) {
-          text = node.getTextContent();
-        }
-
-        return !text || text.includes(nodeFilter);
-      };
-      //prevent editor from re-gaining focus
+      const notesState = NotesState.getActive();
+      notesState.setFilter(noteFilter);
       $setSelection(null);
     });
-  }, [editor, nodeFilter]);
+  }, [editor, noteFilter]);
 
   useEffect(() => {
     function onMouseMove(event) {
@@ -182,11 +174,11 @@ export function NotesPlugin({ anchorElement }) {
         INSERT_PARAGRAPH_COMMAND,
         () => {
           //this replaces $handleListInsertParagraph logic
-          //the default implementation replaces an empty list item with a 
+          //the default implementation replaces an empty list item with a
           //paragraph effectively ending the list
           //this version just creates a new empty list item
           //
-          //the code below is directly copied from the beginning of 
+          //the code below is directly copied from the beginning of
           //$handleListInsertParagraph function from lexical's code
           const selection = $getSelection();
 
@@ -209,8 +201,26 @@ export function NotesPlugin({ anchorElement }) {
         COMMAND_PRIORITY_HIGH
       ),
       editor.registerNodeTransform(RootNode, rootNode => {
+        //forces the right editor structure:
+        //  root
+        //    stateNode
+        //    ul
+        //      ...
         //test case "generate content"
-        const children = rootNode.getChildren();
+        const children = [];
+        let stateNode = null;
+        for (const child of rootNode.getChildren()) {
+          if ($isStateNode(child)) {
+            stateNode = child;
+          } else {
+            children.push(child);
+          }
+        }
+        if (!stateNode) {
+          //stateNode = $createStateNode();
+          //rootNode.append(stateNode);
+        }
+
         if (children.length === 1 && $isListNode(children[0])) {
           return;
         }
@@ -226,7 +236,7 @@ export function NotesPlugin({ anchorElement }) {
         SELECTION_CHANGE_COMMAND,
         () => {
           const selection = $getSelection();
-          if(!$isRangeSelection(selection)) {
+          if (!$isRangeSelection(selection)) {
             return false;
           }
           const focusLIElement = editor
@@ -300,8 +310,8 @@ export function NotesPlugin({ anchorElement }) {
 
       <input
         type="text"
-        value={nodeFilter}
-        onChange={e => setNodeFilter(e.target.value)}
+        value={noteFilter}
+        onChange={e => setNoteFilter(e.target.value)}
         className="form-control"
         placeholder="Search..."
         role="searchbox"

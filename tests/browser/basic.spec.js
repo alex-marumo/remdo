@@ -178,7 +178,9 @@ test.fixme("indent note with children", async ({ page }) => {
 test("change root", async ({ page }) => {
   //check breadcrumbs
   await expect(page.locator("li.breadcrumb-item")).toHaveCount(1);
-  await expect(page.locator("li.breadcrumb-item.active")).toContainText("Document");
+  await expect(page.locator("li.breadcrumb-item.active")).toContainText(
+    "Document"
+  );
 
   //make note3 child of note2
   await getNote(page, "note3").selectText();

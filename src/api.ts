@@ -4,6 +4,8 @@ import {
   $isTextNode,
   $createTextNode,
   EditorState,
+  LexicalEditor,
+  EditorConfig,
 } from "lexical";
 import { LexicalNode } from "@lexical/LexicalNode";
 import {
@@ -12,9 +14,13 @@ import {
   $isListNode,
 } from "@lexical/list";
 import type { ListNode, ListItemNode } from "@lexical/list";
-import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
+import {
+  $getNodeByKeyOrThrow,
+  $getRoot,
+} from "@lexical/LexicalUtils";
 import { findNearestListItemNode } from "@lexical/list/utils";
-import { getActiveEditorState } from "@lexical/LexicalUpdates";
+import { getActiveEditor, getActiveEditorState } from "@lexical/LexicalUpdates";
+import { $isStateNode, StateNode } from "./lexicalNodes/StateNode";
 
 const ROOT_TEXT = "Document";
 
@@ -28,7 +34,102 @@ export function getNotesEditorState() {
 
 function _isNested(liNode: ElementNode) {
   //mind that root is also treated as nested note
-  return liNode.getChildren().some(child => $isListNode(child));
+  return liNode.getChildren().some($isListNode);
+}
+
+export function getState(): StateNode {
+  return $getRoot().getChildren().find($isStateNode) as StateNode;
+}
+
+export class NotesState {
+  _element: HTMLElement;
+  _focus: null | { nodeKey: string; parentKey: string };
+
+  constructor(element: HTMLElement) {
+    this._element = element;
+    this._readFocus();
+  }
+
+  get focus() {
+    return this._focus;
+  }
+
+  _readFocus() {
+    const focusNodeKey = this._element.dataset.focusNodeKey;
+    this._focus = !focusNodeKey
+      ? null
+      : {
+          nodeKey: focusNodeKey,
+          parentKey: this._element.dataset.focusParentKey,
+        };
+  }
+
+  setFocus(note: Note) {
+    this._element.dataset.focusNodeKey = note.lexicalKey;
+    this._element.dataset.focusParentKey = note.lexicalNode
+      .getParent()
+      ?.getKey();
+    this._readFocus();
+  }
+
+  setFilter(filter: string) {
+    this._element.dataset.filter = filter;
+  }
+
+  get filter() {
+    return this._element.dataset.filter;
+  }
+
+  static getActive() {
+    return new NotesState(getActiveEditor()._rootElement);
+  }
+
+  lexicalUpdateDOM(
+    node: LexicalNode,
+    lexicalMethod: Function,
+    _prevNode: unknown,
+    _dom: HTMLElement,
+    _config: EditorConfig
+  ) {
+    //TODO double check if lexicalMethod is bound
+    //lexicalMethod has to be placed first as it may have some side effects
+    return lexicalMethod(_prevNode, _dom, _config) || this.focus || this.filter;
+  }
+
+  lexicalCreateDOM(
+    node: LexicalNode,
+    lexicalMethod: Function,
+    _config: EditorConfig,
+    _editor: LexicalEditor
+  ) {
+    //
+    // search filter
+    //
+    if (this.filter && !Note.from(node).text.includes(this.filter)) {
+      return document.createElement("div");
+    }
+
+    //
+    // focus
+    //
+    const focus = this.focus;
+    //console.log("node: ", node.__key, Note.from(node).lexicalKey);
+    if (
+      !focus ||
+      focus.parentKey === node.getKey() ||
+      focus.nodeKey === node.getKey() ||
+      //TODO explain why
+      (note =>
+        [note, ...note.parents].some(
+          p => p.lexicalKey === focus.nodeKey
+          //console.log(p.lexicalKey, focus.nodeKey)
+        ))(Note.from(node))
+    ) {
+      return lexicalMethod(_config, _editor);
+    } else {
+      return document.createElement("div");
+    }
+  }
 }
 
 export class Note {
@@ -117,7 +218,7 @@ export class Note {
 
   _listNode(createIfNeeded = false): ListNode | null {
     if (this.isRoot) {
-      return this.lexicalNode.getFirstChild();
+      return this.lexicalNode.getChildren().find($isListNode) as ListNode;
     }
     // li <- this._lexicalNode
     // li.li-nested
@@ -167,17 +268,6 @@ export class Note {
   }
 
   focus() {
-    const tempRootKey = this.lexicalKey;
-    const tempRootParentKey = this.lexicalNode?.getParent()?.getKey();
-    //getActiveEditorState() returns a different state than editor.getEditorState() ¯\_(ツ)_/¯
-    const state = getNotesEditorState();
-
-    state._notesFilter = node => {
-      const note = Note.from(node);
-      return (
-        node.getKey() === tempRootParentKey ||
-        [note, ...note.parents].some(p => tempRootKey === p.lexicalKey)
-      );
-    };
+    NotesState.getActive().setFocus(this);
   }
 }

@@ -1,19 +1,8 @@
-import {
-  describe,
-  it,
-  afterAll,
-  expect,
-  beforeEach,
-  afterEach,
-} from "vitest";
+import { describe, it, afterAll, expect, beforeEach, afterEach } from "vitest";
 import React from "react";
 import App from "../../src/App";
 import { Note } from "../../src/api";
-import {
-  $createTextNode,
-  $getRoot,
-  $setSelection,
-} from "lexical";
+import { $createTextNode, $getRoot, $setSelection } from "lexical";
 import { $isListNode, $isListItemNode } from "@lexical/list";
 import {
   BoundFunctions,
@@ -129,7 +118,8 @@ beforeEach(async context => {
   //be fired afterwards and create the default root note
   context.lexicalUpdate(() => {
     $getRoot()
-      .getFirstChildOrThrow()
+      .getChildren()
+      .find($isListNode)
       .getFirstChildOrThrow()
       .append($createTextNode("note0"));
 
@@ -265,7 +255,7 @@ describe("API", async () => {
     expect(context.queries.getAllNotNestedIListItems()).toHaveLength(3);
   });
 
-  it.fails("focus and add children", context => {
+  it("focus and add children", context => {
     context.lexicalUpdate(() => {
       const root = Note.from($getRoot());
       const note0 = [...root.children][0];
@@ -283,8 +273,14 @@ describe("API", async () => {
     });
     debug();
 
-    //note0, note1 
+    //note0, note1
     //note2 should be filtered out as it's not a child of focused node
     expect(context.queries.getAllNotNestedIListItems()).toHaveLength(2);
+    context.lexicalUpdate(() => {
+      const root = Note.from($getRoot());
+      root.focus();
+    });
+    //note0, note1, note2
+    expect(context.queries.getAllNotNestedIListItems()).toHaveLength(3);
   });
 });
