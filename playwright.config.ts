@@ -7,7 +7,7 @@ import { devices } from "@playwright/test";
  * See https://playwright.dev/docs/test-configuration.
  */
 
-const port = 3001;
+const port = 3009;
 const disableCollab = process.env.VITE_DISABLECOLLAB;
 
 const config: PlaywrightTestConfig = {
@@ -100,8 +100,9 @@ const config: PlaywrightTestConfig = {
   webServer: {
     command: `PORT=${port} VITE_DISABLECOLLAB=${
       disableCollab || ""
-    } npm run server`,
+    } SERVER_MODE=playwright npm run server`,
     port: port,
+    timeout: 5 * 1000,
   },
 };
 

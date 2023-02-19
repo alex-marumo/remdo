@@ -2,8 +2,9 @@
 8000 # vscode
 8080 # websocket
 3000 # notes server
-3001 # test
-3002 # test
-3003 # test
-3004 # test
-3005 # test
+3001 # vitest preview
+3002 # unused/test
+3003 # notes server HMR
+3004 # vitest preview HMR
+3005 # vitest preview API
+3009 # playwright notes server

@@ -216,15 +216,33 @@ playgroundResolveAlias.unshift(
   }
 );
 
-const vitestPreview = process.env.VITEST_PREVIEW;
+function getPort({ page, vitest_preview, playwright }) {
+  const modes = ["page", "vitest_preview", "playwright"];
+  const mode = process.env.SERVER_MODE || "page";
+
+  if (!modes.includes(mode)) {
+    throw Error(`Invalid server mode: ${mode}, should be one of ${modes}`);
+  }
+  const port = arguments[0][mode];
+  if (port === undefined) {
+    //null is fine, means that we don't need that port for a given scenario
+    throw Error(
+      `Wrong config args: ${JSON.stringify(arguments["0"])} mode: ${mode}`
+    );
+  }
+  return port;
+}
 
 export default defineConfig({
   server: {
-    port: vitestPreview ? 3001 : 3000,
+    port: getPort({
+      page: 3000,
+      vitest_preview: 3001,
+      playwright: process.env.PORT,
+    }),
     strictPort: true,
     hmr: {
-      port: vitestPreview ? 3003 : 3002,
-      strictPort: true,
+      port: getPort({ page: 3003, vitest_preview: 3004, playwright: null }),
     },
   },
 
@@ -234,6 +252,7 @@ export default defineConfig({
 
   //TODO copied from lexical playground
   plugins: [
+    //@ts-ignore
     babel({
       babelHelpers: "bundled",
       babelrc: false,
@@ -270,7 +289,7 @@ export default defineConfig({
     open: false,
     threads: false,
     api: {
-      port: vitestPreview ? 9324 : 9323,
+      port: getPort({ page: null, vitest_preview: 3007, playwright: null }),
       host: "0.0.0.0",
     },
     css: true,
