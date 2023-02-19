@@ -20,8 +20,8 @@ import IndentOncePlugin from "../plugins/IndentOncePlugin";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { TextNode } from "lexical";
 import React from "react";
-import { NotesPlugin, applyNodePatches } from "@/plugins/Notes";
-import { StateNode } from "@/lexicalNodes/StateNode";
+import { NotesPlugin } from "@/plugins/Notes";
+import { applyNodePatches } from "@/lexicalNodes";
 
 function providerFactory(id, yjsDocMap) {
   let doc = yjsDocMap.get(id);
@@ -73,7 +73,7 @@ export default function Editor() {
       throw error;
     },
     namespace: "notes",
-    nodes: [ListItemNode, ListNode, StateNode],
+    nodes: [ListItemNode, ListNode],
     theme: {
       list: {
         nested: {
@@ -83,42 +83,41 @@ export default function Editor() {
       },
     },
     editorState: null,
+    //@ts-ignore
     disableCollab: !!import.meta.env.VITE_DISABLECOLLAB,
   };
 
   return (
-    <>
-      <LexicalComposer initialConfig={editorConfig}>
-        <div className="editor-container editor-shell">
-          {floatingAnchorElem && (
-            <NotesPlugin anchorElement={floatingAnchorElem} />
-          )}
-          <RichTextPlugin
-            contentEditable={
-              <div className="editor" ref={onRef}>
-                <ContentEditable className="editor-input form-control" />
-              </div>
-            }
-            placeholder={<Placeholder />}
-            ErrorBoundary={LexicalErrorBoundary}
+    <LexicalComposer initialConfig={editorConfig}>
+      <div className="editor-container editor-shell">
+        {floatingAnchorElem && (
+          <NotesPlugin anchorElement={floatingAnchorElem} />
+        )}
+        <RichTextPlugin
+          contentEditable={
+            <div className="editor" ref={onRef}>
+              <ContentEditable className="editor-input form-control" />
+            </div>
+          }
+          placeholder={<Placeholder />}
+          ErrorBoundary={LexicalErrorBoundary}
+        />
+        <ComponentTestPlugin />
+        <ClearEditorPlugin />
+        <ListPlugin />
+        <TabIndentationPlugin />
+        <IndentOncePlugin />
+        <TreeViewPlugin />
+        {editorConfig.disableCollab ? (
+          <HistoryPlugin />
+        ) : (
+          <CollaborationPlugin
+            id="main"
+            providerFactory={providerFactory}
+            shouldBootstrap={true}
           />
-          <ComponentTestPlugin />
-          <ClearEditorPlugin />
-          <ListPlugin />
-          <TabIndentationPlugin />
-          <IndentOncePlugin />
-          <TreeViewPlugin />
-          {editorConfig.disableCollab ? (
-            <HistoryPlugin />
-          ) : (
-            <CollaborationPlugin
-              id="main"
-              providerFactory={providerFactory}
-              shouldBootstrap={true}
-            />
-          )}
-        </div>
-      </LexicalComposer>
-    </>
+        )}
+      </div>
+    </LexicalComposer>
   );
 }

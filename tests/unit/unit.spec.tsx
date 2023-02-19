@@ -1,7 +1,7 @@
 import { describe, it, afterAll, expect, beforeEach, afterEach } from "vitest";
 import React from "react";
 import App from "../../src/App";
-import { Note } from "../../src/api";
+import { Note, NotesState } from "../../src/api";
 import { $createTextNode, $getRoot, $setSelection } from "lexical";
 import { $isListNode, $isListItemNode } from "@lexical/list";
 import {
@@ -271,7 +271,6 @@ describe("API", async () => {
       note0.createChild("note1");
       root.createChild("note2");
     });
-    debug();
 
     //note0, note1
     //note2 should be filtered out as it's not a child of focused node
@@ -282,5 +281,38 @@ describe("API", async () => {
     });
     //note0, note1, note2
     expect(context.queries.getAllNotNestedIListItems()).toHaveLength(3);
+  });
+
+  it("filter", context => {
+    context.lexicalUpdate(() => {
+      const root = Note.from($getRoot());
+      const notesState = NotesState.getActive();
+
+      createChildren(root, 1);
+      //filter that matches all notes
+      notesState.setFilter("note");
+
+      //to make sure that notes created after setting filter behave in the same way as already existing ones
+      createChildren(root, 1);
+    });
+
+    //note0, note1, note2
+    expect(context.queries.getAllNotNestedIListItems()).toHaveLength(3);
+
+    context.lexicalUpdate(() => {
+      const root = Note.from($getRoot());
+      const notesState = NotesState.getActive();
+      notesState.setFilter("note1");
+
+      //to make sure that notes created after setting filter behave in the same way as already existing ones
+      createChildren(root, 1);
+    });
+
+    debug();
+    //note1
+    expect(context.queries.getAllNotNestedIListItems()).toHaveLength(1);
+  });
+
+  it.skip("focus and filter", context => {
   });
 });

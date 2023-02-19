@@ -7,6 +7,7 @@ import {
   $getSelection,
   $getNearestNodeFromDOMNode,
   CLEAR_EDITOR_COMMAND,
+  $getRoot,
 } from "lexical";
 import { FULL_RECONCILE } from "@lexical/LexicalConstants";
 import { useEffect, useRef, useState, useCallback } from "react";
@@ -28,39 +29,9 @@ import { createPortal } from "react-dom";
 import React from "react";
 import PropTypes from "prop-types";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { $createStateNode, $isStateNode } from "@/lexicalNodes/StateNode";
 
 import { patch } from "@/utils";
-import { Note, getNotesEditorState, getState, NotesState } from "@/api";
-
-//TODO move somewhere else
-export function applyNodePatches(NodeType) {
-  /*
-  This function customizes updateDOM and createDOM (see below) in an existing
-  lexical node class. An alternative would be to use lexical node replacement
-  mechanism, but this turns off TextNode merging (see TextNote.isSimpleText() ) 
-  it could be fixed, but an additional benefit is that this method is simpler, 
-  shorter (doesn't require to implement importJSON, clone, etc.)
-  and doesn't rename original types
-  */
-  patch(NodeType, "updateDOM", function (oldMethod, prevNode, dom, config) {
-    return NotesState.getActive().lexicalUpdateDOM(
-      this,
-      oldMethod,
-      prevNode,
-      dom,
-      config
-    );
-  });
-  patch(NodeType, "createDOM", function (oldMethod, config, editor) {
-    return NotesState.getActive().lexicalCreateDOM(
-      this,
-      oldMethod,
-      config,
-      editor
-    );
-  });
-}
+import { Note, NotesState } from "@/api";
 
 export function NotesPlugin({ anchorElement }) {
   const [editor] = useLexicalComposerContext();
@@ -203,24 +174,10 @@ export function NotesPlugin({ anchorElement }) {
       editor.registerNodeTransform(RootNode, rootNode => {
         //forces the right editor structure:
         //  root
-        //    stateNode
         //    ul
         //      ...
         //test case "generate content"
-        const children = [];
-        let stateNode = null;
-        for (const child of rootNode.getChildren()) {
-          if ($isStateNode(child)) {
-            stateNode = child;
-          } else {
-            children.push(child);
-          }
-        }
-        if (!stateNode) {
-          //stateNode = $createStateNode();
-          //rootNode.append(stateNode);
-        }
-
+        const children = $getRoot().getChildren();
         if (children.length === 1 && $isListNode(children[0])) {
           return;
         }

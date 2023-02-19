@@ -20,7 +20,6 @@ import {
 } from "@lexical/LexicalUtils";
 import { findNearestListItemNode } from "@lexical/list/utils";
 import { getActiveEditor, getActiveEditorState } from "@lexical/LexicalUpdates";
-import { $isStateNode, StateNode } from "./lexicalNodes/StateNode";
 
 const ROOT_TEXT = "Document";
 
@@ -35,10 +34,6 @@ export function getNotesEditorState() {
 function _isNested(liNode: ElementNode) {
   //mind that root is also treated as nested note
   return liNode.getChildren().some($isListNode);
-}
-
-export function getState(): StateNode {
-  return $getRoot().getChildren().find($isStateNode) as StateNode;
 }
 
 export class NotesState {
@@ -82,53 +77,6 @@ export class NotesState {
 
   static getActive() {
     return new NotesState(getActiveEditor()._rootElement);
-  }
-
-  lexicalUpdateDOM(
-    node: LexicalNode,
-    lexicalMethod: Function,
-    _prevNode: unknown,
-    _dom: HTMLElement,
-    _config: EditorConfig
-  ) {
-    //TODO double check if lexicalMethod is bound
-    //lexicalMethod has to be placed first as it may have some side effects
-    return lexicalMethod(_prevNode, _dom, _config) || this.focus || this.filter;
-  }
-
-  lexicalCreateDOM(
-    node: LexicalNode,
-    lexicalMethod: Function,
-    _config: EditorConfig,
-    _editor: LexicalEditor
-  ) {
-    //
-    // search filter
-    //
-    if (this.filter && !Note.from(node).text.includes(this.filter)) {
-      return document.createElement("div");
-    }
-
-    //
-    // focus
-    //
-    const focus = this.focus;
-    //console.log("node: ", node.__key, Note.from(node).lexicalKey);
-    if (
-      !focus ||
-      focus.parentKey === node.getKey() ||
-      focus.nodeKey === node.getKey() ||
-      //TODO explain why
-      (note =>
-        [note, ...note.parents].some(
-          p => p.lexicalKey === focus.nodeKey
-          //console.log(p.lexicalKey, focus.nodeKey)
-        ))(Note.from(node))
-    ) {
-      return lexicalMethod(_config, _editor);
-    } else {
-      return document.createElement("div");
-    }
   }
 }
 

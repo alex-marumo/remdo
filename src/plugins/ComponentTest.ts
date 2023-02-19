@@ -13,4 +13,5 @@ export function ComponentTestPlugin() {
     }
     testContext.testHandler(editor);
   }, [editor, testContext]);
+  return null;
 }
