@@ -216,13 +216,16 @@ playgroundResolveAlias.unshift(
   }
 );
 
+const vitestPreview = process.env.VITEST_PREVIEW;
+
 export default defineConfig({
   server: {
-    port: parseInt(process.env.PORT) || 3000,
+    port: vitestPreview ? 3001 : 3000,
     strictPort: true,
     hmr: {
-      port: 3002,
-    }
+      port: vitestPreview ? 3003 : 3002,
+      strictPort: true,
+    },
   },
 
   define: {
@@ -267,7 +270,7 @@ export default defineConfig({
     open: false,
     threads: false,
     api: {
-      port: 9323,
+      port: vitestPreview ? 9324 : 9323,
       host: "0.0.0.0",
     },
     css: true,
