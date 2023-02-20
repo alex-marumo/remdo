@@ -16,7 +16,7 @@ import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
 import { WebsocketProvider } from "y-websocket";
 import { Doc } from "yjs";
 import { useState } from "react";
-import IndentOncePlugin from "../plugins/IndentOncePlugin";
+import IndentationPlugin from "../plugins/IndentationPlugin";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { TextNode } from "lexical";
 import React from "react";
@@ -32,9 +32,16 @@ function providerFactory(id, yjsDocMap) {
   } else {
     doc.load();
   }
-  return new WebsocketProvider("ws://athena:8080", "notes/0/" + id, doc, {
-    connect: false,
-  });
+  const wsProvider = new WebsocketProvider(
+    "ws://athena:8080",
+    "notes/0/" + id,
+    doc,
+    {
+      connect: false,
+    }
+  );
+  wsProvider.shouldConnect = true; //reconnect after disconnecting
+  return wsProvider
 }
 
 function Placeholder() {
@@ -106,7 +113,7 @@ export default function Editor() {
         <ClearEditorPlugin />
         <ListPlugin />
         <TabIndentationPlugin />
-        <IndentOncePlugin />
+        <IndentationPlugin />
         <TreeViewPlugin />
         {editorConfig.disableCollab ? (
           <HistoryPlugin />

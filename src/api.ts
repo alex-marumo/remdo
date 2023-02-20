@@ -4,8 +4,6 @@ import {
   $isTextNode,
   $createTextNode,
   EditorState,
-  LexicalEditor,
-  EditorConfig,
 } from "lexical";
 import { LexicalNode } from "@lexical/LexicalNode";
 import {
@@ -14,17 +12,14 @@ import {
   $isListNode,
 } from "@lexical/list";
 import type { ListNode, ListItemNode } from "@lexical/list";
-import {
-  $getNodeByKeyOrThrow,
-  $getRoot,
-} from "@lexical/LexicalUtils";
+import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
 import { findNearestListItemNode } from "@lexical/list/utils";
 import { getActiveEditor, getActiveEditorState } from "@lexical/LexicalUpdates";
 
 const ROOT_TEXT = "Document";
 
 interface NotesEditorState extends EditorState {
-  _notesFilter?: Function;
+  _notesFilterChanged?: boolean;
 }
 
 export function getNotesEditorState() {
@@ -51,24 +46,32 @@ export class NotesState {
 
   _readFocus() {
     const focusNodeKey = this._element.dataset.focusNodeKey;
-    this._focus = !focusNodeKey
-      ? null
-      : {
-          nodeKey: focusNodeKey,
-          parentKey: this._element.dataset.focusParentKey,
-        };
+    this._focus =
+      !focusNodeKey || focusNodeKey === "root"
+        ? null
+        : {
+            nodeKey: focusNodeKey,
+            parentKey: this._element.dataset.focusParentKey,
+          };
+  }
+
+  _forceLexicalUpdate() {
+    getNotesEditorState()._notesFilterChanged = true;
   }
 
   setFocus(note: Note) {
+    //change notes state
     this._element.dataset.focusNodeKey = note.lexicalKey;
     this._element.dataset.focusParentKey = note.lexicalNode
       .getParent()
       ?.getKey();
     this._readFocus();
+    this._forceLexicalUpdate();
   }
 
   setFilter(filter: string) {
     this._element.dataset.filter = filter;
+    this._forceLexicalUpdate();
   }
 
   get filter() {
@@ -196,15 +199,36 @@ export class Note {
     ].join("");
   }
 
-  canIndent() {
-    return !!this.lexicalNode.getPreviousSibling();
+  indent() {
+    if (!this.lexicalNode.getPreviousSibling()) {
+      return;
+    }
+    const prevSibling = this.lexicalNode.getPreviousSibling();
+    const prevNote = Note.from(prevSibling);
+    const prevListNode = prevNote._listNode(true);
+    const listNode = this._listNode();
+    prevListNode.append(this.lexicalNode);
+    if (listNode) {
+      //li <- this.lexicalNode
+      //li <- listNode.getParent if exists should be moved with this.lexicalNode
+      //  ul <-listNode
+      this.lexicalNode.insertAfter(listNode.getParent());
+    }
   }
 
-  indent() {
-    if (this.canIndent()) {
-      const prevSibling = this.lexicalNode.getPreviousSibling();
-      const prevNote = Note.from(prevSibling);
-      prevNote._listNode(true).append(this.lexicalNode);
+  outdent() {
+    const parent = this.parent;
+    if (this.isRoot || parent.isRoot) {
+      return;
+    }
+    const list = this._listNode();
+    const parentList = parent._listNode();
+    parentList.getParent().insertAfter(this.lexicalNode);
+    if (list) {
+      this.lexicalNode.insertAfter(list.getParentOrThrow());
+    }
+    if (parentList.getChildrenSize() === 0) {
+      parentList.getParentOrThrow().remove();
     }
   }
 

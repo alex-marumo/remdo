@@ -33,7 +33,10 @@
     "[typescript]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "cSpell.words": ["collab"],
+    "cSpell.words": [
+      "collab",
+      "outdent"
+    ],
     "editor.minimap.enabled": false,
     "editor.rulers": [80],
     "eslint.codeActionsOnSave.rules": [
@@ -73,26 +76,36 @@
         "label": "server",
         "problemMatcher": [],
         "script": "server",
-        "type": "npm"
+        "type": "npm",
+        "icon": { "id": "cloud" }
       },
       {
         "group": "test",
-        "label": "npm: test",
-        "problemMatcher": [],
-        "script": "test",
-        "type": "npm"
-      },
-      {
-        "group": "test",
-        "label": "unit tests",
+        "label": "unit watch",
         "script": "test-unit-watch",
-        "type": "npm"
+        "type": "npm",
+        "icon": { "id": "beaker" }
+      },
+      {
+        "group": "test",
+        "label": "unit preview",
+        "script": "test-unit-preview",
+        "type": "npm",
+        "icon": { "id": "open-preview" }
+      },
+      {
+        "group": "test",
+        "label": "browser watch",
+        "script": "test-browser-watch",
+        "type": "npm",
+        "icon": { "id": "browser" }
       },
       {
         "label": "websocket",
         "problemMatcher": [],
         "script": "websocket",
-        "type": "npm"
+        "type": "npm",
+        "icon": { "id": "plug" }
       }
     ],
     "version": "2.0.0"

@@ -1,5 +1,5 @@
 import { patch } from "./utils";
-import { NotesState, Note } from "./api";
+import { NotesState, Note, getNotesEditorState } from "./api";
 
 export function applyNodePatches(NodeType: any) {
   /*
@@ -11,10 +11,10 @@ export function applyNodePatches(NodeType: any) {
     and doesn't rename original types
     */
   patch(NodeType, "updateDOM", function (oldMethod, prevNode, dom, config) {
-    const notesState = NotesState.getActive();
+    const lexicalState = getNotesEditorState();
     //lexicalMethod has to be placed first as it may have some side effects
     return (
-      oldMethod(prevNode, dom, config) || notesState.focus || notesState.filter
+      oldMethod(prevNode, dom, config) || lexicalState._notesFilterChanged
     );
   });
 

@@ -289,6 +289,7 @@ export default defineConfig({
     open: false,
     threads: false,
     api: {
+      strictPort: true,
       port: getPort({ page: null, vitest_preview: 3007, playwright: null }),
       host: "0.0.0.0",
     },

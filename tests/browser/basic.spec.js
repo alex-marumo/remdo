@@ -98,6 +98,44 @@ test("indent outdent", async ({ page }) => {
   await assertHTML(page, expectedHTMLBase);
 });
 
+test("indent outdent with children", async ({ page }) => {
+  //make note 3 child of note2
+  await getNote(page, "note3").selectText();
+  await page.keyboard.press("Tab");
+  const expectedHTML1 = await getHTML(page);
+
+  //indent note2
+  await getNote(page, "note2").selectText();
+  await page.keyboard.press("Tab");
+
+  const expectedHTMLIndented = html`
+    <ul>
+      <li value="1" dir="ltr"><span data-lexical-text="true">note1</span></li>
+      <li value="2" class="position-relative li-nested">
+        <ul>
+          <li value="1" dir="ltr">
+            <span data-lexical-text="true">note2</span>
+          </li>
+          <li value="2" class="position-relative li-nested">
+            <ul>
+              <li value="1" dir="ltr">
+                <span data-lexical-text="true">note3</span>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  `;
+
+  await assertHTML(page, expectedHTMLIndented);
+
+  await page.keyboard.down("Shift");
+  await page.keyboard.press("Tab");
+  await page.keyboard.up("Shift");
+  await assertHTML(page, expectedHTML1);
+});
+
 test("create empty notes", async ({ page }) => {
   await getNote(page, "note3").selectText();
 
@@ -138,43 +176,6 @@ test("menu follows selection", async ({ page }) => {
   expect(await menu.locator("ul").count()).toEqual(0);
 });
 
-test.fixme("indent note with children", async ({ page }) => {
-  //TODO get back to this once https://github.com/facebook/lexical/issues/2951 is fixed
-  //alternatively revert previous formalList changes
-
-  const expectedHTMLBase = await getHTML(page);
-
-  //make note3 child of note2
-  await getNote(page, "note3").selectText();
-  await page.keyboard.press("Tab");
-
-  //intent note2 to make sure that it's child follows the indentation
-  await getNote(page, "note2").selectText();
-  await page.keyboard.press("Tab");
-
-  const expectedHTMLIndented = html`
-    <ul>
-      <li value="1" dir="ltr"><span data-lexical-text="true">note1</span></li>
-      <li class="position-relative li-nested" value="2">
-        <ul>
-          <li value="1" dir="ltr">
-            <span data-lexical-text="true">note2</span>
-          </li>
-        </ul>
-      </li>
-      <li value="2" dir="ltr"><span data-lexical-text="true">note3</span></li>
-    </ul>
-  `;
-
-  await assertHTML(page, expectedHTMLIndented);
-
-  //outdent
-  await page.keyboard.down("Shift");
-  await page.keyboard.press("Tab");
-  await page.keyboard.up("Shift");
-  await assertHTML(page, expectedHTMLBase);
-});
-
 test("change root", async ({ page }) => {
   //check breadcrumbs
   await expect(page.locator("li.breadcrumb-item")).toHaveCount(1);
@@ -196,10 +197,7 @@ test("change root", async ({ page }) => {
   const html = await getHTML(page);
   expect(html).not.toContain("note1");
   expect(html).toContain("note2");
-
-  //TODO uncomment once https://github.com/facebook/lexical/issues/2951 is fixed
-  //alternatively revert previous formalList changes
-  //expect(html).toContain("note3");
+  expect(html).toContain("note3");
 
   //check breadcrumbs after changing root
   await expect(page.locator("li.breadcrumb-item")).toHaveCount(2);

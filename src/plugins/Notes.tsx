@@ -32,6 +32,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { patch } from "@/utils";
 import { Note, NotesState } from "@/api";
+import { CONNECTED_COMMAND } from "@lexical/yjs";
 
 export function NotesPlugin({ anchorElement }) {
   const [editor] = useLexicalComposerContext();
@@ -140,6 +141,15 @@ export function NotesPlugin({ anchorElement }) {
           changeRoot(noteID);
         }
       }),
+      editor.registerCommand(
+        //test case "create empty notes"
+        CONNECTED_COMMAND,
+        (payload) => {
+          console.log("Connected command ", payload);
+          return false;
+        },
+        COMMAND_PRIORITY_CRITICAL
+      ),
       editor.registerCommand(
         //test case "create empty notes"
         INSERT_PARAGRAPH_COMMAND,

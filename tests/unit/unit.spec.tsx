@@ -24,18 +24,22 @@ declare module "vitest" {
       typeof queries & { getAllNotNestedIListItems: typeof getAllByRole.bind }
     >;
     lexicalUpdate: Function;
-    lexicalClear: Function;
   }
 }
 
 /** Runs test in Lexical editor update context */
-function testUpdate(title: string, fn, runner: Function = it) {
+function testUpdate(
+  title: string,
+  fn: ({ root, context, rootNode }) => void,
+  runner: Function = it
+) {
   if (fn.constructor.name == "AsyncFunction") {
     throw Error("Async functions can't be wrapped with update");
   }
   return runner(title, context => {
     context.lexicalUpdate(() => {
-      fn(context);
+      const rootNode = $getRoot();
+      fn({ context, root: Note.from(rootNode), rootNode });
     });
     debug();
   });
@@ -49,6 +53,17 @@ testUpdate.skip = (title: string, fn) => {
   testUpdate(title, fn, it.skip);
 };
 
+//TODO consider changing that function to accept structure parameter like that:
+//    const structure = checkStructure(root, {
+//  root: {
+//    note0,
+//    note1: {
+//      note2,
+//    },
+//  },
+//});
+//in such a case ids would not be available, but these can be compared to text
+//or just skipped
 function checkChildren(
   notes: Array<Note>,
   expectedChildrenArrays: Array<Array<Note>>
@@ -57,7 +72,12 @@ function checkChildren(
   notes.forEach((note, idx) => {
     const expectedChildren = expectedChildrenArrays[idx] || [];
     expectedCount += expectedChildren.length;
-    expect([...note.children]).toStrictEqual(expectedChildren);
+    //note.text and idx are added in case of an error, so it's easier to notice which node causes the issue
+    expect([note.text, idx, ...note.children]).toStrictEqual([
+      note.text,
+      idx,
+      ...expectedChildren,
+    ]);
     expect(note.hasChildren).toEqual(expectedChildren.length > 0);
     for (let child of note.children) {
       expect(child).toBeInstanceOf(Note);
@@ -102,8 +122,22 @@ beforeEach(async context => {
   });
 
   context.lexicalUpdate = updateFunction => {
+    let err = null;
     editor._dirtyType = FULL_RECONCILE;
-    editor.update(updateFunction, { discrete: true });
+    editor.update(
+      function () {
+        try {
+          return updateFunction(...arguments);
+        } catch(e) {
+          err = e;
+        }
+      },
+      { discrete: true }
+    );
+    if(err) {
+      //rethrow after finishing update
+      throw err;
+    }
   };
 
   //wait for yjs to connect via websocket and init the editor content
@@ -130,6 +164,8 @@ beforeEach(async context => {
 });
 
 afterEach(async context => {
+  //an ugly workaround - to give a chance for yjs to sync
+  await new Promise(r => setTimeout(r, 10));
   context._component.unmount();
 });
 
@@ -139,9 +175,7 @@ afterAll(async () => {
 });
 
 describe("editor init", async () => {
-  testUpdate("create notes", () => {
-    const rootNode = $getRoot();
-
+  testUpdate("create notes", ({ rootNode }) => {
     expect(rootNode.getChildrenSize()).toEqual(1);
     expect(rootNode.getChildren()[0]).toSatisfy($isListNode);
 
@@ -155,8 +189,7 @@ describe("editor init", async () => {
 });
 
 describe("API", async () => {
-  testUpdate("create notes", () => {
-    const root = Note.from($getRoot());
+  testUpdate("create notes", ({ root }) => {
     const note0 = [...root.children][0];
     const notes = [root, note0];
 
@@ -173,9 +206,7 @@ describe("API", async () => {
     expect(note2.text).toEqual("");
   });
 
-  testUpdate("indent", () => {
-    const root = Note.from($getRoot());
-
+  testUpdate("indent and outdent", ({ root }) => {
     expect([...root.children].length).toEqual(1);
 
     const [notes, note0, note1, note2] = createChildren(root, 2);
@@ -195,11 +226,37 @@ describe("API", async () => {
 
     note2.indent(); //no effect
     checkChildren(notes, [[note0], [note1], [note2]]);
+    
+    note2.outdent();
+    checkChildren(notes, [[note0], [note1, note2]]);
+
+    note2.outdent();
+    checkChildren(notes, [[note0, note2], [note1]]);
+
+    note2.outdent();//no effect
+    checkChildren(notes, [[note0, note2], [note1]]);
+
+    note1.outdent();
+    checkChildren(notes, [[note0, note1, note2]]);
   });
 
-  testUpdate("move", () => {
-    const root = Note.from($getRoot());
+  testUpdate.only("indent and out with children", ({ root }) => {
+    expect([...root.children].length).toEqual(1);
 
+    const [notes, note0, note1, note2, note3, note4] = createChildren(root, 4);
+    checkChildren(notes, [[note0, note1, note2, note3, note4]]);
+
+    note3.indent();
+    checkChildren(notes, [[note0, note1, note2, note4], [], [], [note3]]);
+
+    note2.indent();
+    checkChildren(notes, [[note0, note1, note4], [], [note2], [note3]]);
+
+    note2.outdent();
+    checkChildren(notes, [[note0, note1, note2, note4], [], [], [note3]]);
+  });
+
+  testUpdate("move", ({ root }) => {
     const [notes, note0, note1, note2] = createChildren(root, 2);
     checkChildren(notes, [[note0, note1, note2]]);
 
@@ -313,6 +370,5 @@ describe("API", async () => {
     expect(context.queries.getAllNotNestedIListItems()).toHaveLength(1);
   });
 
-  it.skip("focus and filter", context => {
-  });
+  it.skip("focus and filter", context => {});
 });
