@@ -1,5 +1,6 @@
 import { patch } from "./utils";
 import { NotesState, Note, getNotesEditorState } from "./api";
+import { $isListNode } from "@lexical/list";
 
 export function applyNodePatches(NodeType: any) {
   /*
@@ -14,6 +15,9 @@ export function applyNodePatches(NodeType: any) {
     const lexicalState = getNotesEditorState();
     //lexicalMethod has to be placed first as it may have some side effects
     return (
+      //TODO just checking lexicalState._notesFilterChanged is necessary but not sufficient
+      //it may be more efficient to actually check if node will be different after updateDOM
+      //for example when it was already filtered out and still needs to be
       oldMethod(prevNode, dom, config) || lexicalState._notesFilterChanged
     );
   });
@@ -24,8 +28,16 @@ export function applyNodePatches(NodeType: any) {
     //
     // search filter
     //
-    if (notesState.filter && !Note.from(this).text.includes(notesState.filter)) {
-      return document.createElement("div");
+    if (notesState.filter) {
+      if($isListNode(this)) {
+        if (this.getParent().getKey() === "root") {
+          return oldMethod(config, editor);
+        }
+        return document.createElement("div");
+      }
+      if (!Note.from(this).text.includes(notesState.filter)) {
+        return document.createElement("div");
+      }
     }
 
     //
