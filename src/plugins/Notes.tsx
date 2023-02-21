@@ -30,7 +30,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { patch } from "@/utils";
 import { Note, NotesState } from "@/api";
 import { CONNECTED_COMMAND } from "@lexical/yjs";
 
@@ -129,8 +128,44 @@ export function NotesPlugin({ anchorElement }) {
     floatingElement.style.transform = `translate(${0}px, ${top}px)`;
   }
 
+  const rootKeyDownListener = useCallback(
+    //TODO add browser test and move this somewhere else
+    (e: KeyboardEvent) => {
+      if (
+        e.metaKey &&
+        (e.key === "ArrowDown" || e.key === "ArrowUp") &&
+        !(e.altKey || e.shiftKey || e.ctrlKey)
+      ) {
+        e.preventDefault();
+        editor.update(() => {
+          const selection = $getSelection();
+
+          if (!$isRangeSelection(selection)) {
+            return false;
+          }
+
+          const nodesInSelection = selection.getNodes();
+          const note = Note.from(nodesInSelection[0]);
+          if (e.key === "ArrowDown") {
+            note.moveDown();
+          } else {
+            note.moveUp();
+          }
+        });
+      }
+    },
+    [editor]
+  );
+
   useEffect(() => {
     return mergeRegister(
+      //TODO double check if the listener callback is stable between calls to this code
+      editor.registerRootListener((rootElement, prevRootElement) => {
+        rootElement &&
+          rootElement.addEventListener("keydown", rootKeyDownListener);
+        prevRootElement &&
+          prevRootElement.removeEventListener("keydown", rootKeyDownListener);
+      }),
       editor.registerMutationListener(ListItemNode, mutatedNodes => {
         const { noteID } = locationParams;
         if (
@@ -144,7 +179,7 @@ export function NotesPlugin({ anchorElement }) {
       editor.registerCommand(
         //test case "create empty notes"
         CONNECTED_COMMAND,
-        (payload) => {
+        payload => {
           console.log("Connected command ", payload);
           return false;
         },
@@ -216,7 +251,7 @@ export function NotesPlugin({ anchorElement }) {
         COMMAND_PRIORITY_CRITICAL
       )
     );
-  }, [changeRoot, editor, locationParams]);
+  }, [changeRoot, editor, locationParams, rootKeyDownListener]);
 
   const menuClick = e => {
     e.preventDefault();
