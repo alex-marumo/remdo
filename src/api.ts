@@ -233,9 +233,35 @@ export class Note {
   }
 
   moveDown() {
-    const nextNode = this.lexicalNode.getNextSibling();
-    if (nextNode) {
-      nextNode.insertAfter(this.lexicalNode);
+    const lexicalNode = this.lexicalNode;
+    let nextNode = lexicalNode.getNextSibling();
+    if (!nextNode) {
+      return;
+    }
+    const listNode = this._listNode();
+    if (listNode) {
+      //if this has some children (which implies having listNode) then we have to go one node down
+      nextNode = nextNode.getNextSibling();
+      if (!nextNode) {
+        return;
+      }  
+    }
+    nextNode.insertAfter(lexicalNode);
+    if (listNode) {
+      lexicalNode.insertAfter(listNode.getParentOrThrow());
+    }
+  }
+
+  moveUp() {
+    const lexicalNode = this.lexicalNode;
+    let prevNode = lexicalNode.getPreviousSibling();
+    if (!prevNode) {
+      return;
+    }
+    const listNode = this._listNode();
+    prevNode.insertBefore(lexicalNode);
+    if(listNode) {
+      lexicalNode.insertAfter(listNode.getParentOrThrow());
     }
   }
 
