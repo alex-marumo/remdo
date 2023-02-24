@@ -25,10 +25,6 @@ button.fold {
     list-style-image: none;
 }
 
-.editor li {
-    pointer-events: none;
-}
-
 .editor li::before {
     content: "\2022";
     color: black;

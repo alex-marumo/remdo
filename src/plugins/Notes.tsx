@@ -18,6 +18,7 @@ import {
   $isListNode,
   $isListItemNode,
   ListItemNode,
+  ListNode,
 } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
 import {
@@ -27,11 +28,12 @@ import {
 } from "lexical";
 import { createPortal } from "react-dom";
 import React from "react";
-import PropTypes from "prop-types";
+import PropTypes, { number } from "prop-types";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { Note, NotesState } from "@/api";
 import { CONNECTED_COMMAND } from "@lexical/yjs";
+import { NodeEventPlugin } from "@lexical/react/LexicalNodeEventPlugin";
 
 export function NotesPlugin({ anchorElement }) {
   const [editor] = useLexicalComposerContext();
@@ -83,31 +85,22 @@ export function NotesPlugin({ anchorElement }) {
   }, [editor, noteFilter]);
 
   useEffect(() => {
-    function onMouseMove(event) {
-      const noteElement = event.target.closest("li");
-      if (noteElement) {
-        //show menu
-        setHoveredNoteElement(noteElement);
-      }
-    }
-
-    function onClick(event) {
-      if (!event.target.matches("li")) {
+    function onClick(event: React.MouseEvent<HTMLElement>) {
+      const target = event.target as HTMLElement;
+      if (!target.matches("li")) {
         return;
       }
       let key;
       //TODO read or just passing editor state should be enough, re-check in a newer lexical version
       editor.update(() => {
-        key = $getNearestNodeFromDOMNode(event.target).getKey();
+        key = $getNearestNodeFromDOMNode(target).getKey();
       });
       navigate(`/note/${key}`);
     }
 
-    anchorElement?.addEventListener("mousemove", onMouseMove);
     anchorElement?.addEventListener("click", onClick);
 
     return () => {
-      anchorElement?.removeEventListener("mousemove", onMouseMove);
       anchorElement?.removeEventListener("click", onClick);
     };
   }, [anchorElement, editor, navigate]);
@@ -118,14 +111,24 @@ export function NotesPlugin({ anchorElement }) {
     }
   }, [anchorElement, hoveredNoteElement]);
 
-  function setMenuPosition(targetElement, floatingElement, anchor) {
+  function setMenuPosition(
+    targetElement: HTMLElement,
+    floatingElement: HTMLElement,
+    anchor: HTMLAnchorElement
+  ) {
     if (!targetElement) {
       return;
     }
     const targetRectangle = targetElement.getBoundingClientRect();
     const anchorRectangle = anchor.getBoundingClientRect();
+    const floatingRectangle = floatingElement.getBoundingClientRect();
     const top = targetRectangle.y - anchorRectangle.y;
-    floatingElement.style.transform = `translate(${0}px, ${top}px)`;
+    const left =
+      targetRectangle.x -
+      anchorRectangle.x -
+      floatingRectangle.width -
+      parseFloat(getComputedStyle(targetElement, ":before").width);
+    floatingElement.style.transform = `translate(${left}px, ${top}px)`;
   }
 
   const rootKeyDownListener = useCallback(
@@ -176,15 +179,6 @@ export function NotesPlugin({ anchorElement }) {
           changeRoot(noteID);
         }
       }),
-      editor.registerCommand(
-        //test case "create empty notes"
-        CONNECTED_COMMAND,
-        payload => {
-          //console.log("Connected command ", payload);
-          return false;
-        },
-        COMMAND_PRIORITY_CRITICAL
-      ),
       editor.registerCommand(
         //test case "create empty notes"
         INSERT_PARAGRAPH_COMMAND,
@@ -285,8 +279,30 @@ export function NotesPlugin({ anchorElement }) {
     });
   };
 
+  const rootMouseMove = (event: MouseEvent) => {
+    //it would be easier to assign this listener to ListItemNode instead of RootNode
+    //the problem is that indented ListItem element don't extend to the left side of the RootNode element
+    //this is also why, it's better to find list items on the very right side of the RootNode element
+    const editorRect = editor.getRootElement().getBoundingClientRect();
+    const editorComputedStyle = getComputedStyle(editor.getRootElement());
+    const li = document.elementFromPoint(
+      editorRect.left +
+        parseFloat(editorComputedStyle.width) -
+        parseFloat(editorComputedStyle.paddingRight) -
+        parseFloat(editorComputedStyle.borderRightWidth) -
+        1,
+      event.y
+    );
+    li && setHoveredNoteElement(li);
+  };
+
   return (
-    <div>
+    <>
+      <NodeEventPlugin
+        nodeType={RootNode}
+        eventType={"mousemove"}
+        eventListener={rootMouseMove}
+      />
       <nav aria-label="breadcrumb">
         <button
           type="button"
@@ -351,7 +367,7 @@ export function NotesPlugin({ anchorElement }) {
         </div>,
         anchorElement
       )}
-    </div>
+    </>
   );
 }
 
