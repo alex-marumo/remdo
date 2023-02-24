@@ -399,6 +399,17 @@ describe("API", async () => {
     expect(context.queries.getAllNotNestedIListItems()).toHaveLength(1);
   });
 
+  it("fold", async context => {
+    context.lexicalUpdate(() => {
+      const root = Note.from($getRoot());
+      const [notes, note0, note1, note2, note3] = createChildren(root, 3);
+      note2.indent();
+      note1.indent();
+      note0.fold = true;
+    });
+    //TODO check visibility once folding changes rendering instead of just hiding via css
+  });
+
   it.skip("focus and filter", context => {});
 
   it.skip("playground", context => {

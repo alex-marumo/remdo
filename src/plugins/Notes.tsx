@@ -180,7 +180,7 @@ export function NotesPlugin({ anchorElement }) {
         //test case "create empty notes"
         CONNECTED_COMMAND,
         payload => {
-          console.log("Connected command ", payload);
+          //console.log("Connected command ", payload);
           return false;
         },
         COMMAND_PRIORITY_CRITICAL
@@ -274,6 +274,17 @@ export function NotesPlugin({ anchorElement }) {
     });
   };
 
+  const toggleFold = event => {
+    event.preventDefault();
+    editor._dirtyType = FULL_RECONCILE; //TODO
+    editor.update(() => {
+      NotesState.getActive()._forceLexicalUpdate(); //TODO
+      const node = $getNearestNodeFromDOMNode(hoveredNoteElement);
+      const note = Note.from(node);
+      note.fold = !note.fold;
+    });
+  };
+
   return (
     <div>
       <nav aria-label="breadcrumb">
@@ -322,7 +333,7 @@ export function NotesPlugin({ anchorElement }) {
       {createPortal(
         <div id="hovered-note-menu" ref={menuRef}>
           {!menuExpanded ? (
-            <a href="/" onClick={menuClick}>
+            <a href="/" onClick={menuClick} className="text-decoration-none">
               ...
             </a>
           ) : (
@@ -333,6 +344,10 @@ export function NotesPlugin({ anchorElement }) {
               <li>option4</li>
             </ul>
           )}
+          &nbsp;
+          <a href="/" onClick={toggleFold} className="text-decoration-none">
+            +
+          </a>
         </div>,
         anchorElement
       )}

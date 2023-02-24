@@ -1,6 +1,6 @@
-export function patch(klass, methodName, newMethod) {
-  var oldMethod = klass.prototype[methodName];
-  klass.prototype[methodName] = function () {
+export function patch(Class, methodName, newMethod) {
+  const oldMethod = Class.prototype[methodName];
+  Class.prototype[methodName] = function () {
     return newMethod.bind(this)(oldMethod.bind(this), ...arguments);
   };
 }

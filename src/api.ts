@@ -10,11 +10,14 @@ import {
   $createListItemNode,
   $createListNode,
   $isListNode,
+  ListItemNode,
 } from "@lexical/list";
-import type { ListNode, ListItemNode } from "@lexical/list";
+import { ListNode, ListItemNode as LexicalListItemNode } from "@lexical/list";
 import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
 import { findNearestListItemNode } from "@lexical/list/utils";
 import { getActiveEditor, getActiveEditorState } from "@lexical/LexicalUpdates";
+//TODO
+//create folder api and split this to Note and NotesState
 
 const ROOT_TEXT = "Document";
 
@@ -119,7 +122,7 @@ export class Note {
     return this.lexicalKey === "root";
   }
 
-  get lexicalNode(): ElementNode {
+  get lexicalNode(): LexicalListItemNode {
     return $getNodeByKeyOrThrow(this._lexicalKey);
   }
 
@@ -158,7 +161,7 @@ export class Note {
       *[Symbol.iterator]() {
         let child = that._listNode()?.getFirstChild();
         while (child) {
-          if (!_isNested(child as ListItemNode)) {
+          if (!_isNested(child as LexicalListItemNode)) {
             yield Note.from(child);
           }
           child = child.getNextSibling();
@@ -244,7 +247,7 @@ export class Note {
       nextNode = nextNode.getNextSibling();
       if (!nextNode) {
         return;
-      }  
+      }
     }
     nextNode.insertAfter(lexicalNode);
     if (listNode) {
@@ -260,7 +263,7 @@ export class Note {
     }
     const listNode = this._listNode();
     prevNode.insertBefore(lexicalNode);
-    if(listNode) {
+    if (listNode) {
       lexicalNode.insertAfter(listNode.getParentOrThrow());
     }
   }
@@ -268,4 +271,33 @@ export class Note {
   focus() {
     NotesState.getActive().setFocus(this);
   }
+
+  get fold() {
+    if (this.isRoot) {
+      //TODO
+      return false;
+    }
+    return this.lexicalNode.getFold();
+  }
+
+  set fold(value) {
+    this.lexicalNode.setFold(value);
+  }
 }
+
+//TODO move somewhere else
+declare module "@lexical/list" {
+  interface ListItemNode {
+    getFold(): boolean;
+    setFold(fold: boolean): void;
+    __fold: boolean | null;
+  }
+}
+
+LexicalListItemNode.prototype.getFold = function () {
+  return this.getLatest().__fold;
+};
+
+LexicalListItemNode.prototype.setFold = function (fold: boolean): void {
+  this.getWritable().__fold = !!fold;
+};

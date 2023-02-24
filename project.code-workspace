@@ -106,6 +106,12 @@
         "script": "websocket",
         "type": "npm",
         "icon": { "id": "plug" }
+      },
+      {
+        "label": "tsc watch",
+        "problemMatcher": [],
+        "type": "shell",
+        "command": "npx tsc-watch --onSuccess 'node _exec.js'"
       }
     ],
     "version": "2.0.0"

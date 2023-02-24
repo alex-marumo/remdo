@@ -1,6 +1,6 @@
 import { patch } from "./utils";
 import { NotesState, Note, getNotesEditorState } from "./api";
-import { $isListNode } from "@lexical/list";
+import { $isListItemNode, $isListNode, ListItemNode } from "@lexical/list";
 
 export function applyNodePatches(NodeType: any) {
   /*
@@ -29,7 +29,8 @@ export function applyNodePatches(NodeType: any) {
     // search filter
     //
     if (notesState.filter) {
-      if($isListNode(this)) {
+      if ($isListNode(this)) {
+        //TODO this could be specific for ListNode.createDOM
         if (this.getParent().getKey() === "root") {
           return oldMethod(config, editor);
         }
@@ -54,7 +55,19 @@ export function applyNodePatches(NodeType: any) {
           p => p.lexicalKey === notesState.focus.nodeKey
         ))(Note.from(this))
     ) {
-      return oldMethod(config, editor);
+      const dom: HTMLElement = oldMethod(config, editor);
+      //
+      // is fold?
+      //
+      if (
+        $isListItemNode(this) &&
+        this.getChildren().some(child => $isListNode(child)) &&
+        Note.from(this).fold
+      ) {
+        //TODO should be specific to ListNode
+        dom.classList.add("d-none");
+      }
+      return dom;
     } else {
       return document.createElement("div");
     }

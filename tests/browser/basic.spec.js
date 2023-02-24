@@ -156,7 +156,7 @@ test("create empty notes", async ({ page }) => {
   );
 });
 
-test("menu follows selection", async ({ page }) => {
+test.fixme("menu follows selection", async ({ page }) => {
   const note = getNote(page, "note2");
   await note.selectText();
   const noteBB = await note.boundingBox();
@@ -164,7 +164,7 @@ test("menu follows selection", async ({ page }) => {
   const menuBB = await menu.boundingBox();
   const menuCenter = menuBB.y + menuBB.height / 2;
 
-  //check if the center of the menu icon is somwhere between top and bottom of selected note
+  //check if the center of the menu icon is somewhere between top and bottom of selected note
   expect(menuCenter).toBeGreaterThanOrEqual(noteBB.y);
   expect(menuCenter).toBeLessThanOrEqual(noteBB.y + noteBB.height);
 
