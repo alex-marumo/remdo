@@ -18,7 +18,6 @@ import {
   $isListNode,
   $isListItemNode,
   ListItemNode,
-  ListNode,
 } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
 import {
@@ -28,11 +27,10 @@ import {
 } from "lexical";
 import { createPortal } from "react-dom";
 import React from "react";
-import PropTypes, { number } from "prop-types";
+import PropTypes from "prop-types";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { Note, NotesState } from "@/api";
-import { CONNECTED_COMMAND } from "@lexical/yjs";
 import { NodeEventPlugin } from "@lexical/react/LexicalNodeEventPlugin";
 
 export function NotesPlugin({ anchorElement }) {
@@ -87,7 +85,7 @@ export function NotesPlugin({ anchorElement }) {
   useEffect(() => {
     function onClick(event: React.MouseEvent<HTMLElement>) {
       const target = event.target as HTMLElement;
-      if (!target.matches("li")) {
+      if (!target.matches("li") || target.getBoundingClientRect().x <= event.clientX) {
         return;
       }
       let key;
