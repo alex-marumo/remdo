@@ -410,7 +410,7 @@ describe("API", async () => {
     //TODO check visibility once folding changes rendering instead of just hiding via css
   });
 
-  it.skip("focus and filter", context => {});
+  it("focus and filter", context => {});
 
   it.skip("playground", context => {
     context.lexicalUpdate(() => {

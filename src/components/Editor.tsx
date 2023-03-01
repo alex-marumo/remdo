@@ -22,6 +22,7 @@ import { TextNode } from "lexical";
 import React from "react";
 import { NotesPlugin } from "@/plugins/Notes";
 import { applyNodePatches } from "@/lexicalNodes";
+import { NoteMenuPlugin } from "@/plugins/NoteMenuPlugin";
 
 function providerFactory(id, yjsDocMap) {
   let doc = yjsDocMap.get(id);
@@ -41,7 +42,7 @@ function providerFactory(id, yjsDocMap) {
     }
   );
   wsProvider.shouldConnect = true; //reconnect after disconnecting
-  return wsProvider
+  return wsProvider;
 }
 
 function Placeholder() {
@@ -100,6 +101,7 @@ export default function Editor() {
         {floatingAnchorElem && (
           <NotesPlugin anchorElement={floatingAnchorElem} />
         )}
+        <NoteMenuPlugin />
         <RichTextPlugin
           contentEditable={
             <div className="editor" ref={onRef}>

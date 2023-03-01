@@ -15,6 +15,7 @@
     }
   ],
   "settings": {
+    "typescript.preferences.includePackageJsonAutoImports": "on",
     "[css]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
@@ -33,9 +34,16 @@
     "[typescript]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "cSpell.words": [
-      "collab",
-      "outdent"
+    "cSpell.words": ["outdent"],
+    "cSpell.ignoreWords": ["collab", "Typeahead"],
+    "cSpell.ignorePaths": [
+      "package-lock.json",
+      "node_modules",
+      "vscode-extension",
+      ".git/objects",
+      ".vscode",
+      ".vscode-insiders",
+      "project.code-workspace"
     ],
     "editor.minimap.enabled": false,
     "editor.rulers": [80],
@@ -45,7 +53,12 @@
       "react/jsx-uses-vars"
     ],
     "files.exclude": {
-      "lexical/**/*.d.ts": true
+      "lexical/**/*.d.ts": true,
+      "lexical/**/dist/**": true,
+      "lexical/**/flow/**": true,
+      "lexical/**/__tests__/**": true,
+      "lexical/packages/lexical-devtools/**": true,
+      "lexical/packages/playwright*": true
     },
     "html-css-class-completion.CSSLanguages": ["css", "sass", "scss"],
     "html-css-class-completion.JavaScriptLanguages": [
@@ -67,7 +80,8 @@
     "terminal.integrated.shellIntegration.decorationsEnabled": "never",
     "terminal.integrated.tabs.enableAnimation": false,
     "workbench.colorTheme": "Default Dark+",
-    "files.autoSave": "onFocusChange"
+    "files.autoSave": "onFocusChange",
+    "git.ignoreLimitWarning": true
   },
   "tasks": {
     "tasks": [
@@ -99,6 +113,13 @@
         "script": "test-browser-watch",
         "type": "npm",
         "icon": { "id": "browser" }
+      },
+      {
+        "group": "test",
+        "label": "browser report",
+        "script": "test-report",
+        "type": "npm",
+        "icon": { "id": "report" }
       },
       {
         "label": "websocket",

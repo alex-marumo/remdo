@@ -29,9 +29,10 @@ export function getNotesEditorState() {
   return getActiveEditorState() as NotesEditorState;
 }
 
-function _isNested(liNode: ElementNode) {
-  //mind that root is also treated as nested note
-  return liNode.getChildren().some($isListNode);
+export function isNestedLI(liNode: ListItemNode) {
+  return liNode.getKey() === "root"
+    ? false
+    : liNode.getChildren().some($isListNode);
 }
 
 export class NotesState {
@@ -90,7 +91,7 @@ export class Note {
   _lexicalKey: string;
   _lexicalNode: ElementNode;
 
-  static from(keyOrNode: LexicalNode | string) {
+  static from(keyOrNode: LexicalNode | string): Note {
     let baseNode =
       keyOrNode instanceof LexicalNode
         ? keyOrNode
@@ -100,8 +101,8 @@ export class Note {
     if (!liNode) {
       return new Note("root");
     }
-    return _isNested(liNode)
-      ? new Note(liNode.getPreviousSibling().getKey())
+    return isNestedLI(liNode)
+      ? new Note(liNode.getPreviousSibling()?.getKey() || liNode.getKey())
       : new Note(liNode.getKey());
   }
 
@@ -161,7 +162,7 @@ export class Note {
       *[Symbol.iterator]() {
         let child = that._listNode()?.getFirstChild();
         while (child) {
-          if (!_isNested(child as LexicalListItemNode)) {
+          if (!isNestedLI(child as LexicalListItemNode)) {
             yield Note.from(child);
           }
           child = child.getNextSibling();
@@ -281,7 +282,7 @@ export class Note {
   }
 
   set fold(value) {
-    this.lexicalNode.setFold(value);
+    !this.isRoot && this.lexicalNode.setFold(value);
   }
 }
 

@@ -8,6 +8,8 @@ import {
   $getNearestNodeFromDOMNode,
   CLEAR_EDITOR_COMMAND,
   $getRoot,
+  COMMAND_PRIORITY_LOW,
+  $getNodeByKey,
 } from "lexical";
 import { FULL_RECONCILE } from "@lexical/LexicalConstants";
 import { useEffect, useRef, useState, useCallback } from "react";
@@ -32,6 +34,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { Note, NotesState } from "@/api";
 import { NodeEventPlugin } from "@lexical/react/LexicalNodeEventPlugin";
+import { NOTES_FOLD_COMMAND } from "@/commands";
+import { KEY_BACKSPACE_COMMAND } from "../../lexical/packages/lexical/src/LexicalCommands";
 
 export function NotesPlugin({ anchorElement }) {
   const [editor] = useLexicalComposerContext();
@@ -85,7 +89,10 @@ export function NotesPlugin({ anchorElement }) {
   useEffect(() => {
     function onClick(event: React.MouseEvent<HTMLElement>) {
       const target = event.target as HTMLElement;
-      if (!target.matches("li") || target.getBoundingClientRect().x <= event.clientX) {
+      if (
+        !target.matches("li") ||
+        target.getBoundingClientRect().x <= event.clientX
+      ) {
         return;
       }
       let key;
@@ -208,6 +215,30 @@ export function NotesPlugin({ anchorElement }) {
         },
         COMMAND_PRIORITY_HIGH
       ),
+      editor.registerCommand(
+        KEY_BACKSPACE_COMMAND,
+        (event: KeyboardEvent | null) => {
+          //do not allow to delete top level list item node as otherwise the document structure may be invalid
+          const selection = $getSelection();
+          if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+            return false;
+          }
+          const node = $getNodeByKey(selection.anchor.key);
+          if (!$isListItemNode(node)) {
+            return false;
+          }
+          if (
+            !node.getPreviousSibling() &&
+            node.getParent().getParent().getKey() === "root"
+          ) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            return true;
+          }
+          return false;
+        },
+        COMMAND_PRIORITY_CRITICAL
+      ),
       editor.registerNodeTransform(RootNode, rootNode => {
         //forces the right editor structure:
         //  root
@@ -233,6 +264,7 @@ export function NotesPlugin({ anchorElement }) {
           if (!$isRangeSelection(selection)) {
             return false;
           }
+          //TODO use notes api
           const focusLIElement = editor
             .getElementByKey(selection.focus.key)
             .closest("li");
@@ -241,6 +273,24 @@ export function NotesPlugin({ anchorElement }) {
           return false;
         },
         COMMAND_PRIORITY_CRITICAL
+      ),
+      editor.registerCommand(
+        NOTES_FOLD_COMMAND,
+        () => {
+          //TODO create notes API for that
+          const selection = $getSelection();
+          if (!$isRangeSelection(selection)) {
+            return false;
+          }
+          console.log("command", selection.focus.key);
+          //getActiveEditorState()._di = FULL_RECONCILE;
+          editor._dirtyType = FULL_RECONCILE;
+          editor.update(() => {
+            Note.from(selection.focus.key).fold = true;
+          });
+          return true;
+        },
+        COMMAND_PRIORITY_LOW
       )
     );
   }, [changeRoot, editor, locationParams, rootKeyDownListener]);

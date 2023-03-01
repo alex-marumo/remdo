@@ -55,18 +55,15 @@ export function applyNodePatches(NodeType: any) {
           p => p.lexicalKey === notesState.focus.nodeKey
         ))(Note.from(this))
     ) {
-      const dom: HTMLElement = oldMethod(config, editor);
       //
       // is fold?
       //
-      if (
-        $isListItemNode(this) &&
-        this.getChildren().some(child => $isListNode(child)) &&
-        Note.from(this).fold
-      ) {
+      if ([...Note.from(this).parents].some(p => p.fold)) {
         //TODO should be specific to ListNode
-        dom.classList.add("d-none");
+        return document.createElement("div");
       }
+
+      const dom: HTMLElement = oldMethod(config, editor);
       return dom;
     } else {
       return document.createElement("div");

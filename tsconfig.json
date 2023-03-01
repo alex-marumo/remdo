@@ -110,7 +110,7 @@
         "./lexical/packages/lexical-react/src/LexicalRichTextPlugin.tsx"
       ],
       "@lexical/react/LexicalTypeaheadMenuPlugin": [
-        "packages/lexical-react/src/LexicalTypeaheadMenuPlugin.tsx"
+        "./lexical/packages/lexical-react/src/LexicalTypeaheadMenuPlugin.tsx"
       ],
       "@lexical/react/LexicalHistoryPlugin": [
         "./lexical/packages/lexical-react/src/LexicalHistoryPlugin.ts"

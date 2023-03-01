@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "lexical": "file:lexical/packages/lexical",
     "@lexical/monorepo": "file:lexical",
+    "@lexical/utils": "file:lexical",
+    "@lexical/list": "file:lexical",
     "@lexical/react": "file:lexical/packages/lexical-react",
     "@playwright/test": "^1.29.2",
     "@testing-library/react": "^13.3.0",
@@ -30,7 +33,7 @@
     "test-report": "npx playwright show-report --host 0.0.0.0",
     "test-browser": "VITE_DISABLECOLLAB=true npm run test-browser-collab",
     "test-browser-collab": "npx playwright test --project=chromium",
-    "test-browser-watch": "SHELL=zsh npx chokidar './**' --ignore 'playwright-report/**' -c 'npm run test-browser-collab'",
+    "test-browser-watch": "SHELL=zsh npx chokidar './**' --ignore 'playwright-report/**' --ignore 'test-results/**' -c 'npm run test-browser'",
     "test-unit": "npx vitest run",
     "test-unit-watch": "npx vitest --ui",
     "test-unit-preview": "SERVER_MODE=vitest_preview PORT=3001 npx vitest-preview",
@@ -62,6 +65,7 @@
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^7.0.1",
     "vite": "^4.1.1",
     "vitest": "^0.28.4",
     "vitest-preview": "^0.0.1"

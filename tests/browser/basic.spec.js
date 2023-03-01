@@ -17,6 +17,17 @@ async function logHTML(page) {
 }
 
 test.beforeEach(async ({ page }) => {
+  page.on("console", message => {
+    if (["warning", "error"].includes(message.type())) {
+      console.error(`${message.type} inside the browser: `, message.text());
+      throw Error(message);
+    }
+  });
+  page.on("pageerror", err => {
+    console.error("Error inside the browser: ", err.message);
+    throw err;
+  });
+
   await page.goto("");
   await focusEditor(page);
   await clearEditor(page);
@@ -225,3 +236,106 @@ test("search", async ({ page }) => {
   expect(html).toContain("note2");
   expect(html).not.toContain("note3");
 });
+
+async function prepareMenu(page) {
+  //TODO move to a separate file and use before/after each
+  const menuLocator = page.locator("#typeahead-menu");
+  await expect(menuLocator).toHaveCount(0);
+
+  await getNote(page, "note3").selectText();
+  await page.keyboard.press("Tab");
+  expect(await getHTML(page)).toContain("note3");
+
+  await getNote(page, "note2").selectText();
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.type(",,");
+  //expect(await getHTML(page)).toContain(",,"); //TODO
+  return menuLocator;
+}
+
+async function checkMenu(page) {
+  expect(await getHTML(page)).not.toContain("note3"); //folded
+  expect(await getHTML(page)).not.toContain(",,");
+}
+
+test("quick menu", async ({ page }) => {
+  const menuLocator = await prepareMenu(page);
+  await expect(menuLocator).toHaveCount(1);
+  await expect(menuLocator).toContainText("Press a key...");
+  await expect(menuLocator.locator("li.list-group-item")).not.toHaveCount(0);
+  await expect(menuLocator.locator("li.list-group-item.active")).toHaveCount(0);
+
+  await page.keyboard.press("ArrowDown");
+  await expect(
+    menuLocator.locator("li.list-group-item.active")
+  ).not.toHaveCount(0);
+
+  await page.keyboard.press("Enter"); //blindly assuming that the first option is fold
+  await checkMenu(page);
+});
+
+test("quick menu - hot key", async ({ page }) => {
+  const menuLocator = await prepareMenu(page);
+
+  await page.keyboard.press("f"); //fold
+
+  expect(await getHTML(page)).not.toContain("note3"); //folded
+});
+
+test("quick menu - click", async ({ page }) => {
+  const menuLocator = await prepareMenu(page);
+  await page.locator("#typeahead-menu button :text('Fold')").click();
+  await checkMenu(page);
+});
+
+test("quick menu - arrows + enter", async ({ page }) => {
+  const menuLocator = await prepareMenu(page);
+
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("Enter");
+
+  await checkMenu(page);
+});
+
+test("quick menu - arrows + hot key", async ({ page }) => {
+  const menuLocator = await prepareMenu(page);
+
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("ArrowUp");
+
+  await page.keyboard.press("f"); //fold
+
+  await checkMenu(page);
+});
+
+test("quick menu - esc", async ({ page }) => {
+  const menuLocator = await prepareMenu(page);
+
+  await page.keyboard.press("Escape");
+
+  expect(await getHTML(page)).toContain("note3"); //not folded
+  expect(await getHTML(page)).not.toContain(",,");
+});
+
+test("quick menu - backspace", async ({ page }) => {
+  const menuLocator = await prepareMenu(page);
+
+  await page.keyboard.press("Backspace");
+
+  expect(await getHTML(page)).toContain("note3"); //not folded
+  expect(await getHTML(page)).not.toContain(",,");
+});
+
+test.fixme("quick menu - invalid hot key", async ({ page }) => {
+  const menuLocator = await prepareMenu(page);
+
+  await page.keyboard.press("$");
+
+  expect(await getHTML(page)).toContain("note3"); //not folded
+  expect(await getHTML(page)).not.toContain(",,");
+});
+
+//FIXME add a test for deleting folded notes
+//FIXME test clicking outside of the menu

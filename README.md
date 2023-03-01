@@ -17,6 +17,8 @@ TODO work on listeners (for example to update content and structure of breadcrum
 
 TODO check LexicalTypeahead and how it generates (hides?) nodes may be useful for filtering notes
 
+FIXME very wired behavior with url pointing to an not existing note
+
 TODO lexical bugs
 getActiveEditorState() (not available publicly) returns a different state than editor.getEditorState() which can cause problems if someone modifies state in editor.update()
 Vite and it's HMR cause errorOnKlassMismatch when saving custom's node source file
