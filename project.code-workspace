@@ -116,6 +116,13 @@
       },
       {
         "group": "test",
+        "label": "all tests watch",
+        "script": "test-watch",
+        "type": "npm",
+        "icon": { "id": "beaker" }
+      },
+      {
+        "group": "test",
         "label": "browser report",
         "script": "test-report",
         "type": "npm",
@@ -127,12 +134,6 @@
         "script": "websocket",
         "type": "npm",
         "icon": { "id": "plug" }
-      },
-      {
-        "label": "tsc watch",
-        "problemMatcher": [],
-        "type": "shell",
-        "command": "npx tsc-watch --onSuccess 'node _exec.js'"
       }
     ],
     "version": "2.0.0"

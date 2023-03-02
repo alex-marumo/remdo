@@ -231,51 +231,45 @@ export function NoteMenuPlugin(): JSX.Element {
 
         return anchorElementRef.current && options.length
           ? ReactDOM.createPortal(
-              <div className="typeahead-popover component-picker-menu">
-                <div className="w-auto">
-                  <ul className="list-group position-absolute top-100">
-                    <li className="list-group-item">
-                      <h6 className="dropdown-header">Press a key...</h6>
-                    </li>
-                    {options.map((option, index) => {
-                      const active = selectedIndex === index;
-                      return !option.title ? null : (
-                        <li
-                          key={option.key}
-                          tabIndex={-1}
-                          className={`list-group-item${
-                            active ? " active" : ""
-                          }`}
-                          role="option"
-                          aria-selected={active}
-                          aria-current={active}
-                          id={"typeahead-item-" + index}
-                          onMouseEnter={() => {
-                            setHighlightedIndex(index);
-                          }}
-                          onClick={() => {
-                            triggerOption(option);
-                          }}
-                        >
-                          <button className="dropdown-item" type="button">
-                            {option.icon}&nbsp;
-                            <span className="text">{option.title}</span>
-                          </button>
-                        </li>
-                      );
-                    })}
-                    <li className="list-group-item">
-                      <h6 className="dropdown-header">Hints</h6>
-                    </li>
-                    <li className="list-group-item">
+              <ul className="list-group position-absolute">
+                <li className="list-group-item">
+                  <h6 className="dropdown-header">Press a key...</h6>
+                </li>
+                {options.map((option, index) => {
+                  const active = selectedIndex === index;
+                  return !option.title ? null : (
+                    <li
+                      key={option.key}
+                      tabIndex={-1}
+                      className={`list-group-item${active ? " active" : ""}`}
+                      role="option"
+                      aria-selected={active}
+                      aria-current={active}
+                      id={"typeahead-item-" + index}
+                      onMouseEnter={() => {
+                        setHighlightedIndex(index);
+                      }}
+                      onClick={() => {
+                        triggerOption(option);
+                      }}
+                    >
                       <button className="dropdown-item" type="button">
-                        <i className="bi bi-file-binary" />
-                        &nbsp;Press 1-9 to set fold level
+                        {option.icon}&nbsp;
+                        <span className="text">{option.title}</span>
                       </button>
                     </li>
-                  </ul>
-                </div>
-              </div>,
+                  );
+                })}
+                <li className="list-group-item">
+                  <h6 className="dropdown-header">Hints</h6>
+                </li>
+                <li className="list-group-item">
+                  <button className="dropdown-item" type="button">
+                    <i className="bi bi-file-binary" />
+                    &nbsp;Press 1-9 to set fold level
+                  </button>
+                </li>
+              </ul>,
               anchorElementRef.current
             )
           : null;

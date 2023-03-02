@@ -14,8 +14,34 @@ import {
 } from "@testing-library/react";
 import type { ElementNode } from "lexical";
 import { TestContext as ComponentTestContext } from "../../src/plugins/ComponentTest";
-import { debug } from "vitest-preview";
 import { FULL_RECONCILE } from "@lexical/LexicalConstants";
+import fs from 'fs';
+import path from 'path';
+
+
+function debug() {
+  const CACHE_FOLDER = path.join(process.cwd(), 'data', ".vitest-preview");
+  //content directly copied from vitest-preview to change the cache folder
+  
+  function createCacheFolderIfNeeded() {
+    if (!fs.existsSync(CACHE_FOLDER)) {
+      fs.mkdirSync(CACHE_FOLDER, {
+        recursive: true,
+      });
+    }
+  }
+
+  function debug() {
+    createCacheFolderIfNeeded();
+    fs.writeFileSync(
+      path.join(CACHE_FOLDER, "index.html"),
+      document.documentElement.outerHTML
+    );
+  }
+  //end of copied code
+
+  debug();
+}
 
 declare module "vitest" {
   export interface TestContext {
@@ -140,9 +166,11 @@ beforeEach(async context => {
     }
   };
 
-  //wait for yjs to connect via websocket and init the editor content
-  while (editorElement.children.length == 0) {
-    await new Promise(r => setTimeout(r, 10));
+  if (!process.env.VITE_DISABLECOLLAB) {
+    //wait for yjs to connect via websocket and init the editor content
+    while (editorElement.children.length == 0) {
+      await new Promise(r => setTimeout(r, 10));
+    }
   }
 
   context.lexicalUpdate(() => {

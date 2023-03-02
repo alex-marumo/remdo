@@ -276,7 +276,7 @@ export default defineConfig({
     alias: playgroundResolveAlias,
   },
   build: {
-    outDir: "build",
+    outDir: "data/build",
     rollupOptions: {
       input: {
         main: "./index.html",
@@ -287,7 +287,7 @@ export default defineConfig({
     include: ["tests/unit/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     environment: "jsdom",
     open: false,
-    threads: false,
+    threads: !process.env.VITE_DISABLECOLLAB,
     api: {
       strictPort: true,
       port: getPort({ page: null, vitest_preview: 3007, playwright: null }),

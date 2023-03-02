@@ -30,14 +30,15 @@
     "websocket": "HOST=0.0.0.0 PORT=8080 npx y-websocket",
     "build": "vite build",
     "eject": "react-scripts eject",
-    "test-report": "npx playwright show-report --host 0.0.0.0",
+    "test-report": "npx playwright show-report data/playwright-report --host 0.0.0.0",
     "test-browser": "VITE_DISABLECOLLAB=true npm run test-browser-collab",
-    "test-browser-collab": "npx playwright test --project=chromium",
-    "test-browser-watch": "SHELL=zsh npx chokidar './**' --ignore 'playwright-report/**' --ignore 'test-results/**' -c 'npm run test-browser'",
+    "test-browser-collab": "npx playwright test --project=chromium | ./utils.sh trim_playwright",
+    "test-browser-watch": "./utils.sh watch_repo 'npm run test-browser'",
     "test-unit": "npx vitest run",
     "test-unit-watch": "npx vitest --ui",
-    "test-unit-preview": "SERVER_MODE=vitest_preview PORT=3001 npx vitest-preview",
-    "test": "npm run test-unit && npm run test-browser"
+    "test-unit-preview": "cd data && SERVER_MODE=vitest_preview PORT=3001 npx vitest-preview",
+    "test": "npm run test-unit && npm run test-browser",
+    "test-watch": "VITE_DISABLECOLLAB=true ./utils.sh watch_repo 'npm run test'"
   },
   "browserslist": {
     "production": [

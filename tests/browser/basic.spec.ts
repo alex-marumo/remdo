@@ -20,7 +20,7 @@ test.beforeEach(async ({ page }) => {
   page.on("console", message => {
     if (["warning", "error"].includes(message.type())) {
       console.error(`${message.type} inside the browser: `, message.text());
-      throw Error(message);
+      throw Error(message.text());
     }
   });
   page.on("pageerror", err => {
