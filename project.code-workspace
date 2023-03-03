@@ -35,7 +35,11 @@
       "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "cSpell.words": ["outdent"],
-    "cSpell.ignoreWords": ["collab", "Typeahead"],
+    "cSpell.ignoreWords": [
+      "Typeahead",
+      "collab",
+      "pageerror"
+    ],
     "cSpell.ignorePaths": [
       "package-lock.json",
       "node_modules",
