@@ -3,7 +3,7 @@ import { useEffect, useContext, createContext } from "react";
 
 export const TestContext = createContext(null);
 
-export function ComponentTestPlugin() {
+export function DevComponentTestPlugin() {
   const [editor] = useLexicalComposerContext();
   const testContext = useContext(TestContext);
 

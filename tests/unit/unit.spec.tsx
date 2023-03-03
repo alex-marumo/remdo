@@ -13,7 +13,7 @@ import {
   within,
 } from "@testing-library/react";
 import type { ElementNode } from "lexical";
-import { TestContext as ComponentTestContext } from "../../src/plugins/ComponentTest";
+import { TestContext as ComponentTestContext } from "../../src/plugins/DevComponentTest";
 import { FULL_RECONCILE } from "@lexical/LexicalConstants";
 import fs from 'fs';
 import path from 'path';

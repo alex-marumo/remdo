@@ -301,21 +301,6 @@ export function NotesPlugin({ anchorElement }) {
     setMenuExpanded(true);
   };
 
-  const clearContent = () => {
-    editor.update(() => {
-      editor.dispatchCommand(CLEAR_EDITOR_COMMAND, null);
-    });
-  };
-
-  const testAction = event => {
-    event.preventDefault();
-    console.clear();
-    editor._dirtyType = FULL_RECONCILE;
-    editor.update(() => {
-      console.log("testing");
-    });
-  };
-
   const toggleFold = event => {
     event.preventDefault();
     editor._dirtyType = FULL_RECONCILE; //TODO
@@ -352,20 +337,6 @@ export function NotesPlugin({ anchorElement }) {
         eventListener={rootMouseMove}
       />
       <nav aria-label="breadcrumb">
-        <button
-          type="button"
-          className="btn btn-link float-end"
-          onClick={clearContent}
-        >
-          Clear
-        </button>
-        <button
-          type="button"
-          className="btn btn-link float-end"
-          onClick={testAction}
-        >
-          Test
-        </button>
         <ol className="breadcrumb">
           {breadcrumbs.map((note, idx, { length }) => {
             return idx + 1 < length ? (

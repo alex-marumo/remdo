@@ -3,7 +3,7 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { TreeView } from "@lexical/react/LexicalTreeView";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
-import { ComponentTestPlugin } from "../plugins/ComponentTest";
+import { DevComponentTestPlugin } from "../plugins/DevComponentTest";
 
 import "./Editor.css";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
@@ -23,6 +23,7 @@ import React from "react";
 import { NotesPlugin } from "@/plugins/Notes";
 import { applyNodePatches } from "@/lexicalNodes";
 import { NoteMenuPlugin } from "@/plugins/NoteMenuPlugin";
+import Navigation from "@/plugins/DevToolbar";
 
 function providerFactory(id, yjsDocMap) {
   let doc = yjsDocMap.get(id);
@@ -98,6 +99,7 @@ export default function Editor() {
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div className="editor-container editor-shell">
+        <Navigation />
         {floatingAnchorElem && (
           <NotesPlugin anchorElement={floatingAnchorElem} />
         )}
@@ -111,7 +113,7 @@ export default function Editor() {
           placeholder={<Placeholder />}
           ErrorBoundary={LexicalErrorBoundary}
         />
-        <ComponentTestPlugin />
+        <DevComponentTestPlugin />
         <ClearEditorPlugin />
         <ListPlugin />
         <TabIndentationPlugin />

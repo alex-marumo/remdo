@@ -6,7 +6,9 @@
       "ms-playwright.playwright",
       "streetsidesoftware.code-spell-checker",
       "zignd.html-css-class-completion",
-      "zixuanchen.vitest-explorer"
+      "zixuanchen.vitest-explorer",
+      "github.copilot",
+      "github.copilot-labs"
     ]
   },
   "folders": [
