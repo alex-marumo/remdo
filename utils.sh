@@ -2,28 +2,35 @@
 
 SCRIPT_PATH=$0
 
+#launches this script in watch mode and auto executes test function on every change
 function debug {
-    #launches this script in watch mode and auto executes test function on every change
     $SCRIPT_PATH test
     SHELL=zsh npx chokidar $SCRIPT_PATH -c "$SCRIPT_PATH test"
 }
 
+#list files in thi git reporitory includes nedwly added and not commited yet
+#but does not include submodules, neither ignored files
 function repo_files {
-    #list files in thi git reporitory includes nedwly added and not commited yet
-    #but does not include submodules, neither ignored files
     NEW_FILES=$(git ls-files --others --exclude-standard)
     TRACKED_FILES=$(git ls-files)
     if [ "$1" = "include_submodules" ]; then
         echo $NEW_FILES $TRACKED_FILES
     else
-        SUBMODULES_REGEXP=$(git submodule foreach --quiet 'echo ^$path' | tr '\n' '|' | sed 's/|$//')
+        SUBMODULES_REGEXP=$(git submodule foreach --quiet 'echo ^$path' | $SCRIPT_PATH list_to_regexp)
         echo $NEW_FILES $TRACKED_FILES | grep -Ev $SUBMODULES_REGEXP
     fi
 }
 
+#converts list of files to regexp
+function list_to_regexp {
+    cat | tr '\n' '|' | sed 's/|$//'
+}
+
+#exclude data/ dir as symlink placed there causes firing commant twice
 function watch_repo {
-    #exclude data/ dir as symlink placed there causes firing commant twice
-    SHELL=zsh npx chokidar $(repo_files include_submodules | grep -Ev '^data/') -c $1
+    IGNORED=$(git ls-files --others --ignored --exclude-standard --directory | sed 's/\/$//' | $SCRIPT_PATH list_to_regexp)
+    echo $IGNORED
+    SHELL=zsh npx chokidar . --ignore "$IGNORED" -c "$1"
 }
 
 #test function, modify it as you like
@@ -32,14 +39,15 @@ function test {
     echo "testing"
 }
 
+#help message
 function wrong_usage {
     echo "Usage: $SCRIPT_PATH [function], where function is one of:"
     egrep "^function" $SCRIPT_PATH | grep -v wrong_usage | awk '{print " "$2}'
     exit 1
 }
 
+#removes some unnecessary lines from the end of the playwright output
 function trim_playwright {
-    #removes some unnecessary lines from the end of the playwright output
     cat | grep -Ev 'To open last HTML report run|npx playwright show-report data'
 }
 
