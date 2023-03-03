@@ -1,4 +1,4 @@
-import { describe, it, afterAll, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, afterAll, expect, beforeEach, afterEach, TestAPI, TestFunction } from "vitest";
 import React from "react";
 import App from "../../src/App";
 import { Note, NotesState } from "../../src/api";
@@ -15,14 +15,13 @@ import {
 import type { ElementNode } from "lexical";
 import { TestContext as ComponentTestContext } from "../../src/plugins/DevComponentTest";
 import { FULL_RECONCILE } from "@lexical/LexicalConstants";
-import fs from 'fs';
-import path from 'path';
-
+import fs from "fs";
+import path from "path";
 
 function debug() {
-  const CACHE_FOLDER = path.join(process.cwd(), 'data', ".vitest-preview");
+  const CACHE_FOLDER = path.join(process.cwd(), "data", ".vitest-preview");
   //content directly copied from vitest-preview to change the cache folder
-  
+
   function createCacheFolderIfNeeded() {
     if (!fs.existsSync(CACHE_FOLDER)) {
       fs.mkdirSync(CACHE_FOLDER, {
@@ -49,7 +48,7 @@ declare module "vitest" {
     queries?: BoundFunctions<
       typeof queries & { getAllNotNestedIListItems: typeof getAllByRole.bind }
     >;
-    lexicalUpdate: Function;
+    lexicalUpdate: (fn: () => void) => void;
   }
 }
 
@@ -57,6 +56,7 @@ declare module "vitest" {
 function testUpdate(
   title: string,
   fn: ({ root, context, rootNode }) => void,
+  // eslint-disable-next-line @typescript-eslint/ban-types
   runner: Function = it
 ) {
   if (fn.constructor.name == "AsyncFunction") {
@@ -105,7 +105,7 @@ function checkChildren(
       ...expectedChildren,
     ]);
     expect(note.hasChildren).toEqual(expectedChildren.length > 0);
-    for (let child of note.children) {
+    for (const child of note.children) {
       expect(child).toBeInstanceOf(Note);
     }
   });
@@ -153,7 +153,7 @@ beforeEach(async context => {
     editor.update(
       function () {
         try {
-          return updateFunction(...arguments);
+          return updateFunction();
         } catch (e) {
           err = e;
         }
@@ -438,7 +438,7 @@ describe("API", async () => {
     //TODO check visibility once folding changes rendering instead of just hiding via css
   });
 
-  it("focus and filter", context => {});
+  it.skip("focus and filter", null);
 
   it.skip("playground", context => {
     context.lexicalUpdate(() => {

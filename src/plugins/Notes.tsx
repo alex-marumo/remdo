@@ -6,7 +6,6 @@ import {
   $isRangeSelection,
   $getSelection,
   $getNearestNodeFromDOMNode,
-  CLEAR_EDITOR_COMMAND,
   $getRoot,
   COMMAND_PRIORITY_LOW,
   $getNodeByKey,
@@ -208,7 +207,7 @@ export function NotesPlugin({ anchorElement }) {
           }
           //end of copied code
 
-          let newListItemNode = $createListItemNode();
+          const newListItemNode = $createListItemNode();
           anchor.insertAfter(newListItemNode);
           newListItemNode.select();
           return true;

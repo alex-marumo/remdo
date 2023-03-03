@@ -36,10 +36,16 @@
     "[typescript]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "cSpell.words": ["outdent"],
+    "cSpell.words": [
+      "linebreak",
+      "outdent",
+      "viewports"
+    ],
     "cSpell.ignoreWords": [
+      "DISABLECOLLAB",
       "Typeahead",
       "collab",
+      "earch",
       "pageerror"
     ],
     "cSpell.ignorePaths": [
@@ -49,7 +55,9 @@
       ".git/objects",
       ".vscode",
       ".vscode-insiders",
-      "project.code-workspace"
+      "project.code-workspace",
+      "lexical",
+      "tsconfig.json"
     ],
     "editor.minimap.enabled": false,
     "editor.rulers": [80],
@@ -87,7 +95,10 @@
     "terminal.integrated.tabs.enableAnimation": false,
     "workbench.colorTheme": "Default Dark+",
     "files.autoSave": "onFocusChange",
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "eslint.lintTask.enable": true,
+    "explorer.confirmDelete": false,
+    "explorer.autoReveal": "focusNoScroll",
   },
   "tasks": {
     "tasks": [
@@ -142,6 +153,7 @@
         "icon": { "id": "plug" }
       }
     ],
+
     "version": "2.0.0"
   }
 }

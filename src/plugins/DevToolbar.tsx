@@ -1,7 +1,7 @@
 import { FULL_RECONCILE } from "@lexical/LexicalConstants";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { CLEAR_EDITOR_COMMAND } from "lexical";
-import React, { Children } from "react";
+import React from "react";
 
 const Navigation = () => {
   const [editor] = useLexicalComposerContext();
@@ -33,7 +33,6 @@ const Navigation = () => {
       </a>
     );
   };
-
   return (
     <div>
       <button
@@ -53,8 +52,6 @@ const Navigation = () => {
       <DevLink title="Vitest Preview" port="3001">
         <IconVitest />
       </DevLink>
-      {/* Resize to the height of the text */}
-
       <DevLink title="Playwright Report" port="9323">
         <IconPlaywright />
       </DevLink>

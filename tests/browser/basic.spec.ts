@@ -199,7 +199,7 @@ test("change root", async ({ page }) => {
   await page.keyboard.press("Tab");
 
   //focus on note2 and make sure that only it and it's child are visible
-  const el = await page.$('ul > li :text("note2")');
+  const el = await page.$("ul > li :text('note2')");
   const box = await el.boundingBox();
   const preFocusHTML = await getHTML(page);
 

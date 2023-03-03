@@ -92,11 +92,11 @@ export class Note {
   _lexicalNode: ElementNode;
 
   static from(keyOrNode: LexicalNode | string): Note {
-    let baseNode =
+    const baseNode =
       keyOrNode instanceof LexicalNode
         ? keyOrNode
         : $getNodeByKey(keyOrNode as string);
-    let liNode = findNearestListItemNode(baseNode);
+    const liNode = findNearestListItemNode(baseNode);
 
     if (!liNode) {
       return new Note("root");
@@ -112,7 +112,7 @@ export class Note {
 
   createChild(text = null): Note {
     const childNode = $createListItemNode();
-    let listNode = this._listNode(true).append(childNode);
+    const listNode = this._listNode(true).append(childNode);
     if (text) {
       childNode.append($createTextNode(text));
     }
@@ -135,7 +135,7 @@ export class Note {
     if (this.isRoot) {
       return null;
     }
-    let lexicalParentNode = this.lexicalNode.getParent();
+    const lexicalParentNode = this.lexicalNode.getParent();
     return Note.from(lexicalParentNode.getKey());
   }
 
@@ -258,7 +258,7 @@ export class Note {
 
   moveUp() {
     const lexicalNode = this.lexicalNode;
-    let prevNode = lexicalNode.getPreviousSibling();
+    const prevNode = lexicalNode.getPreviousSibling();
     if (!prevNode) {
       return;
     }

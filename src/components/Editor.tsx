@@ -21,7 +21,7 @@ import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { TextNode } from "lexical";
 import React from "react";
 import { NotesPlugin } from "@/plugins/Notes";
-import { applyNodePatches } from "@/lexicalNodes";
+import { applyNodePatches } from "@/lexical/nodes";
 import { NoteMenuPlugin } from "@/plugins/NoteMenuPlugin";
 import Navigation from "@/plugins/DevToolbar";
 

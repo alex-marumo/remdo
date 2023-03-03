@@ -1,5 +1,5 @@
-import { patch } from "./utils";
-import { NotesState, Note, getNotesEditorState } from "./api";
+import { patch } from "../utils";
+import { NotesState, Note, getNotesEditorState } from "../api";
 import { $isListItemNode, $isListNode, ListItemNode } from "@lexical/list";
 
 export function applyNodePatches(NodeType: any) {
