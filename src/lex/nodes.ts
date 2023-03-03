@@ -1,6 +1,6 @@
-import { patch } from "../utils";
 import { NotesState, Note, getNotesEditorState } from "../api";
-import { $isListItemNode, $isListNode, ListItemNode } from "@lexical/list";
+import { patch } from "../utils";
+import { $isListNode } from "@lexical/list";
 
 export function applyNodePatches(NodeType: any) {
   /*
@@ -28,6 +28,7 @@ export function applyNodePatches(NodeType: any) {
     //
     // search filter
     //
+    //TODO try to use "changeFocus" tag instead of changing state
     if (notesState.filter) {
       if ($isListNode(this)) {
         //TODO this could be specific for ListNode.createDOM

@@ -1,10 +1,9 @@
-import { FULL_RECONCILE } from "@lexical/LexicalConstants";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { useNotesLexicalComposerContext } from "@/lex/NotesComposerContext";
 import { CLEAR_EDITOR_COMMAND } from "lexical";
 import React from "react";
 
 const Navigation = () => {
-  const [editor] = useLexicalComposerContext();
+  const [editor] = useNotesLexicalComposerContext();
   const clearContent = () => {
     editor.update(() => {
       editor.dispatchCommand(CLEAR_EDITOR_COMMAND, null);
@@ -14,8 +13,7 @@ const Navigation = () => {
   const testAction = event => {
     event.preventDefault();
     console.clear();
-    editor._dirtyType = FULL_RECONCILE;
-    editor.update(() => {
+    editor.fullUpdate(() => {
       console.log("testing");
     });
   };

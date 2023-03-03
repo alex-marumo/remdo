@@ -1,10 +1,13 @@
+import { Note } from "@/api";
+import { NOTES_MOVE_COMMAND, NOTES_SEARCH_COMMAND } from "@/commands";
+import { useNotesLexicalComposerContext } from "@/lex/NotesComposerContext";
 import { INSERT_ORDERED_LIST_COMMAND } from "@lexical/list";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
   LexicalTypeaheadMenuPlugin,
   TriggerFn,
   TypeaheadOption,
 } from "@lexical/react/LexicalTypeaheadMenuPlugin";
+import { mergeRegister } from "@lexical/utils";
 import {
   $getSelection,
   $isRangeSelection,
@@ -16,11 +19,6 @@ import {
 } from "lexical";
 import React, { useEffect, useMemo, useRef } from "react";
 import ReactDOM from "react-dom";
-import { FULL_RECONCILE } from "@lexical/LexicalConstants";
-import { NOTES_MOVE_COMMAND, NOTES_SEARCH_COMMAND } from "@/commands";
-import { Note, NotesState } from "@/api";
-import { getActiveEditor } from "../../lexical/packages/lexical/src/LexicalUpdates";
-import { mergeRegister } from "@lexical/utils";
 
 class NoteMenuOption extends TypeaheadOption {
   title: JSX.Element;
@@ -52,7 +50,7 @@ class NoteMenuOption extends TypeaheadOption {
 }
 
 export function NoteMenuPlugin(): JSX.Element {
-  const [editor] = useLexicalComposerContext();
+  const [editor] = useNotesLexicalComposerContext();
   const triggerPattern = ",,";
   const triggerPatternIndex = useRef(0);
   const menuOpen = useRef(false);
@@ -169,14 +167,14 @@ export function NoteMenuPlugin(): JSX.Element {
         icon: <i className="bi bi-arrows-collapse" />,
         trigger: () => {
           //TODO use a directive
-          getActiveEditor()._dirtyType = FULL_RECONCILE;
-          const selection = $getSelection();
-          if (!$isRangeSelection(selection)) {
-            return false;
-          }
-          NotesState.getActive()._forceLexicalUpdate();
-          const note = Note.from(selection.focus.key);
-          note.fold = !note.fold;
+          editor.fullUpdate(() => {
+            const selection = $getSelection();
+            if (!$isRangeSelection(selection)) {
+              return false;
+            }
+            const note = Note.from(selection.focus.key);
+            note.fold = !note.fold;
+          });
         },
       }),
       new NoteMenuOption({

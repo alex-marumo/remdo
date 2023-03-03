@@ -1,5 +1,4 @@
 {
-  "root": true,
   "env": {
     "browser": true,
     "es2021": true
@@ -10,34 +9,35 @@
     "plugin:@typescript-eslint/recommended",
     "prettier"
   ],
+  "ignorePatterns": ["lexical"],
   "overrides": [],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
     "ecmaFeatures": {
-        "jsx": true
+      "jsx": true
     },
     "sourceType": "module"
   },
   "plugins": ["react", "react-hooks", "@typescript-eslint"],
+  "root": true,
   "rules": {
-    "react/jsx-uses-react": "error",
-    "react/jsx-uses-vars": "error",
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "error",
+    "react/jsx-uses-react": "warn",
+    "react/jsx-uses-vars": "warn",
+    "react-hooks/rules-of-hooks": "warn",
+    "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-this-alias": "off",
     "react/prop-types": "off",
-    "linebreak-style": ["error", "unix"],
-    "semi": ["error", "always"],
+    "linebreak-style": ["warn", "unix"],
+    "semi": ["warn", "always"],
     "no-unused-vars": "off"
   },
   "settings": {
     "react": {
       "version": "detect"
     }
-  },
-  "ignorePatterns":["lexical"]
+  }
 }

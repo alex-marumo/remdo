@@ -1,29 +1,27 @@
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { TreeView } from "@lexical/react/LexicalTreeView";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { DevComponentTestPlugin } from "../plugins/DevComponentTest";
-
+import IndentationPlugin from "../plugins/IndentationPlugin";
 import "./Editor.css";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+import { applyNodePatches } from "@/lex/nodes";
+import Navigation from "@/plugins/DevToolbar";
+import { NoteMenuPlugin } from "@/plugins/NoteMenuPlugin";
+import { NotesPlugin } from "@/plugins/Notes";
 import { ListNode, ListItemNode } from "@lexical/list";
-import { ListPlugin } from "@lexical/react/LexicalListPlugin";
-import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
-
-import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
 import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
+import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
+import { LexicalComposer } from "@lexical/react/LexicalComposer";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { ContentEditable } from "@lexical/react/LexicalContentEditable";
+import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
+import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
+import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
+import { TreeView } from "@lexical/react/LexicalTreeView";
+import { TextNode } from "lexical";
+import { useState } from "react";
+import React from "react";
 import { WebsocketProvider } from "y-websocket";
 import { Doc } from "yjs";
-import { useState } from "react";
-import IndentationPlugin from "../plugins/IndentationPlugin";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { TextNode } from "lexical";
-import React from "react";
-import { NotesPlugin } from "@/plugins/Notes";
-import { applyNodePatches } from "@/lexical/nodes";
-import { NoteMenuPlugin } from "@/plugins/NoteMenuPlugin";
-import Navigation from "@/plugins/DevToolbar";
 
 function providerFactory(id, yjsDocMap) {
   let doc = yjsDocMap.get(id);

@@ -1,4 +1,17 @@
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { KEY_BACKSPACE_COMMAND } from "../../lexical/packages/lexical/src/LexicalCommands";
+import { useNotesLexicalComposerContext } from "../lex/NotesComposerContext";
+import "./Notes.css";
+import { Note, NotesState } from "@/api";
+import { NOTES_FOLD_COMMAND } from "@/commands";
+import {
+  $createListNode,
+  $createListItemNode,
+  $isListNode,
+  $isListItemNode,
+  ListItemNode,
+} from "@lexical/list";
+import { NodeEventPlugin } from "@lexical/react/LexicalNodeEventPlugin";
+import { mergeRegister } from "@lexical/utils";
 import {
   RootNode,
   INSERT_PARAGRAPH_COMMAND,
@@ -10,34 +23,19 @@ import {
   COMMAND_PRIORITY_LOW,
   $getNodeByKey,
 } from "lexical";
-import { FULL_RECONCILE } from "@lexical/LexicalConstants";
-import { useEffect, useRef, useState, useCallback } from "react";
-import "./Notes.css";
-import {
-  $createListNode,
-  $createListItemNode,
-  $isListNode,
-  $isListItemNode,
-  ListItemNode,
-} from "@lexical/list";
-import { mergeRegister } from "@lexical/utils";
 import {
   SELECTION_CHANGE_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
   $setSelection,
 } from "lexical";
-import { createPortal } from "react-dom";
-import React from "react";
 import PropTypes from "prop-types";
+import { useEffect, useRef, useState, useCallback } from "react";
+import React from "react";
+import { createPortal } from "react-dom";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { Note, NotesState } from "@/api";
-import { NodeEventPlugin } from "@lexical/react/LexicalNodeEventPlugin";
-import { NOTES_FOLD_COMMAND } from "@/commands";
-import { KEY_BACKSPACE_COMMAND } from "../../lexical/packages/lexical/src/LexicalCommands";
-
 export function NotesPlugin({ anchorElement }) {
-  const [editor] = useLexicalComposerContext();
+  const [editor] = useNotesLexicalComposerContext();
   const menuRef = useRef(null);
   const [hoveredNoteElement, setHoveredNoteElement] = useState(null);
   const [menuExpanded, setMenuExpanded] = useState(false);
@@ -49,10 +47,9 @@ export function NotesPlugin({ anchorElement }) {
   const locationParams = useParams();
   const rootRef = useRef("");
 
-  const changeRoot = useCallback(
+  const setFocus = useCallback(
     (key: string) => {
-      editor._dirtyType = FULL_RECONCILE;
-      editor.update(
+      editor.fullUpdate(
         () => {
           const note = Note.from(key);
           rootRef.current = note.lexicalKey;
@@ -73,12 +70,11 @@ export function NotesPlugin({ anchorElement }) {
   );
 
   useEffect(() => {
-    changeRoot(locationParams["noteID"]);
-  }, [changeRoot, locationParams]);
+    setFocus(locationParams["noteID"]);
+  }, [setFocus, locationParams]);
 
   useEffect(() => {
-    editor._dirtyType = FULL_RECONCILE;
-    editor.update(() => {
+    editor.fullUpdate(() => {
       const notesState = NotesState.getActive();
       notesState.setFilter(noteFilter);
       $setSelection(null);
@@ -180,7 +176,7 @@ export function NotesPlugin({ anchorElement }) {
           rootRef.current !== noteID &&
           mutatedNodes.get(noteID) === "created"
         ) {
-          changeRoot(noteID);
+          setFocus(noteID);
         }
       }),
       editor.registerCommand(
@@ -282,9 +278,7 @@ export function NotesPlugin({ anchorElement }) {
             return false;
           }
           console.log("command", selection.focus.key);
-          //getActiveEditorState()._di = FULL_RECONCILE;
-          editor._dirtyType = FULL_RECONCILE;
-          editor.update(() => {
+          editor.fullUpdate(() => {
             Note.from(selection.focus.key).fold = true;
           });
           return true;
@@ -292,7 +286,7 @@ export function NotesPlugin({ anchorElement }) {
         COMMAND_PRIORITY_LOW
       )
     );
-  }, [changeRoot, editor, locationParams, rootKeyDownListener]);
+  }, [setFocus, editor, locationParams, rootKeyDownListener]);
 
   const menuClick = e => {
     e.preventDefault();
@@ -302,9 +296,7 @@ export function NotesPlugin({ anchorElement }) {
 
   const toggleFold = event => {
     event.preventDefault();
-    editor._dirtyType = FULL_RECONCILE; //TODO
-    editor.update(() => {
-      NotesState.getActive()._forceLexicalUpdate(); //TODO
+    editor.fullUpdate(() => {
       const node = $getNearestNodeFromDOMNode(hoveredNoteElement);
       const note = Note.from(node);
       note.fold = !note.fold;

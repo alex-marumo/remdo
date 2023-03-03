@@ -1,8 +1,6 @@
-import { describe, it, afterAll, expect, beforeEach, afterEach, TestAPI, TestFunction } from "vitest";
-import React from "react";
 import App from "../../src/App";
 import { Note, NotesState } from "../../src/api";
-import { $createTextNode, $getRoot, $setSelection } from "lexical";
+import { TestContext as ComponentTestContext } from "../../src/plugins/DevComponentTest";
 import { $isListNode, $isListItemNode } from "@lexical/list";
 import {
   BoundFunctions,
@@ -12,11 +10,12 @@ import {
   RenderResult,
   within,
 } from "@testing-library/react";
-import type { ElementNode } from "lexical";
-import { TestContext as ComponentTestContext } from "../../src/plugins/DevComponentTest";
-import { FULL_RECONCILE } from "@lexical/LexicalConstants";
 import fs from "fs";
+import { $createTextNode, $getRoot, $setSelection } from "lexical";
+import type { ElementNode } from "lexical";
 import path from "path";
+import React from "react";
+import { describe, it, afterAll, expect, beforeEach, afterEach } from "vitest";
 
 function debug() {
   const CACHE_FOLDER = path.join(process.cwd(), "data", ".vitest-preview");
@@ -149,8 +148,7 @@ beforeEach(async context => {
 
   context.lexicalUpdate = updateFunction => {
     let err = null;
-    editor._dirtyType = FULL_RECONCILE;
-    editor.update(
+    editor.fullUpdate(
       function () {
         try {
           return updateFunction();
