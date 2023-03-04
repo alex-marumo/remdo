@@ -10,6 +10,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
+      "@lexical/playground/*": [
+        "./lexical/packages/lexical-playground/src/*"
+      ],
       //copied from lexical/tsconfig.json
       "lexical": ["./lexical/packages/lexical/src/"],
       "@lexical/clipboard": ["./lexical/packages/lexical-clipboard/src/"],
@@ -170,13 +173,25 @@
         "./lexical/packages/lexical-react/src/LexicalCheckListPlugin.tsx"
       ],
 
-      "@lexical/dragon/LexicalDragon": ["./lexical/packages/lexical-dragon/src/"],
-      "@lexical/history/LexicalHistory": ["./lexical/packages/lexical-history/src/"],
+      "@lexical/dragon/LexicalDragon": [
+        "./lexical/packages/lexical-dragon/src/"
+      ],
+      "@lexical/history/LexicalHistory": [
+        "./lexical/packages/lexical-history/src/"
+      ],
       "@lexical/link/LexicalLink": ["./lexical/packages/lexical-link/src/"],
-      "@lexical/markdown/LexicalMarkdown": ["./lexical/packages/lexical-markdown/src/"],
-      "@lexical/headless/LexicalHeadless": ["./lexical/packages/lexical-markdown/src/"],
-      "@lexical/offset/LexicalOffset": ["./lexical/packages/lexical-offset/src/"],
-      "@lexical/overflow/LexicalOverflow": ["./lexical/packages/lexical-overflow/src/"],
+      "@lexical/markdown/LexicalMarkdown": [
+        "./lexical/packages/lexical-markdown/src/"
+      ],
+      "@lexical/headless/LexicalHeadless": [
+        "./lexical/packages/lexical-markdown/src/"
+      ],
+      "@lexical/offset/LexicalOffset": [
+        "./lexical/packages/lexical-offset/src/"
+      ],
+      "@lexical/overflow/LexicalOverflow": [
+        "./lexical/packages/lexical-overflow/src/"
+      ],
       "@lexical/plain-text/LexicalPlainText": [
         "./lexical/packages/lexical-plain-text/src/"
       ],
@@ -202,7 +217,7 @@
         "lexical/packages/lexical/src/LexicalUpdates.ts"
       ],
       "@lexical/LexicalUtils": ["lexical/packages/lexical/src/LexicalUtils.ts"],
-      "@lexical/LexicalNode": ["./lexical/packages/lexical/src/LexicalNode.ts"]
+      "@lexical/LexicalNode": ["lexical/packages/lexical/src/LexicalNode.ts"]
     }
   },
   "exclude": ["**/node_modules/**"]

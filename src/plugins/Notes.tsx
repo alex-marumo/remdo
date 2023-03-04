@@ -90,7 +90,7 @@ export function NotesPlugin({ anchorElement }) {
       ) {
         return;
       }
-      let key;
+      let key: string;
       //TODO read or just passing editor state should be enough, re-check in a newer lexical version
       editor.update(() => {
         key = $getNearestNodeFromDOMNode(target).getKey();

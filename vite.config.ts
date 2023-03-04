@@ -1,9 +1,9 @@
 /* eslint-disable prefer-rest-params */
-import { defineConfig } from "vite";
-import path from "path";
-import fs from "fs";
-import react from "@vitejs/plugin-react";
 import babel from "@rollup/plugin-babel";
+import react from "@vitejs/plugin-react";
+import fs from "fs";
+import path from "path";
+import { defineConfig } from "vite";
 
 // TODO copied from lexical playground vite config + duplicated with tsconfig
 
@@ -181,6 +181,12 @@ const playgroundResolveAlias = moduleResolution.map(module => {
 //finally let's add some missing entries
 //do it at the beginning of the array so they take the priority
 playgroundResolveAlias.unshift(
+  {
+    find: "@lexical/playground",
+    replacement: path.resolve(
+      "./lexical/packages/lexical-playground/src"
+    ),
+  },
   {
     find: "@lexical/react/LexicalTabIndentationPlugin",
     replacement: path.resolve(

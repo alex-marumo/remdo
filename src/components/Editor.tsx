@@ -6,6 +6,9 @@ import Navigation from "@/plugins/DevToolbar";
 import { NoteMenuPlugin } from "@/plugins/NoteMenuPlugin";
 import { NotesPlugin } from "@/plugins/Notes";
 import { ListNode, ListItemNode } from "@lexical/list";
+import "@lexical/playground/index.css";
+import FloatingTextFormatToolbarPlugin from "@lexical/playground/plugins/FloatingTextFormatToolbarPlugin";
+import "@lexical/playground/plugins/FloatingTextFormatToolbarPlugin/index.css";
 import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
 import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
@@ -17,13 +20,14 @@ import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { TreeView } from "@lexical/react/LexicalTreeView";
+import { Provider } from "@lexical/yjs";
 import { TextNode } from "lexical";
 import { useState } from "react";
 import React from "react";
 import { WebsocketProvider } from "y-websocket";
 import { Doc } from "yjs";
 
-function providerFactory(id, yjsDocMap) {
+function providerFactory(id: string, yjsDocMap: Map<string, Doc>): Provider {
   let doc = yjsDocMap.get(id);
 
   if (doc === undefined) {
@@ -41,6 +45,7 @@ function providerFactory(id, yjsDocMap) {
     }
   );
   wsProvider.shouldConnect = true; //reconnect after disconnecting
+  // @ts-ignore
   return wsProvider;
 }
 
@@ -88,6 +93,16 @@ export default function Editor() {
         },
         ol: "editor-list-ol",
       },
+      text: {
+        bold: "font-weight-bold",
+        code: "",
+        italic: "font-italic",
+        strikethrough: "strikethrough",
+        subscript: "subscript",
+        superscript: "superscript",
+        underline: "underline",
+        underlineStrikethrough: "underline strikethrough",
+      },
     },
     editorState: null,
     //@ts-ignore
@@ -112,6 +127,7 @@ export default function Editor() {
           ErrorBoundary={LexicalErrorBoundary}
         />
         <DevComponentTestPlugin />
+        <FloatingTextFormatToolbarPlugin />
         <ClearEditorPlugin />
         <ListPlugin />
         <TabIndentationPlugin />

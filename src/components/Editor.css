@@ -15,3 +15,22 @@
 .tree-view-output > button {
   display: none;
 }
+
+/* font */
+.strikethrough {
+  text-decoration: line-through;
+}
+
+.subscript {
+  vertical-align: sub;
+  font-size: smaller;
+}
+
+.superscript {
+  vertical-align: super;
+  font-size: smaller;
+}
+
+.underline {
+  text-decoration: underline;
+}
