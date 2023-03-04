@@ -2,7 +2,7 @@ import { DevComponentTestPlugin } from "../plugins/DevComponentTest";
 import IndentationPlugin from "../plugins/IndentationPlugin";
 import "./Editor.css";
 import { applyNodePatches } from "@/lex/nodes";
-import Navigation from "@/plugins/DevToolbar";
+import { DevToolbar } from "@/plugins/DevToolbar";
 import { NoteMenuPlugin } from "@/plugins/NoteMenuPlugin";
 import { NotesPlugin } from "@/plugins/Notes";
 import { ListNode, ListItemNode } from "@lexical/list";
@@ -73,6 +73,7 @@ applyNodePatches(ListItemNode);
 
 export default function Editor() {
   const [floatingAnchorElem, setFloatingAnchorElem] = useState(null);
+  const [editorBottom, setEditorBottom] = useState(null);
 
   const onRef = _floatingAnchorElem => {
     if (_floatingAnchorElem !== null) {
@@ -112,7 +113,7 @@ export default function Editor() {
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div className="editor-container editor-shell">
-        <Navigation />
+        <DevToolbar editorBottom={editorBottom} />
         {floatingAnchorElem && (
           <NotesPlugin anchorElement={floatingAnchorElem} />
         )}
@@ -132,7 +133,6 @@ export default function Editor() {
         <ListPlugin />
         <TabIndentationPlugin />
         <IndentationPlugin />
-        <TreeViewPlugin />
         {editorConfig.disableCollab ? (
           <HistoryPlugin />
         ) : (
@@ -142,6 +142,7 @@ export default function Editor() {
             shouldBootstrap={true}
           />
         )}
+        <div id="editor-bottom" ref={setEditorBottom} />
       </div>
     </LexicalComposer>
   );

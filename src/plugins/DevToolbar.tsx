@@ -1,9 +1,13 @@
 import { useNotesLexicalComposerContext } from "@/lex/NotesComposerContext";
+import TreeViewPlugin from "@lexical/playground/plugins/TreeViewPlugin";
 import { CLEAR_EDITOR_COMMAND } from "lexical";
-import React from "react";
+import React, { useState } from "react";
+import { createPortal } from "react-dom";
 
-const Navigation = () => {
+export const DevToolbar = ({ editorBottom }) => {
   const [editor] = useNotesLexicalComposerContext();
+  const [showDebug, setShowDebugState] = useState(false);
+
   const clearContent = () => {
     editor.update(() => {
       editor.dispatchCommand(CLEAR_EDITOR_COMMAND, null);
@@ -18,7 +22,7 @@ const Navigation = () => {
     });
   };
 
-  const DevLink = ({ title, port, children }) => {
+  const DifferentPortSameHostLink = ({ title, port, children }) => {
     return (
       <a
         href={`${location.protocol}//${location.hostname}:${port}`}
@@ -31,29 +35,55 @@ const Navigation = () => {
       </a>
     );
   };
+
+  const toggleShowDebug = () => {
+    setShowDebugState(!showDebug);
+    editor.update(() => {
+      editor.focus();
+    });
+  };
+
   return (
-    <div>
+    <>
+      <div>
+        <button
+          type="button"
+          className="btn btn-link float-end"
+          onClick={clearContent}
+        >
+          Clear
+        </button>
+        <button
+          type="button"
+          className="btn btn-link float-end"
+          onClick={testAction}
+        >
+          Test
+        </button>
+        <DifferentPortSameHostLink title="Vitest Preview" port="3001">
+          <IconVitest />
+        </DifferentPortSameHostLink>
+        <DifferentPortSameHostLink title="Playwright Report" port="9323">
+          <IconPlaywright />
+        </DifferentPortSameHostLink>
+      </div>
       <button
         type="button"
         className="btn btn-link float-end"
-        onClick={clearContent}
+        onClick={toggleShowDebug}
       >
-        Clear
+        <i className="bi bi-bug-fill text-secondary"></i>
+        Show Debug
       </button>
-      <button
-        type="button"
-        className="btn btn-link float-end"
-        onClick={testAction}
-      >
-        Test
-      </button>
-      <DevLink title="Vitest Preview" port="3001">
-        <IconVitest />
-      </DevLink>
-      <DevLink title="Playwright Report" port="9323">
-        <IconPlaywright />
-      </DevLink>
-    </div>
+      {editorBottom &&
+        showDebug &&
+        createPortal(
+          <div>
+            <TreeViewPlugin />
+          </div>,
+          editorBottom
+        )}
+    </>
   );
 };
 
@@ -82,5 +112,3 @@ const IconVitest = () => {
     </svg>
   );
 };
-
-export default Navigation;
