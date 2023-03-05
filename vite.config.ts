@@ -4,6 +4,7 @@ import react from "@vitejs/plugin-react";
 import fs from "fs";
 import path from "path";
 import { defineConfig } from "vite";
+import Terminal from "vite-plugin-terminal";
 
 // TODO copied from lexical playground vite config + duplicated with tsconfig
 
@@ -183,9 +184,7 @@ const playgroundResolveAlias = moduleResolution.map(module => {
 playgroundResolveAlias.unshift(
   {
     find: "@lexical/playground",
-    replacement: path.resolve(
-      "./lexical/packages/lexical-playground/src"
-    ),
+    replacement: path.resolve("./lexical/packages/lexical-playground/src"),
   },
   {
     find: "@lexical/react/LexicalTabIndentationPlugin",
@@ -240,6 +239,9 @@ function getPort({ page, vitest_preview, playwright }) {
   return port;
 }
 
+const terminalPlugin = Terminal({ console: "terminal" });
+//console.log("terminal plugin", terminalPlugin[0]);
+
 export default defineConfig({
   server: {
     port: getPort({
@@ -258,6 +260,19 @@ export default defineConfig({
 
   //TODO copied from lexical playground
   plugins: [
+    {
+      name: "terminal-patch",
+      configureServer(server) {
+        server.middlewares.use("/__terminal", (req, res, next) => {
+          //replace host with a dot in logs from the browser
+          //the idea is to change file paths clickable in the terminal
+          const regexp = new RegExp(`(http|https)://${req.headers.host}`, "g");
+          req.url = req.url.replaceAll(regexp, ".");
+          next();
+        });
+      },
+    },
+    terminalPlugin,
     //@ts-ignore
     babel({
       babelHelpers: "bundled",
