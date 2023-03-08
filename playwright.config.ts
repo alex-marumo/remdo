@@ -7,7 +7,7 @@ import { devices } from "@playwright/test";
  * See https://playwright.dev/docs/test-configuration.
  */
 
-const port = 3020;
+const port = 3023;
 const disableCollab = process.env.VITE_DISABLECOLLAB;
 
 const config: PlaywrightTestConfig = {

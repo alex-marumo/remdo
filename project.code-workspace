@@ -36,11 +36,7 @@
     "[typescript]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "cSpell.words": [
-      "linebreak",
-      "outdent",
-      "viewports"
-    ],
+    "cSpell.words": ["linebreak", "middlewares", "outdent", "viewports"],
     "cSpell.ignoreWords": [
       "DISABLECOLLAB",
       "Typeahead",
@@ -99,59 +95,171 @@
     "eslint.lintTask.enable": true,
     "explorer.confirmDelete": false,
     "explorer.autoReveal": "focusNoScroll",
-    "editor.wordWrap": "on",
+    "editor.wordWrap": "on"
   },
   "tasks": {
     "tasks": [
       {
         "group": "none",
-        "label": "server",
+        "label": "kill backgrund tasks",
+        "icon": {
+          "id": "close-all",
+          "color": "terminal.ansiRed"
+        },
         "problemMatcher": [],
-        "script": "server",
-        "type": "npm",
-        "icon": { "id": "cloud" }
+        "command": "npm run kill-npm-processes",
+        "type": "shell",
+        "presentation": {
+          "close": true
+        }
+      },
+      {
+        "group": "test",
+        "label": "browser tests",
+        "command": "npm run test-browser-watch",
+        "type": "shell",
+        "icon": {
+          "id": "beaker"
+        },
+        //"isBackground": true,
+        "runOptions": {
+          "runOn": "folderOpen",
+          "instanceLimit": 1
+        },
+        "presentation": {
+          "revealProblems": "onProblem",
+          "panel": "dedicated",
+          "clear": true,
+          "group": "test",
+          "close": true
+        },
+        /*"problemMatcher": {
+          "owner": "javascript",
+          "fileLocation": ["relative", "${workspaceFolder}/tests/browser"],
+          "pattern": {
+            "regexp": "^(.*?)\\[(.*])(\\s*?)›(\\s*?)(.*?):(\\d+):(\\d+)(\\s*?)›(\\s*?)(.*?)(\\=+)(.*?)$",
+            "file": 5,
+            "line": 6,
+            "column": 7,
+            "message": 10
+          }
+        }*/
       },
       {
         "group": "test",
         "label": "unit watch",
-        "script": "test-unit-watch",
-        "type": "npm",
-        "icon": { "id": "beaker" }
+        "command": "npm run test-unit-watch",
+        "type": "shell",
+        "icon": {
+          "id": "beaker"
+        },
+        "isBackground": true,
+        "runOptions": {
+          "runOn": "folderOpen",
+          "instanceLimit": 1
+        },
+        "presentation": {
+          "revealProblems": "onProblem",
+          "panel": "dedicated",
+          "clear": true,
+          "group": "test",
+          "close": true
+        },
+        /*"problemMatcher": {
+          "owner": "javascript",
+          "fileLocation": ["relative", "${workspaceFolder}"],
+          "pattern": {
+            "regexp": "^(\\s*?)❯(\\s*?)(.*?):(\\d+):(\\d+)(\\s*?)$",
+            "file": 3,
+            "line": 4,
+            "column": 5,
+            "message": 3
+          },
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "^(.*?)RERUN(.*?)$",
+            "endsPattern": "^(.*?)to show help(.*?)$",
+          }
+        }*/
       },
       {
-        "group": "test",
-        "label": "unit preview",
-        "script": "test-unit-preview",
-        "type": "npm",
-        "icon": { "id": "open-preview" }
-      },
-      {
-        "group": "test",
-        "label": "browser watch",
-        "script": "test-browser-watch",
-        "type": "npm",
-        "icon": { "id": "browser" }
-      },
-      {
-        "group": "test",
-        "label": "all tests watch",
-        "script": "test-watch",
-        "type": "npm",
-        "icon": { "id": "beaker" }
-      },
-      {
-        "group": "test",
-        "label": "browser report",
-        "script": "test-report",
-        "type": "npm",
-        "icon": { "id": "report" }
+        "label": "server",
+        "problemMatcher": [],
+        "command": "npm run server",
+        "type": "shell",
+        "icon": {
+          "id": "cloud"
+        },
+        "isBackground": true,
+        "presentation": {
+          "panel": "dedicated",
+          "clear": true,
+          "group": "server",
+          "close": true
+        },
+        "runOptions": {
+          "runOn": "folderOpen",
+          "instanceLimit": 1
+        }
       },
       {
         "label": "websocket",
         "problemMatcher": [],
-        "script": "websocket",
-        "type": "npm",
-        "icon": { "id": "plug" }
+        "command": "npm run websocket",
+        "type": "shell",
+        "icon": {
+          "id": "plug"
+        },
+        "isBackground": true,
+        "presentation": {
+          "group": "server",
+          "panel": "dedicated",
+          "clear": true,
+          "close": true
+        },
+        "runOptions": {
+          "runOn": "folderOpen",
+          "instanceLimit": 1
+        }
+      },
+      {
+        "group": "test",
+        "label": "browser report",
+        "command": "npm run test-report",
+        "type": "shell",
+        "icon": {
+          "id": "report"
+        },
+        "isBackground": true,
+        "presentation": {
+          "panel": "dedicated",
+          "clear": true,
+          "group": "server",
+          "close": true
+        },
+        "runOptions": {
+          "runOn": "folderOpen",
+          "instanceLimit": 1
+        }
+      },
+      {
+        "group": "test",
+        "label": "unit preview",
+        "command": "npm run test-unit-preview",
+        "type": "shell",
+        "icon": {
+          "id": "open-preview"
+        },
+        "isBackground": true,
+        "presentation": {
+          "panel": "dedicated",
+          "clear": true,
+          "group": "server",
+          "close": true
+        },
+        "runOptions": {
+          "instanceLimit": 1
+        }
       }
     ],
 

@@ -33,12 +33,11 @@
     "test-report": "npx playwright show-report data/playwright-report --host 0.0.0.0",
     "test-browser": "VITE_DISABLECOLLAB=true npm run test-browser-collab",
     "test-browser-collab": "npx playwright test --project=chromium | ./utils.sh trim_playwright",
-    "test-browser-watch": "./utils.sh watch_repo 'npm run test-browser'",
+    "test-browser-watch": "VITE_DISABLECOLLAB=true ./utils.sh watch_repo 'npm run test-browser'",
     "test-unit": "npx vitest run",
-    "test-unit-watch": "npx vitest --ui",
+    "test-unit-watch": "VITE_DISABLECOLLAB=true npx vitest --ui --no-color",
     "test-unit-preview": "cd data && SERVER_MODE=vitest_preview PORT=3001 npx vitest-preview",
     "test": "npm run test-unit && npm run test-browser",
-    "test-watch": "VITE_DISABLECOLLAB=true ./utils.sh watch_repo 'npm run test'",
     "kill-npm-processes": "ps -eaf | grep 'npm run' | awk '{print $2}' |  xargs kill"
   },
   "browserslist": {
