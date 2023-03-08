@@ -1,6 +1,7 @@
 import { NotesState, Note, getNotesEditorState } from "../api";
 import { patch } from "../utils";
 import { $isListNode } from "@lexical/list";
+import { addClassNamesToElement } from "@lexical/utils";
 
 export function applyNodePatches(NodeType: any) {
   /*
@@ -59,12 +60,15 @@ export function applyNodePatches(NodeType: any) {
       //
       // is fold?
       //
-      if ([...Note.from(this).parents].some(p => p.fold)) {
+      const note = Note.from(this);
+      if ([...note.parents].some(p => p.fold)) {
         //TODO should be specific to ListNode
         return document.createElement("div");
       }
-
       const dom: HTMLElement = oldMethod(config, editor);
+      if(note.fold) {
+        addClassNamesToElement(dom, "note-folded");
+      }
       return dom;
     } else {
       return document.createElement("div");

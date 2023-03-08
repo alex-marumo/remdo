@@ -3,6 +3,7 @@ import { useNotesLexicalComposerContext } from "../lex/NotesComposerContext";
 import "./Notes.css";
 import { Note, NotesState } from "@/api";
 import { NOTES_FOLD_COMMAND } from "@/commands";
+import { NoteControls } from "@/components/NoteControls";
 import {
   $createListNode,
   $createListItemNode,
@@ -10,7 +11,6 @@ import {
   $isListItemNode,
   ListItemNode,
 } from "@lexical/list";
-import { NodeEventPlugin } from "@lexical/react/LexicalNodeEventPlugin";
 import { mergeRegister } from "@lexical/utils";
 import {
   RootNode,
@@ -24,7 +24,6 @@ import {
   $getNodeByKey,
 } from "lexical";
 import {
-  SELECTION_CHANGE_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
   $setSelection,
 } from "lexical";
@@ -36,9 +35,6 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 export function NotesPlugin({ anchorElement }) {
   const [editor] = useNotesLexicalComposerContext();
-  const menuRef = useRef(null);
-  const [hoveredNoteElement, setHoveredNoteElement] = useState(null);
-  const [menuExpanded, setMenuExpanded] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState([
     { key: "root", text: "ToDo" },
   ]);
@@ -104,32 +100,6 @@ export function NotesPlugin({ anchorElement }) {
       anchorElement?.removeEventListener("click", onClick);
     };
   }, [anchorElement, editor, navigate]);
-
-  useEffect(() => {
-    if (menuRef.current) {
-      setMenuPosition(hoveredNoteElement, menuRef.current, anchorElement);
-    }
-  }, [anchorElement, hoveredNoteElement]);
-
-  function setMenuPosition(
-    targetElement: HTMLElement,
-    floatingElement: HTMLElement,
-    anchor: HTMLAnchorElement
-  ) {
-    if (!targetElement) {
-      return;
-    }
-    const targetRectangle = targetElement.getBoundingClientRect();
-    const anchorRectangle = anchor.getBoundingClientRect();
-    const floatingRectangle = floatingElement.getBoundingClientRect();
-    const top = targetRectangle.y - anchorRectangle.y;
-    const left =
-      targetRectangle.x -
-      anchorRectangle.x -
-      floatingRectangle.width -
-      parseFloat(getComputedStyle(targetElement, ":before").width);
-    floatingElement.style.transform = `translate(${left}px, ${top}px)`;
-  }
 
   const rootKeyDownListener = useCallback(
     //TODO add browser test and move this somewhere else
@@ -252,24 +222,6 @@ export function NotesPlugin({ anchorElement }) {
         listItemNode.select();
       }),
       editor.registerCommand(
-        //close menu and change its position
-        SELECTION_CHANGE_COMMAND,
-        () => {
-          const selection = $getSelection();
-          if (!$isRangeSelection(selection)) {
-            return false;
-          }
-          //TODO use notes api
-          const focusLIElement = editor
-            .getElementByKey(selection.focus.key)
-            .closest("li");
-          setHoveredNoteElement(focusLIElement);
-          setMenuExpanded(false);
-          return false;
-        },
-        COMMAND_PRIORITY_CRITICAL
-      ),
-      editor.registerCommand(
         NOTES_FOLD_COMMAND,
         () => {
           //TODO create notes API for that
@@ -277,7 +229,6 @@ export function NotesPlugin({ anchorElement }) {
           if (!$isRangeSelection(selection)) {
             return false;
           }
-          console.log("command", selection.focus.key);
           editor.fullUpdate(() => {
             Note.from(selection.focus.key).fold = true;
           });
@@ -288,45 +239,8 @@ export function NotesPlugin({ anchorElement }) {
     );
   }, [setFocus, editor, locationParams, rootKeyDownListener]);
 
-  const menuClick = e => {
-    e.preventDefault();
-
-    setMenuExpanded(true);
-  };
-
-  const toggleFold = event => {
-    event.preventDefault();
-    editor.fullUpdate(() => {
-      const node = $getNearestNodeFromDOMNode(hoveredNoteElement);
-      const note = Note.from(node);
-      note.fold = !note.fold;
-    });
-  };
-
-  const rootMouseMove = (event: MouseEvent) => {
-    //it would be easier to assign this listener to ListItemNode instead of RootNode
-    //the problem is that indented ListItem element don't extend to the left side of the RootNode element
-    //this is also why, it's better to find list items on the very right side of the RootNode element
-    const editorRect = editor.getRootElement().getBoundingClientRect();
-    const editorComputedStyle = getComputedStyle(editor.getRootElement());
-    const li = document.elementFromPoint(
-      editorRect.left +
-        parseFloat(editorComputedStyle.width) -
-        parseFloat(editorComputedStyle.paddingRight) -
-        parseFloat(editorComputedStyle.borderRightWidth) -
-        1,
-      event.y
-    );
-    li && setHoveredNoteElement(li);
-  };
-
   return (
     <>
-      <NodeEventPlugin
-        nodeType={RootNode}
-        eventType={"mousemove"}
-        eventListener={rootMouseMove}
-      />
       <nav aria-label="breadcrumb">
         <ol className="breadcrumb">
           {breadcrumbs.map((note, idx, { length }) => {
@@ -346,7 +260,6 @@ export function NotesPlugin({ anchorElement }) {
           })}
         </ol>
       </nav>
-
       <input
         type="text"
         value={noteFilter}
@@ -357,24 +270,7 @@ export function NotesPlugin({ anchorElement }) {
         id="search"
       />
       {createPortal(
-        <div id="hovered-note-menu" ref={menuRef}>
-          {!menuExpanded ? (
-            <a href="/" onClick={menuClick} className="text-decoration-none">
-              ...
-            </a>
-          ) : (
-            <ul>
-              <li>option1</li>
-              <li>option2</li>
-              <li>option3</li>
-              <li>option4</li>
-            </ul>
-          )}
-          &nbsp;
-          <a href="/" onClick={toggleFold} className="text-decoration-none">
-            +
-          </a>
-        </div>,
+        <NoteControls anchorElement={anchorElement} />,
         anchorElement
       )}
     </>

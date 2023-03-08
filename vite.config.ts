@@ -3,6 +3,7 @@ import babel from "@rollup/plugin-babel";
 import react from "@vitejs/plugin-react";
 import fs from "fs";
 import path from "path";
+import ufo from "ufo";
 import { defineConfig } from "vite";
 import Terminal from "vite-plugin-terminal";
 
@@ -239,9 +240,6 @@ function getPort({ page, vitest_preview, playwright }) {
   return port;
 }
 
-const terminalPlugin = Terminal({ console: "terminal" });
-//console.log("terminal plugin", terminalPlugin[0]);
-
 export default defineConfig({
   server: {
     port: getPort({
@@ -260,19 +258,34 @@ export default defineConfig({
 
   //TODO copied from lexical playground
   plugins: [
-    {
+    false && {
       name: "terminal-patch",
       configureServer(server) {
         server.middlewares.use("/__terminal", (req, res, next) => {
           //replace host with a dot in logs from the browser
           //the idea is to change file paths clickable in the terminal
-          const regexp = new RegExp(`(http|https)://${req.headers.host}`, "g");
-          req.url = req.url.replaceAll(regexp, ".");
-          next();
+          const regexp = new RegExp(
+            `(http|https)://${req.headers.host}/(.*?)(\\?.*?)?(:[0-9]*:[0-9]*)`,
+            "g"
+          );
+          req.url = req.url.replaceAll(regexp, "./$2$4");
+
+          try {
+            const { pathname, search } = ufo.parseURL(req.url);
+            const searchParams = new URLSearchParams(search.slice(1));
+            const message = decodeURI(searchParams.get("m") ?? "")
+              .split("\n")
+              .join("\n  ");
+
+            next();
+          } catch (e) {
+            console.log(e);
+            res.end();
+          }
         });
       },
     },
-    terminalPlugin,
+    Terminal(/*{ console: "terminal" }*/),
     //@ts-ignore
     babel({
       babelHelpers: "bundled",

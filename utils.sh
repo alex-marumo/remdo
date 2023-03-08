@@ -30,7 +30,7 @@ function list_to_regexp {
 function watch_repo {
     IGNORED=$(git ls-files --others --ignored --exclude-standard --directory | sed 's/\/$//' | $SCRIPT_PATH list_to_regexp)
     echo $IGNORED
-    SHELL=zsh npx chokidar . --ignore "$IGNORED" -c "$1"
+    SHELL=zsh npx chokidar . --ignore "$IGNORED|data" -c "$1"
 }
 
 #test function, modify it as you like
