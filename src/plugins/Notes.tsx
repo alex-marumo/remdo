@@ -1,9 +1,10 @@
 import { KEY_BACKSPACE_COMMAND } from "../../lexical/packages/lexical/src/LexicalCommands";
 import { useNotesLexicalComposerContext } from "../lex/NotesComposerContext";
 import "./Notes.css";
-import { Note, NotesState } from "@/api";
+import { Note } from "@/api";
 import { NOTES_FOLD_COMMAND } from "@/commands";
 import { NoteControls } from "@/components/NoteControls";
+import { Search } from "@/components/Search";
 import {
   $createListNode,
   $createListItemNode,
@@ -23,10 +24,7 @@ import {
   COMMAND_PRIORITY_LOW,
   $getNodeByKey,
 } from "lexical";
-import {
-  COMMAND_PRIORITY_CRITICAL,
-  $setSelection,
-} from "lexical";
+import { COMMAND_PRIORITY_CRITICAL } from "lexical";
 import PropTypes from "prop-types";
 import { useEffect, useRef, useState, useCallback } from "react";
 import React from "react";
@@ -38,7 +36,6 @@ export function NotesPlugin({ anchorElement }) {
   const [breadcrumbs, setBreadcrumbs] = useState([
     { key: "root", text: "ToDo" },
   ]);
-  const [noteFilter, setNoteFilter] = useState("");
   const navigate = useNavigate();
   const locationParams = useParams();
   const rootRef = useRef("");
@@ -68,14 +65,6 @@ export function NotesPlugin({ anchorElement }) {
   useEffect(() => {
     setFocus(locationParams["noteID"]);
   }, [setFocus, locationParams]);
-
-  useEffect(() => {
-    editor.fullUpdate(() => {
-      const notesState = NotesState.getActive();
-      notesState.setFilter(noteFilter);
-      $setSelection(null);
-    });
-  }, [editor, noteFilter]);
 
   useEffect(() => {
     function onClick(event: React.MouseEvent<HTMLElement>) {
@@ -260,19 +249,8 @@ export function NotesPlugin({ anchorElement }) {
           })}
         </ol>
       </nav>
-      <input
-        type="text"
-        value={noteFilter}
-        onChange={e => setNoteFilter(e.target.value)}
-        className="form-control"
-        placeholder="Search..."
-        role="searchbox"
-        id="search"
-      />
-      {createPortal(
-        <NoteControls anchorElement={anchorElement} />,
-        anchorElement
-      )}
+      <Search />
+      {createPortal(<NoteControls />, anchorElement)}
     </>
   );
 }

@@ -10,14 +10,9 @@ import {
   RootNode,
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
-import { element } from "prop-types";
 import React, { useCallback, useEffect, useState } from "react";
 
-export function NoteControls({
-  anchorElement,
-}: {
-  anchorElement: HTMLElement;
-}) {
+export function NoteControls() {
   const [editor] = useNotesLexicalComposerContext();
   const [menuExpanded, setMenuExpanded] = useState(false);
   const [noteFolded, setNoteFolded] = useState(false);
@@ -51,7 +46,7 @@ export function NoteControls({
       }
       updateNoteState(targetElement);
       const targetRectangle = targetElement.getBoundingClientRect();
-      const anchorRectangle = anchorElement.getBoundingClientRect();
+      const anchorRectangle = editor.getRootElement().getBoundingClientRect();
       const top = targetRectangle.y - anchorRectangle.y;
       const left =
         targetRectangle.x -
@@ -62,7 +57,7 @@ export function NoteControls({
         transform: `translate(${left}px, ${top}px) translate(-100%, 0)`,
       });
     },
-    [anchorElement, updateNoteState]
+    [editor, updateNoteState]
   );
 
   const toggleFold = event => {
