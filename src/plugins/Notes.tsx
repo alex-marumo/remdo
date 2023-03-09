@@ -3,6 +3,7 @@ import { useNotesLexicalComposerContext } from "../lex/NotesComposerContext";
 import "./Notes.css";
 import { Note } from "@/api";
 import { NOTES_FOLD_COMMAND } from "@/commands";
+import { Navigation } from "@/components/Navigation";
 import { NoteControls } from "@/components/NoteControls";
 import { Search } from "@/components/Search";
 import {
@@ -10,7 +11,6 @@ import {
   $createListItemNode,
   $isListNode,
   $isListItemNode,
-  ListItemNode,
 } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
 import {
@@ -19,76 +19,18 @@ import {
   COMMAND_PRIORITY_HIGH,
   $isRangeSelection,
   $getSelection,
-  $getNearestNodeFromDOMNode,
   $getRoot,
   COMMAND_PRIORITY_LOW,
   $getNodeByKey,
 } from "lexical";
 import { COMMAND_PRIORITY_CRITICAL } from "lexical";
 import PropTypes from "prop-types";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import React from "react";
 import { createPortal } from "react-dom";
-import { Link, useNavigate, useParams } from "react-router-dom";
 
 export function NotesPlugin({ anchorElement }) {
   const [editor] = useNotesLexicalComposerContext();
-  const [breadcrumbs, setBreadcrumbs] = useState([
-    { key: "root", text: "ToDo" },
-  ]);
-  const navigate = useNavigate();
-  const locationParams = useParams();
-  const rootRef = useRef("");
-
-  const setFocus = useCallback(
-    (key: string) => {
-      editor.fullUpdate(
-        () => {
-          const note = Note.from(key);
-          rootRef.current = note.lexicalKey;
-          note.focus();
-
-          //TODO won't update if path is changed elsewhere
-          setBreadcrumbs(
-            [note, ...note.parents].reverse().map(p => ({
-              key: p.lexicalNode.getKey(),
-              text: p.text,
-            }))
-          );
-        },
-        { discrete: true }
-      );
-    },
-    [editor]
-  );
-
-  useEffect(() => {
-    setFocus(locationParams["noteID"]);
-  }, [setFocus, locationParams]);
-
-  useEffect(() => {
-    function onClick(event: React.MouseEvent<HTMLElement>) {
-      const target = event.target as HTMLElement;
-      if (
-        !target.matches("li") ||
-        target.getBoundingClientRect().x <= event.clientX
-      ) {
-        return;
-      }
-      let key: string;
-      //TODO read or just passing editor state should be enough, re-check in a newer lexical version
-      editor.update(() => {
-        key = $getNearestNodeFromDOMNode(target).getKey();
-      });
-      navigate(`/note/${key}`);
-    }
-
-    anchorElement?.addEventListener("click", onClick);
-
-    return () => {
-      anchorElement?.removeEventListener("click", onClick);
-    };
-  }, [anchorElement, editor, navigate]);
 
   const rootKeyDownListener = useCallback(
     //TODO add browser test and move this somewhere else
@@ -127,16 +69,6 @@ export function NotesPlugin({ anchorElement }) {
           rootElement.addEventListener("keydown", rootKeyDownListener);
         prevRootElement &&
           prevRootElement.removeEventListener("keydown", rootKeyDownListener);
-      }),
-      editor.registerMutationListener(ListItemNode, mutatedNodes => {
-        const { noteID } = locationParams;
-        if (
-          //TODO re-check
-          rootRef.current !== noteID &&
-          mutatedNodes.get(noteID) === "created"
-        ) {
-          setFocus(noteID);
-        }
       }),
       editor.registerCommand(
         //test case "create empty notes"
@@ -226,29 +158,11 @@ export function NotesPlugin({ anchorElement }) {
         COMMAND_PRIORITY_LOW
       )
     );
-  }, [setFocus, editor, locationParams, rootKeyDownListener]);
+  }, [editor, rootKeyDownListener]);
 
   return (
     <>
-      <nav aria-label="breadcrumb">
-        <ol className="breadcrumb">
-          {breadcrumbs.map((note, idx, { length }) => {
-            return idx + 1 < length ? (
-              <li className="breadcrumb-item" key={note.key}>
-                <Link to={`/note/${note.key}`}>{note.text}</Link>
-              </li>
-            ) : (
-              <li
-                className="breadcrumb-item active"
-                aria-current="page"
-                key={note.key}
-              >
-                {note.text}
-              </li>
-            );
-          })}
-        </ol>
-      </nav>
+      <Navigation anchorElement={anchorElement} />
       <Search />
       {createPortal(<NoteControls />, anchorElement)}
     </>

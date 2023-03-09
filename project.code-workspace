@@ -36,7 +36,13 @@
     "[typescript]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "cSpell.words": ["linebreak", "middlewares", "outdent", "viewports"],
+    "cSpell.words": [
+      "linebreak",
+      "middlewares",
+      "outdent",
+      "strikethrough",
+      "viewports"
+    ],
     "cSpell.ignoreWords": [
       "DISABLECOLLAB",
       "Typeahead",
