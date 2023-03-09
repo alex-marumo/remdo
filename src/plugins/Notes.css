@@ -1,12 +1,12 @@
-span.note i {
+.editor-input span.note i {
     font-size: .5rem;
 }
 
-span.note ul {
+.editor-input span.note ul {
     padding-left: 0.75rem;
 }
 
-button.fold {
+.editor-input button.fold {
     text-decoration: none;
     /*pointer-events: none;*/
     text-align: left;
@@ -19,13 +19,13 @@ button.fold {
     top: 0;
 }
 
-.editor ul {
+.editor-input ul {
     list-style-type: none;
     list-style-position: outside;
     list-style-image: none;
 }
 
-.editor li::before {
+.editor-input li::before {
     content: "\2022";
     color: black;
     font-weight: bold;
@@ -36,6 +36,6 @@ button.fold {
     pointer-events: all;
 }
 
-.editor li.li-nested::before  {
+.editor-input li.li-nested::before  {
     display: none;
 }

@@ -30,6 +30,8 @@
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-this-alias": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "no-empty": "warn",
     "react/prop-types": "off",
     "linebreak-style": ["warn", "unix"],
     "semi": ["warn", "always"],

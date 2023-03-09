@@ -239,7 +239,7 @@ test("search", async ({ page }) => {
 
 async function prepareMenu(page) {
   //TODO move to a separate file and use before/after each
-  const menuLocator = page.locator("#typeahead-menu");
+  const menuLocator = page.locator("#quick-menu");
   await expect(menuLocator).toHaveCount(0);
 
   await getNote(page, "note3").selectText();
@@ -248,14 +248,14 @@ async function prepareMenu(page) {
 
   await getNote(page, "note2").selectText();
   await page.keyboard.press("ArrowRight");
-  await page.keyboard.type(",,");
-  //expect(await getHTML(page)).toContain(",,"); //TODO
+  await page.keyboard.press("Shift");
+  await page.waitForTimeout(10);
+  await page.keyboard.press("Shift");
   return menuLocator;
 }
 
 async function checkMenu(page) {
   expect(await getHTML(page)).not.toContain("note3"); //folded
-  expect(await getHTML(page)).not.toContain(",,");
 }
 
 test("quick menu", async ({ page }) => {
@@ -284,7 +284,7 @@ test("quick menu - hot key", async ({ page }) => {
 
 test("quick menu - click", async ({ page }) => {
   const menuLocator = await prepareMenu(page);
-  await page.locator("#typeahead-menu button :text('Fold')").click();
+  await page.locator("#quick-menu button :text('Fold')").click();
   await checkMenu(page);
 });
 
@@ -328,7 +328,7 @@ test("quick menu - backspace", async ({ page }) => {
   expect(await getHTML(page)).not.toContain(",,");
 });
 
-test.fixme("quick menu - invalid hot key", async ({ page }) => {
+test("quick menu - invalid hot key", async ({ page }) => {
   const menuLocator = await prepareMenu(page);
 
   await page.keyboard.press("$");

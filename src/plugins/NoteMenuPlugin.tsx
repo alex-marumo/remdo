@@ -1,171 +1,63 @@
+import { SELECTION_CHANGE_COMMAND } from "../../lexical/packages/lexical/src/LexicalCommands";
+import { COMMAND_PRIORITY_HIGH } from "../../lexical/packages/lexical/src/LexicalEditor";
 import { Note } from "@/api";
 import { NOTES_MOVE_COMMAND, NOTES_SEARCH_COMMAND } from "@/commands";
 import { useNotesLexicalComposerContext } from "@/lex/NotesComposerContext";
 import { INSERT_ORDERED_LIST_COMMAND } from "@lexical/list";
-import {
-  LexicalTypeaheadMenuPlugin,
-  TriggerFn,
-  TypeaheadOption,
-} from "@lexical/react/LexicalTypeaheadMenuPlugin";
 import { mergeRegister } from "@lexical/utils";
 import {
   $getSelection,
   $isRangeSelection,
+  CLICK_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
-  COMMAND_PRIORITY_LOW,
+  KEY_BACKSPACE_COMMAND,
   KEY_DOWN_COMMAND,
   KEY_ENTER_COMMAND,
   KEY_ESCAPE_COMMAND,
 } from "lexical";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import ReactDOM from "react-dom";
 
-class NoteMenuOption extends TypeaheadOption {
+type Action = () => void;
+
+class NoteMenuOption {
+  key: string;
   title: JSX.Element;
   icon?: JSX.Element;
-  trigger: () => void;
+  action: Action;
 
-  constructor(args: {
-    title: string;
-    icon?: JSX.Element;
-    trigger?: () => void;
-  }) {
+  constructor(args: { title: string; icon?: JSX.Element; action?: Action }) {
     const regex = /(.+)?<b>(.)<\/b>(.+)?/;
-    if (!args.title) {
-      super(null);
-    } else {
-      const [, beginning, key, end] = args.title.match(regex);
-      super(key.toLowerCase());
-      this.title = (
-        <>
-          {beginning}
-          <b>{key}</b>
-          {end}
-        </>
-      );
-      this.icon = args.icon;
-      this.trigger = args.trigger.bind(this);
-    }
+    const [, beginning, key, end] = args.title.match(regex);
+    this.key = key.toLowerCase();
+    this.title = (
+      <>
+        {beginning}
+        <b>{key}</b>
+        {end}
+      </>
+    );
+    this.icon = args.icon;
+    this.action = args.action.bind(this);
   }
 }
 
-export function NoteMenuPlugin(): JSX.Element {
+function MenuOptions({ closeMenu, anchorElement }) {
   const [editor] = useNotesLexicalComposerContext();
-  const triggerPattern = ",,";
-  const triggerPatternIndex = useRef(0);
-  const menuOpen = useRef(false);
-  const highlightedIndex = useRef(null);
+  const [highlightedOptionIndex, setHighlightedOptionIndex] = useState(null);
 
-  function cleanUp() {
-    menuOpen.current = false;
-    triggerPatternIndex.current = 0;
-
-    const selection = $getSelection();
-    if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
-      return;
-    }
-    const anchor = selection.anchor;
-    if (anchor.type !== "text") {
-      return;
-    }
-    const anchorNode = anchor.getNode();
-    if (!anchorNode.isSimpleText()) {
-      return;
-    }
-    anchorNode.spliceText(
-      anchorNode.getTextContentSize() - triggerPattern.length,
-      triggerPattern.length,
-      "",
-      true
-    );
-  }
-
-  function triggerOption(option: NoteMenuOption) {
-    editor.update(() => {
-      cleanUp();
-      option.trigger();
-    });
-  }
-
-  const checkForTriggerMatch: TriggerFn = (text: string) => {
-    return !menuOpen.current
-      ? null
-      : {
-          leadOffset: text.length,
-          matchingString: "",
-          replaceableString: "",
-        };
-  };
-
-  useEffect(() => {
-    return mergeRegister(
-      editor.registerCommand(
-        KEY_ENTER_COMMAND,
-        (event: KeyboardEvent) => {
-          if (!menuOpen.current) {
-            return false;
-          }
-          triggerOption(options[highlightedIndex.current]);
-          event.preventDefault();
-          event.stopImmediatePropagation();
-          return true;
-        },
-        COMMAND_PRIORITY_CRITICAL
-      ),
-      editor.registerCommand<KeyboardEvent>(
-        KEY_DOWN_COMMAND,
-        event => {
-          if (menuOpen.current) {
-            //menu is already open, so try to trigger an option using a hot key
-            const selected = options.find(o => o.key === event.key);
-            if (!selected) {
-              return false;
-            }
-            triggerOption(selected);
-            event.preventDefault();
-            event.stopImmediatePropagation();
-            return true;
-          }
-          if (event.key === triggerPattern[triggerPatternIndex.current]) {
-            triggerPatternIndex.current++;
-          }
-          if (triggerPatternIndex.current === triggerPattern.length) {
-            menuOpen.current = true;
-          }
-          return false;
-        },
-        COMMAND_PRIORITY_LOW
-      ),
-      editor.registerCommand<KeyboardEvent>(
-        KEY_ESCAPE_COMMAND,
-        event => {
-          if (!menuOpen.current) {
-            return false;
-          }
-          editor.update(() => {
-            cleanUp();
-          });
-          event.preventDefault();
-          event.stopImmediatePropagation();
-          return true;
-        },
-        COMMAND_PRIORITY_CRITICAL
-      )
-    );
-  });
-
-  const options = useMemo(() => {
-    const baseOptions = [
-      /*
-      the first, empty option is not displayed
-      the idea is to have a dummy placeholder as TypeaheadPlugin forces the 
-      first option to be highlighted
-      */
-      new NoteMenuOption({ title: "" }),
+  const options = useMemo(
+    () => [
       new NoteMenuOption({
         title: "<b>F</b>old",
         icon: <i className="bi bi-arrows-collapse" />,
-        trigger: () => {
+        action: () => {
           //TODO use a directive
           editor.fullUpdate(() => {
             const selection = $getSelection();
@@ -180,96 +72,210 @@ export function NoteMenuPlugin(): JSX.Element {
       new NoteMenuOption({
         title: "<b>M</b>ove to...",
         icon: <i className="bi bi-arrow-right-square" />,
-        trigger: () => editor.dispatchCommand(NOTES_MOVE_COMMAND, undefined),
+        action: () => editor.dispatchCommand(NOTES_MOVE_COMMAND, undefined),
       }),
       new NoteMenuOption({
         title: "<b>S</b>earch...",
         icon: <i className="bi bi-search" />,
-        trigger: () => editor.dispatchCommand(NOTES_SEARCH_COMMAND, undefined),
+        action: () => editor.dispatchCommand(NOTES_SEARCH_COMMAND, undefined),
       }),
       new NoteMenuOption({
         title: "Go <b>h</b>ome",
         icon: <i className="bi bi-house-door" />,
-        trigger: () => editor.dispatchCommand(NOTES_SEARCH_COMMAND, undefined),
+        action: () => editor.dispatchCommand(NOTES_SEARCH_COMMAND, undefined),
       }),
       new NoteMenuOption({
         title: "<b>Z</b>oom in",
         icon: <i className="bi bi-zoom-in" />,
-        trigger: () => editor.dispatchCommand(NOTES_SEARCH_COMMAND, undefined),
+        action: () => editor.dispatchCommand(NOTES_SEARCH_COMMAND, undefined),
       }),
       new NoteMenuOption({
         title: "Zoom <b>o</b>ut",
         icon: <i className="bi bi-zoom-out" />,
-        trigger: () => editor.dispatchCommand(NOTES_SEARCH_COMMAND, undefined),
+        action: () => editor.dispatchCommand(NOTES_SEARCH_COMMAND, undefined),
       }),
       new NoteMenuOption({
         title: "Toggle <b>l</b>ist type",
         icon: <i className="bi bi-list-ol" />,
-        trigger: () =>
+        action: () =>
           editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined),
       }),
-    ];
+    ],
+    [editor]
+  );
 
-    return baseOptions;
-  }, [editor]);
+  useEffect(() => {
+    return mergeRegister(
+      editor.registerCommand(
+        KEY_ENTER_COMMAND,
+        (event: KeyboardEvent) => {
+          options[highlightedOptionIndex].action();
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          return true;
+        },
+        COMMAND_PRIORITY_CRITICAL
+      ),
+      editor.registerCommand<KeyboardEvent>(
+        KEY_DOWN_COMMAND,
+        event => {
+          if (
+            event.key === "ArrowDown" ||
+            (event.key === "Tab" && !event.shiftKey)
+          ) {
+            setHighlightedOptionIndex(
+              highlightedOptionIndex === null
+                ? 0
+                : (highlightedOptionIndex + 1) % options.length
+            );
+          } else if (
+            event.key == "ArrowUp" ||
+            (event.key === "Tab" && event.shiftKey)
+          ) {
+            setHighlightedOptionIndex(
+              (highlightedOptionIndex - 1 + options.length) % options.length
+            );
+          } else {
+            const key = event.key.toLowerCase();
+            const selected = options.find(o => o.key === key);
+            if (!selected) {
+              return false;
+            }
+            selected.action();
+          }
+          event.preventDefault();
+          return true;
+        },
+        COMMAND_PRIORITY_CRITICAL
+      ),
+      editor.registerCommand<KeyboardEvent>(
+        KEY_ESCAPE_COMMAND,
+        event => {
+          closeMenu();
+          event.preventDefault();
+          return true;
+        },
+        COMMAND_PRIORITY_CRITICAL
+      ),
+      editor.registerCommand<KeyboardEvent>(
+        KEY_BACKSPACE_COMMAND,
+        event => {
+          closeMenu();
+          event.preventDefault();
+          return true;
+        },
+        COMMAND_PRIORITY_CRITICAL
+      ),
+      editor.registerCommand(
+        SELECTION_CHANGE_COMMAND,
+        closeMenu,
+        COMMAND_PRIORITY_HIGH
+      ),
+      editor.registerCommand(CLICK_COMMAND, closeMenu, COMMAND_PRIORITY_HIGH)
+    );
+  });
+
+  const menuStyle = useCallback(() => {
+    const selection = window.getSelection();
+    const { x, y } = selection.getRangeAt(0).getBoundingClientRect();
+    const { x: aX, y: aY } = anchorElement.getBoundingClientRect();
+    return {
+      left: x - aX + "px",
+      top: y - aY + "px",
+    };
+  }, [anchorElement]);
 
   return (
-    <LexicalTypeaheadMenuPlugin<NoteMenuOption>
-      onQueryChange={() => null}
-      onSelectOption={() => null}
-      triggerFn={checkForTriggerMatch}
-      options={options}
-      menuRenderFn={(
-        anchorElementRef,
-        { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex }
-      ) => {
-        highlightedIndex.current = selectedIndex;
+    <ul
+      className="list-group position-absolute dropdown"
+      id="quick-menu"
+      style={menuStyle()}
+    >
+      <li className="list-group-item">
+        <h6 className="dropdown-header">Press a key...</h6>
+      </li>
+      {options.map((option, index) => {
+        const active = highlightedOptionIndex === index;
+        return !option.title ? null : (
+          <li
+            key={option.key}
+            tabIndex={-1}
+            className={`list-group-item${active ? " active" : ""}`}
+            role="option"
+            aria-selected={active}
+            aria-current={active}
+            id={"typeahead-item-" + index}
+            onMouseEnter={() => {
+              setHighlightedOptionIndex(index);
+            }}
+            onClick={() => {
+              option.action();
+            }}
+          >
+            <button className="dropdown-item" type="button">
+              {option.icon}&nbsp;
+              <span className="text">{option.title}</span>
+            </button>
+          </li>
+        );
+      })}
+      <li className="list-group-item">
+        <h6 className="dropdown-header">Hints</h6>
+      </li>
+      <li className="list-group-item">
+        <button className="dropdown-item" type="button">
+          <i className="bi bi-file-binary" />
+          &nbsp;Press 1-9 to set fold level
+        </button>
+      </li>
+    </ul>
+  );
+}
 
-        return anchorElementRef.current && options.length
-          ? ReactDOM.createPortal(
-              <ul className="list-group position-absolute">
-                <li className="list-group-item">
-                  <h6 className="dropdown-header">Press a key...</h6>
-                </li>
-                {options.map((option, index) => {
-                  const active = selectedIndex === index;
-                  return !option.title ? null : (
-                    <li
-                      key={option.key}
-                      tabIndex={-1}
-                      className={`list-group-item${active ? " active" : ""}`}
-                      role="option"
-                      aria-selected={active}
-                      aria-current={active}
-                      id={"typeahead-item-" + index}
-                      onMouseEnter={() => {
-                        setHighlightedIndex(index);
-                      }}
-                      onClick={() => {
-                        triggerOption(option);
-                      }}
-                    >
-                      <button className="dropdown-item" type="button">
-                        {option.icon}&nbsp;
-                        <span className="text">{option.title}</span>
-                      </button>
-                    </li>
-                  );
-                })}
-                <li className="list-group-item">
-                  <h6 className="dropdown-header">Hints</h6>
-                </li>
-                <li className="list-group-item">
-                  <button className="dropdown-item" type="button">
-                    <i className="bi bi-file-binary" />
-                    &nbsp;Press 1-9 to set fold level
-                  </button>
-                </li>
-              </ul>,
-              anchorElementRef.current
-            )
-          : null;
-      }}
-    />
+export function NoteMenuPlugin() {
+  const [editor] = useNotesLexicalComposerContext();
+  const hotKeyPressed = useRef(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const anchorElement = editor.getRootElement()?.parentElement;
+
+  useEffect(() => {
+    return mergeRegister(
+      editor.registerCommand<KeyboardEvent>(
+        KEY_DOWN_COMMAND,
+        event => {
+          if (event.key !== "Shift") {
+            hotKeyPressed.current = false;
+            return false;
+          }
+          if (!hotKeyPressed.current) {
+            hotKeyPressed.current = true;
+            return false;
+          }
+          hotKeyPressed.current = false;
+          setMenuOpen(true);
+
+          return true;
+        },
+        COMMAND_PRIORITY_CRITICAL
+      )
+    );
+  });
+
+  return (
+    anchorElement &&
+    ReactDOM.createPortal(
+      <div>
+        {menuOpen && (
+          <MenuOptions
+            closeMenu={() => {
+              setMenuOpen(false);
+              return false;
+            }}
+            anchorElement={anchorElement}
+          />
+        )}
+      </div>,
+      anchorElement
+    )
   );
 }

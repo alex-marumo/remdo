@@ -35,7 +35,7 @@
     "test-browser-collab": "npx playwright test --project=chromium | ./utils.sh trim_playwright",
     "test-browser-watch": "VITE_DISABLECOLLAB=true ./utils.sh watch_repo 'npm run test-browser'",
     "test-unit": "npx vitest run",
-    "test-unit-watch": "VITE_DISABLECOLLAB=true npx vitest --ui --no-color",
+    "test-unit-watch": "VITE_DISABLECOLLAB=true npx vitest --ui",
     "test-unit-preview": "cd data && SERVER_MODE=vitest_preview PORT=3001 npx vitest-preview",
     "test": "npm run test-unit && npm run test-browser",
     "kill-npm-processes": "ps -eaf | grep 'npm run' | awk '{print $2}' |  xargs kill"

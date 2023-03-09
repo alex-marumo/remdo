@@ -6,7 +6,7 @@ import { createPortal } from "react-dom";
 
 export const DevToolbar = ({ editorBottom }) => {
   const [editor] = useNotesLexicalComposerContext();
-  const [showDebug, setShowDebugState] = useState(false);
+  const [showDebug, setShowDebugState] = useState(true);
 
   const clearContent = () => {
     editor.update(() => {

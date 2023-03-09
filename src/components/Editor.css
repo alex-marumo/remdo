@@ -2,36 +2,33 @@
   outline: 1px solid lightblue;
   margin-top: 3px;
   padding-left: 2rem !important;
-}
-
-.editor {
   position: relative;
 }
 
-.li-nested {
+.editor-input .li-nested {
   list-style-type: none;
 }
 
 /* hide time travel */
-.tree-view-output > button {
+.editor-input .tree-view-output > button {
   display: none;
 }
 
 /* font */
-.strikethrough {
+.editor-input .strikethrough {
   text-decoration: line-through;
 }
 
-.subscript {
+.editor-input .subscript {
   vertical-align: sub;
   font-size: smaller;
 }
 
-.superscript {
+.editor-input .superscript {
   vertical-align: super;
   font-size: smaller;
 }
 
-.underline {
+.editor-input .underline {
   text-decoration: underline;
 }
