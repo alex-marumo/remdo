@@ -1,8 +1,10 @@
-//TODO rename to lexicalPlugins/QuickMenu
-import { NOTES_OPEN_QUICK_MENU } from "../commands";
-import { Note } from "@/api";
-import { NOTES_MOVE_COMMAND, NOTES_SEARCH_COMMAND } from "@/commands";
-import { useNotesLexicalComposerContext } from "@/lex/NotesComposerContext";
+import {
+  NOTES_OPEN_QUICK_MENU,
+  NOTES_MOVE_COMMAND,
+  NOTES_SEARCH_COMMAND,
+} from "../commands";
+import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
+import { Note } from "../lexical/api";
 import { INSERT_ORDERED_LIST_COMMAND } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
 import { SELECTION_CHANGE_COMMAND } from "lexical";
@@ -226,12 +228,10 @@ function MenuOptions({ closeMenu, position }) {
   );
 }
 
-export function NoteMenuPlugin() {
+export function QuickMenuPlugin() {
   const [editor] = useNotesLexicalComposerContext();
   const hotKeyPressed = useRef(false);
-  const [position, setPosition] = useState<{ x: number; y: number }>(
-    null
-  );
+  const [position, setPosition] = useState<{ x: number; y: number }>(null);
   const anchorElement = editor.getRootElement()?.parentElement;
 
   const updatePosition = useCallback(
@@ -247,27 +247,25 @@ export function NoteMenuPlugin() {
 
   //TODO create useCommand hook to simplify that kind of code
   useEffect(() => {
-    return (
-      mergeRegister(
-        editor.registerCommand<KeyboardEvent>(
-          KEY_DOWN_COMMAND,
-          event => {
-            if (event.key !== "Shift") {
-              hotKeyPressed.current = false;
-              return false;
-            }
-            if (!hotKeyPressed.current) {
-              hotKeyPressed.current = true;
-              return false;
-            }
+    return mergeRegister(
+      editor.registerCommand<KeyboardEvent>(
+        KEY_DOWN_COMMAND,
+        event => {
+          if (event.key !== "Shift") {
             hotKeyPressed.current = false;
-            updatePosition(
-              window.getSelection().getRangeAt(0).getBoundingClientRect()
-            );
-            return true;
-          },
-          COMMAND_PRIORITY_CRITICAL
-        )
+            return false;
+          }
+          if (!hotKeyPressed.current) {
+            hotKeyPressed.current = true;
+            return false;
+          }
+          hotKeyPressed.current = false;
+          updatePosition(
+            window.getSelection().getRangeAt(0).getBoundingClientRect()
+          );
+          return true;
+        },
+        COMMAND_PRIORITY_CRITICAL
       ),
       editor.registerCommand<{ x: number; y: number }>(
         NOTES_OPEN_QUICK_MENU,
@@ -278,7 +276,7 @@ export function NoteMenuPlugin() {
         COMMAND_PRIORITY_LOW
       )
     );
-  });
+  }, [editor, updatePosition]);
 
   return (
     anchorElement &&

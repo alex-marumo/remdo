@@ -1,4 +1,4 @@
-import { NotesState } from "@/api";
+import { NotesState } from "./api";
 import { FULL_RECONCILE } from "@lexical/LexicalConstants";
 import {
   LexicalComposerContextType,

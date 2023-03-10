@@ -1,10 +1,10 @@
-import { useNotesLexicalComposerContext } from "@/lex/NotesComposerContext";
+import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import TreeViewPlugin from "@lexical/playground/plugins/TreeViewPlugin";
 import { CLEAR_EDITOR_COMMAND } from "lexical";
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
 
-export const DevToolbar = ({ editorBottom }) => {
+export const DevToolbarPlugin = ({ editorBottom }) => {
   const [editor] = useNotesLexicalComposerContext();
   const [showDebug, setShowDebugState] = useState(true);
 
@@ -73,7 +73,7 @@ export const DevToolbar = ({ editorBottom }) => {
         onClick={toggleShowDebug}
       >
         <i className="bi bi-bug-fill text-secondary"></i>
-        {showDebug ? "Hide Debug" : "Show Debug" }
+        {showDebug ? "Hide Debug" : "Show Debug"}
       </button>
       {editorBottom &&
         showDebug &&

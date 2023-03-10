@@ -1,6 +1,6 @@
-import App from "../../src/App";
-import { Note, NotesState } from "../../src/api";
-import { TestContext as ComponentTestContext } from "../../src/plugins/DevComponentTest";
+import App from "@/App";
+import { Note, NotesState } from "../../src/components/Editor/lexical/api";
+import { TestContext as ComponentTestContext } from "@/components/Editor/plugins/DevComponentTestPlugin";
 import { $isListNode, $isListItemNode } from "@lexical/list";
 import {
   BoundFunctions,

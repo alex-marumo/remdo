@@ -1,11 +1,10 @@
-import { KEY_BACKSPACE_COMMAND } from "../../lexical/packages/lexical/src/LexicalCommands";
-import { useNotesLexicalComposerContext } from "../lex/NotesComposerContext";
-import "./Notes.css";
-import { Note } from "@/api";
-import { NOTES_FOLD_COMMAND } from "@/commands";
-import { Navigation } from "@/components/Navigation";
-import { NoteControls } from "@/components/NoteControls";
-import { Search } from "@/components/Search";
+import { NOTES_FOLD_COMMAND } from "../commands";
+import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
+import { Navigation } from "./NavigationPlugin";
+import { NoteControlsPlugin } from "./NoteControlsPlugin";
+import "./NotesPlugin.css";
+import { SearchPlugin } from "./SearchPlugin";
+import { Note } from "../lexical/api";
 import {
   $createListNode,
   $createListItemNode,
@@ -13,6 +12,7 @@ import {
   $isListItemNode,
 } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
+import { KEY_BACKSPACE_COMMAND } from "lexical";
 import {
   RootNode,
   INSERT_PARAGRAPH_COMMAND,
@@ -163,8 +163,8 @@ export function NotesPlugin({ anchorElement }) {
   return (
     <>
       <Navigation anchorElement={anchorElement} />
-      <Search />
-      {createPortal(<NoteControls />, anchorElement)}
+      <SearchPlugin />
+      {createPortal(<NoteControlsPlugin />, anchorElement)}
     </>
   );
 }

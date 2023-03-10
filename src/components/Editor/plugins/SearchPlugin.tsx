@@ -1,9 +1,9 @@
-import { NotesState } from "@/api";
-import { useNotesLexicalComposerContext } from "@/lex/NotesComposerContext";
+import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
+import { NotesState } from "../lexical/api";
 import { $setSelection } from "lexical";
 import React, { useEffect, useState } from "react";
 
-export function Search() {
+export function SearchPlugin() {
   const [editor] = useNotesLexicalComposerContext();
   const [noteFilter, setNoteFilter] = useState("");
 

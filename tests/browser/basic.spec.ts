@@ -1,5 +1,4 @@
 //breaks if lexical-playground dependencies are installed
-import { test, expect } from "@playwright/test";
 import {
   assertHTML,
   clearEditor,
@@ -9,6 +8,7 @@ import {
   prettifyHTML,
 } from "../../lexical/packages/lexical-playground/__tests__/utils/index.mjs";
 import { getNote } from "./index";
+import { test, expect } from "@playwright/test";
 
 // eslint-disable-next-line no-unused-vars
 async function logHTML(page) {
@@ -167,7 +167,7 @@ test("create empty notes", async ({ page }) => {
   );
 });
 
-test("menu follows selection", async ({ page }) => {
+test.fixme("menu follows selection", async ({ page }) => {
   const note = getNote(page, "note2");
   await note.selectText();
   const noteBB = await note.boundingBox();

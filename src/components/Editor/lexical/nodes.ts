@@ -1,5 +1,5 @@
-import { NotesState, Note, getNotesEditorState } from "../api";
-import { patch } from "../utils";
+import { NotesState, Note, getNotesEditorState } from "./api";
+import { patch } from "../../../utils";
 import { $isListNode } from "@lexical/list";
 import { addClassNamesToElement } from "@lexical/utils";
 

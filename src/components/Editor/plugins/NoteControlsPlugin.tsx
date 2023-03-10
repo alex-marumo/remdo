@@ -1,6 +1,6 @@
-import { Note } from "@/api";
-import { NOTES_OPEN_QUICK_MENU } from "@/commands";
-import { useNotesLexicalComposerContext } from "@/lex/NotesComposerContext";
+import { NOTES_OPEN_QUICK_MENU } from "../commands";
+import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
+import { Note } from "../lexical/api";
 import { NodeEventPlugin } from "@lexical/react/LexicalNodeEventPlugin";
 import { mergeRegister } from "@lexical/utils";
 import {
@@ -13,7 +13,7 @@ import {
 } from "lexical";
 import React, { useCallback, useEffect, useState } from "react";
 
-export function NoteControls() {
+export function NoteControlsPlugin() {
   const [editor] = useNotesLexicalComposerContext();
   const [menuExpanded, setMenuExpanded] = useState(false);
   const [noteFolded, setNoteFolded] = useState(false);

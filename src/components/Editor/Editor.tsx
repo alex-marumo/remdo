@@ -1,10 +1,10 @@
-import { DevComponentTestPlugin } from "../plugins/DevComponentTest";
-import IndentationPlugin from "../plugins/IndentationPlugin";
+import { DevComponentTestPlugin } from "./plugins/DevComponentTestPlugin";
+import IndentationPlugin from "./plugins/IndentationPlugin";
 import "./Editor.css";
-import { applyNodePatches } from "@/lex/nodes";
-import { DevToolbar } from "@/plugins/DevToolbar";
-import { NoteMenuPlugin } from "@/plugins/NoteMenuPlugin";
-import { NotesPlugin } from "@/plugins/Notes";
+import { applyNodePatches } from "./lexical/nodes";
+import { DevToolbarPlugin } from "./plugins/DevToolbarPlugin";
+import { QuickMenuPlugin } from "./plugins/QuickMenuPlugin";
+import { NotesPlugin } from "./plugins/NotesPlugin";
 import { ListNode, ListItemNode } from "@lexical/list";
 import "@lexical/playground/index.css";
 import FloatingTextFormatToolbarPlugin from "@lexical/playground/plugins/FloatingTextFormatToolbarPlugin";
@@ -113,11 +113,11 @@ export default function Editor() {
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div className="editor-container editor-shell">
-        <DevToolbar editorBottom={editorBottom} />
+        <DevToolbarPlugin editorBottom={editorBottom} />
         {floatingAnchorElem && (
           <NotesPlugin anchorElement={floatingAnchorElem} />
         )}
-        <NoteMenuPlugin />
+        <QuickMenuPlugin />
         <RichTextPlugin
           contentEditable={
             <div className="editor" ref={onRef}>

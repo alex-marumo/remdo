@@ -1,5 +1,5 @@
-import { Note } from "@/api";
-import { useNotesLexicalComposerContext } from "@/lex/NotesComposerContext";
+import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
+import { Note } from "../lexical/api";
 import { ListItemNode } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
 import { $getNearestNodeFromDOMNode } from "lexical";

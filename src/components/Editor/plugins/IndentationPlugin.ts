@@ -8,7 +8,7 @@ import {
 } from "lexical";
 import { mergeRegister } from "@lexical/utils";
 import { useEffect } from "react";
-import { Note } from "../api"; //TODO
+import { Note } from "../lexical/api";
 
 export function indentOutdent(direction: "indent" | "outdent") {
   const selection = $getSelection();
