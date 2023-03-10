@@ -73,7 +73,7 @@ export const DevToolbar = ({ editorBottom }) => {
         onClick={toggleShowDebug}
       >
         <i className="bi bi-bug-fill text-secondary"></i>
-        Show Debug
+        {showDebug ? "Hide Debug" : "Show Debug" }
       </button>
       {editorBottom &&
         showDebug &&

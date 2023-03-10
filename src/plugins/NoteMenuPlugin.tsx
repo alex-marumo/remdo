@@ -1,10 +1,12 @@
-import { SELECTION_CHANGE_COMMAND } from "../../lexical/packages/lexical/src/LexicalCommands";
-import { COMMAND_PRIORITY_HIGH } from "../../lexical/packages/lexical/src/LexicalEditor";
+//TODO rename to lexicalPlugins/QuickMenu
+import { NOTES_OPEN_QUICK_MENU } from "../commands";
 import { Note } from "@/api";
 import { NOTES_MOVE_COMMAND, NOTES_SEARCH_COMMAND } from "@/commands";
 import { useNotesLexicalComposerContext } from "@/lex/NotesComposerContext";
 import { INSERT_ORDERED_LIST_COMMAND } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
+import { SELECTION_CHANGE_COMMAND } from "lexical";
+import { COMMAND_PRIORITY_HIGH, COMMAND_PRIORITY_LOW } from "lexical";
 import {
   $getSelection,
   $isRangeSelection,
@@ -48,10 +50,9 @@ class NoteMenuOption {
   }
 }
 
-function MenuOptions({ closeMenu, anchorElement }) {
+function MenuOptions({ closeMenu, position }) {
   const [editor] = useNotesLexicalComposerContext();
   const [highlightedOptionIndex, setHighlightedOptionIndex] = useState(null);
-
   const options = useMemo(
     () => [
       new NoteMenuOption({
@@ -175,21 +176,14 @@ function MenuOptions({ closeMenu, anchorElement }) {
     );
   });
 
-  const menuStyle = useCallback(() => {
-    const selection = window.getSelection();
-    const { x, y } = selection.getRangeAt(0).getBoundingClientRect();
-    const { x: aX, y: aY } = anchorElement.getBoundingClientRect();
-    return {
-      left: x - aX + "px",
-      top: y - aY + "px",
-    };
-  }, [anchorElement]);
-
   return (
     <ul
       className="list-group position-absolute dropdown"
       id="quick-menu"
-      style={menuStyle()}
+      style={{
+        top: position.y + "px",
+        left: position.x + "px",
+      }}
     >
       <li className="list-group-item">
         <h6 className="dropdown-header">Press a key...</h6>
@@ -235,28 +229,53 @@ function MenuOptions({ closeMenu, anchorElement }) {
 export function NoteMenuPlugin() {
   const [editor] = useNotesLexicalComposerContext();
   const hotKeyPressed = useRef(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [position, setPosition] = useState<{ x: number; y: number }>(
+    null
+  );
   const anchorElement = editor.getRootElement()?.parentElement;
 
-  useEffect(() => {
-    return mergeRegister(
-      editor.registerCommand<KeyboardEvent>(
-        KEY_DOWN_COMMAND,
-        event => {
-          if (event.key !== "Shift") {
-            hotKeyPressed.current = false;
-            return false;
-          }
-          if (!hotKeyPressed.current) {
-            hotKeyPressed.current = true;
-            return false;
-          }
-          hotKeyPressed.current = false;
-          setMenuOpen(true);
+  const updatePosition = useCallback(
+    ({ x, y }) => {
+      const { x: aX, y: aY } = anchorElement.getBoundingClientRect();
+      setPosition({
+        x: x - aX,
+        y: y - aY,
+      });
+    },
+    [anchorElement]
+  );
 
+  //TODO create useCommand hook to simplify that kind of code
+  useEffect(() => {
+    return (
+      mergeRegister(
+        editor.registerCommand<KeyboardEvent>(
+          KEY_DOWN_COMMAND,
+          event => {
+            if (event.key !== "Shift") {
+              hotKeyPressed.current = false;
+              return false;
+            }
+            if (!hotKeyPressed.current) {
+              hotKeyPressed.current = true;
+              return false;
+            }
+            hotKeyPressed.current = false;
+            updatePosition(
+              window.getSelection().getRangeAt(0).getBoundingClientRect()
+            );
+            return true;
+          },
+          COMMAND_PRIORITY_CRITICAL
+        )
+      ),
+      editor.registerCommand<{ x: number; y: number }>(
+        NOTES_OPEN_QUICK_MENU,
+        position => {
+          updatePosition(position);
           return true;
         },
-        COMMAND_PRIORITY_CRITICAL
+        COMMAND_PRIORITY_LOW
       )
     );
   });
@@ -265,13 +284,13 @@ export function NoteMenuPlugin() {
     anchorElement &&
     ReactDOM.createPortal(
       <div>
-        {menuOpen && (
+        {position && (
           <MenuOptions
             closeMenu={() => {
-              setMenuOpen(false);
+              setPosition(null);
               return false;
             }}
-            anchorElement={anchorElement}
+            position={position}
           />
         )}
       </div>,

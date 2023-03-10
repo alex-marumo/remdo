@@ -8,7 +8,11 @@ export const NOTES_FOLD_TO_LEVEL_COMMAND: LexicalCommand<void> = createCommand(
 );
 
 export const NOTES_MOVE_COMMAND: LexicalCommand<void> =
-  createCommand("NOTES_FOLD_COMMAND");
+  createCommand("NOTES_MOVE_COMMAND");
 
-export const NOTES_SEARCH_COMMAND: LexicalCommand<void> =
-  createCommand("NOTES_FOLD_COMMAND");
+export const NOTES_SEARCH_COMMAND: LexicalCommand<void> = createCommand(
+  "NOTES_SEARCH_COMMAND"
+);
+
+export const NOTES_OPEN_QUICK_MENU: LexicalCommand<{ x: number; y: number }> =
+  createCommand("NOTES_OPEN_QUICK_MENU");

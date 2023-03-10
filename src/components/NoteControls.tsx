@@ -1,4 +1,5 @@
 import { Note } from "@/api";
+import { NOTES_OPEN_QUICK_MENU } from "@/commands";
 import { useNotesLexicalComposerContext } from "@/lex/NotesComposerContext";
 import { NodeEventPlugin } from "@lexical/react/LexicalNodeEventPlugin";
 import { mergeRegister } from "@lexical/utils";
@@ -22,8 +23,8 @@ export function NoteControls() {
 
   const menuClick = e => {
     e.preventDefault();
-
-    setMenuExpanded(true);
+    const { x, y, height } = e.target.getBoundingClientRect();
+    editor.dispatchCommand(NOTES_OPEN_QUICK_MENU, { x, y: y + height });
   };
 
   const updateNoteState = useCallback(
