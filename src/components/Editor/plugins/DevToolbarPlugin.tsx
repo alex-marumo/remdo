@@ -1,12 +1,17 @@
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import TreeViewPlugin from "@lexical/playground/plugins/TreeViewPlugin";
 import { CLEAR_EDITOR_COMMAND } from "lexical";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { createPortal } from "react-dom";
 
 export const DevToolbarPlugin = ({ editorBottom }) => {
   const [editor] = useNotesLexicalComposerContext();
   const [showDebug, setShowDebugState] = useState(true);
+  const [darkMode, setDarkMode] = useState(getDarkMode());
+
+  function getDarkMode() {
+    return document.documentElement.dataset.bsTheme === "dark";
+  }
 
   const clearContent = () => {
     editor.update(() => {
@@ -36,37 +41,53 @@ export const DevToolbarPlugin = ({ editorBottom }) => {
     );
   };
 
-  const toggleShowDebug = () => {
+  const toggleShowDebug = useCallback(() => {
     setShowDebugState(!showDebug);
     editor.update(() => {
       editor.focus();
     });
-  };
+  }, [editor, showDebug]);
+
+  const toggleColorMode = useCallback(() => {
+    document.documentElement.dataset.bsTheme = darkMode ? "light" : "dark";
+    setDarkMode(getDarkMode());
+  }, [darkMode]);
 
   return (
     <>
-      <div>
-        <button
-          type="button"
-          className="btn btn-link float-end"
-          onClick={clearContent}
-        >
-          Clear
-        </button>
-        <button
-          type="button"
-          className="btn btn-link float-end"
-          onClick={testAction}
-        >
-          Test
-        </button>
-        <DifferentPortSameHostLink title="Vitest Preview" port="3001">
-          <IconVitest />
-        </DifferentPortSameHostLink>
-        <DifferentPortSameHostLink title="Playwright Report" port="9323">
-          <IconPlaywright />
-        </DifferentPortSameHostLink>
-      </div>
+      <button
+        type="button"
+        className="btn btn-link float-end"
+        onClick={toggleColorMode}
+      >
+        <i
+          className={`bi bi-${
+            darkMode ? "sun-fill" : "moon-stars-fill"
+          } text-secondary`}
+        ></i>
+        {darkMode ? "Light" : "Dark"} Mode
+      </button>
+      <button
+        type="button"
+        className="btn btn-link float-end"
+        onClick={clearContent}
+      >
+        Clear
+      </button>
+      <button
+        type="button"
+        className="btn btn-link float-end"
+        onClick={testAction}
+      >
+        Test
+      </button>
+      <DifferentPortSameHostLink title="Vitest Preview" port="3001">
+        <IconVitest />
+      </DifferentPortSameHostLink>
+      <DifferentPortSameHostLink title="Playwright Report" port="9323">
+        <IconPlaywright />
+      </DifferentPortSameHostLink>
+
       <button
         type="button"
         className="btn btn-link float-end"

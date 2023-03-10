@@ -8,7 +8,6 @@
 
 .editor-input button.fold {
     text-decoration: none;
-    /*pointer-events: none;*/
     text-align: left;
     padding: 0;
 }
@@ -27,7 +26,7 @@
 
 .editor-input li::before {
     content: "\2022";
-    color: black;
+    color: var(--bs-secondary);
     font-weight: bold;
     display: inline-block;
     width: 1em;

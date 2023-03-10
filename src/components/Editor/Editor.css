@@ -1,6 +1,6 @@
 .editor-input {
-  outline: 1px solid lightblue;
   margin-top: 3px;
+  margin-bottom: 3px;
   padding-left: 2rem !important;
   position: relative;
 }
