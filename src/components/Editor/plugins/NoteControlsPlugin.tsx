@@ -15,10 +15,9 @@ import React, { useCallback, useEffect, useState } from "react";
 
 export function NoteControlsPlugin() {
   const [editor] = useNotesLexicalComposerContext();
-  const [menuExpanded, setMenuExpanded] = useState(false);
   const [noteFolded, setNoteFolded] = useState(false);
   const [noteHasChildren, setNoteHasChildren] = useState(false);
-  const [menuStyle, setMenuStyle] = useState({});
+  const [menuStyle, setMenuStyle] = useState(null);
   const [noteElement, setNoteElement] = useState(null);
 
   const menuClick = e => {
@@ -117,18 +116,18 @@ export function NoteControlsPlugin() {
         eventType={"mousemove"}
         eventListener={rootMouseMove}
       />
-      <div id="hovered-note-menu" style={menuStyle}>
-        {noteHasChildren && (
-          <a
-            href="/"
-            onClick={toggleFold}
-            className="text-decoration-none link-secondary"
-          >
-            <i className={"bi bi-" + (noteFolded ? "plus" : "dash")}></i>
-          </a>
-        )}
-        &nbsp;
-        {!menuExpanded ? (
+      {menuStyle && (
+        <div id="hovered-note-menu" style={menuStyle}>
+          {noteHasChildren && (
+            <a
+              href="/"
+              onClick={toggleFold}
+              className="text-decoration-none link-secondary"
+            >
+              <i className={"bi bi-" + (noteFolded ? "plus" : "dash")}></i>
+            </a>
+          )}
+          &nbsp;
           <a
             href="/"
             onClick={menuClick}
@@ -136,15 +135,8 @@ export function NoteControlsPlugin() {
           >
             <i className="bi bi-list"></i>
           </a>
-        ) : (
-          <ul>
-            <li>option1</li>
-            <li>option2</li>
-            <li>option3</li>
-            <li>option4</li>
-          </ul>
-        )}
-      </div>
+        </div>
+      )}
     </>
   );
 }

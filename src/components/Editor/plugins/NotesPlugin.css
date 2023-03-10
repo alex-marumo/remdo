@@ -1,40 +1,43 @@
 .editor-input span.note i {
-    font-size: .5rem;
+  font-size: 0.5rem;
 }
 
 .editor-input span.note ul {
-    padding-left: 0.75rem;
+  padding-left: 0.75rem;
 }
 
 .editor-input button.fold {
-    text-decoration: none;
-    text-align: left;
-    padding: 0;
+  text-decoration: none;
+  text-align: left;
+  padding: 0;
 }
 
 #hovered-note-menu {
-    position: absolute;
-    left: 0;
-    top: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 .editor-input ul {
-    list-style-type: none;
-    list-style-position: outside;
-    list-style-image: none;
+  list-style-type: none;
+  list-style-position: outside;
+  list-style-image: none;
 }
 
 .editor-input li::before {
-    content: "\2022";
-    color: var(--bs-secondary);
-    font-weight: bold;
-    display: inline-block;
-    width: 1em;
-    margin-left: -1em;
-    cursor: pointer;
-    pointer-events: all;
+  color: var(--bs-secondary);
+  cursor: pointer;
+  pointer-events: all;
+  font-size: 0.6em;
+  vertical-align: middle;
+  margin-right: 0.5em;
 }
 
-.editor-input li.li-nested::before  {
-    display: none;
+/* use mouse hover to highlight the note */
+.editor-input li:hover::before {
+  content: "\F519";
+}
+
+.editor-input li.li-nested::before {
+  display: none;
 }

@@ -92,6 +92,7 @@ export default function Editor() {
         nested: {
           listitem: "position-relative li-nested",
         },
+        listitem: "bi bi-record",
         ol: "editor-list-ol",
       },
       text: {
