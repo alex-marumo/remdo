@@ -1,6 +1,6 @@
 import { DevComponentTestPlugin } from "./plugins/DevComponentTestPlugin";
 import IndentationPlugin from "./plugins/IndentationPlugin";
-import "./Editor.css";
+import "./Editor.scss";
 import { applyNodePatches } from "./lexical/nodes";
 import { DevToolbarPlugin } from "./plugins/DevToolbarPlugin";
 import { QuickMenuPlugin } from "./plugins/QuickMenuPlugin";
@@ -92,7 +92,6 @@ export default function Editor() {
         nested: {
           listitem: "position-relative li-nested",
         },
-        listitem: "bi bi-record",
         ol: "editor-list-ol",
       },
       text: {

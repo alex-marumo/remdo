@@ -70,6 +70,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^7.0.1",
     "prettier-plugin-sort-json": "^1.0.0",
+    "sass": "^1.59.2",
     "vite": "^4.1.1",
     "vite-plugin-terminal": "^1.1.0",
     "vitest": "^0.28.4",
