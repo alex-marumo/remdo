@@ -49,9 +49,7 @@ export function NoteControlsPlugin() {
       const targetRectangle = targetElement.getBoundingClientRect();
       const anchorRectangle = editor.getRootElement().getBoundingClientRect();
       const top = targetRectangle.y - anchorRectangle.y;
-      const left =
-        targetRectangle.x -
-        anchorRectangle.x;
+      const left = targetRectangle.x - anchorRectangle.x;
       //TODO work on the relevant test
       setMenuStyle({
         transform: `translate(${left}px, ${top}px) translate(-100%, 0)`,
@@ -92,7 +90,9 @@ export function NoteControlsPlugin() {
       const beforeContent = isBeforeEvent(li, event)
         ? '"\uF519"' //bi-record-fill icon
         : '"\uF51A"'; //bi-record icon
-      li.style.setProperty("--hovered-note-before-content", beforeContent);
+      editor
+        .getRootElement()
+        .style.setProperty("--hovered-note-before-content", beforeContent);
     }
   };
 
@@ -134,7 +134,6 @@ export function NoteControlsPlugin() {
               <i className={"bi bi-" + (noteFolded ? "plus" : "dash")}></i>
             </a>
           )}
-          &nbsp;
           <a
             href="/"
             onClick={menuClick}

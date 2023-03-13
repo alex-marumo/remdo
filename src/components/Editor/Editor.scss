@@ -6,7 +6,15 @@
   left: 0;
 }
 
+/*
+#hovered-note-menu a:hover {
+  box-shadow: 0 0 5px 0px var(--bs-secondary), inset 0 0 5px 0px var(--bs-secondary);
+  border-radius: 100%;
+}
+*/
+
 .editor-input {
+  --hovered-note-before-content: "\F51A"; /* bi-record */
   position: relative;
   margin-top: 3px;
   margin-bottom: 3px;
@@ -42,7 +50,6 @@
   li {
     @extend .bi;
     @extend .bi-record;
-    --hovered-note-before-content: "\F51A"; /* bi-record */
   }
 
   li::before {
