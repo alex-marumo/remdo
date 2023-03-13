@@ -24,18 +24,22 @@
   list-style-image: none;
 }
 
+.editor-input li {
+  --hovered-note-before-content: "\F51A"; /* bi-record */
+}
+
 .editor-input li::before {
+  content: "\F51A"; /* bi-record */
   color: var(--bs-secondary);
   cursor: pointer;
   pointer-events: all;
   font-size: 0.6em;
   vertical-align: middle;
-  margin-right: 0.5em;
+  padding: 0.5em;
 }
 
-/* use mouse hover to highlight the note */
 .editor-input li:hover::before {
-  content: "\F519";
+  content: var(--hovered-note-before-content);
 }
 
 .editor-input li.li-nested::before {

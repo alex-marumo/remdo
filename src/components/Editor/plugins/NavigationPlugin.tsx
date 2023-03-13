@@ -1,5 +1,6 @@
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import { Note } from "../lexical/api";
+import { isBeforeEvent } from "@/utils";
 import { ListItemNode } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
 import { $getNearestNodeFromDOMNode } from "lexical";
@@ -46,8 +47,8 @@ export function Navigation({ anchorElement }) {
     function onClick(event: React.MouseEvent<HTMLElement>) {
       const target = event.target as HTMLElement;
       if (
-        !target.matches("li") ||
-        target.getBoundingClientRect().x <= event.clientX
+        target.tagName.toLowerCase() !== "li" ||
+        !isBeforeEvent(target, event as unknown as MouseEvent) //TODO remove cast
       ) {
         return;
       }

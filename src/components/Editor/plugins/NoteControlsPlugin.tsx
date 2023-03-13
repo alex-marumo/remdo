@@ -1,6 +1,7 @@
 import { NOTES_OPEN_QUICK_MENU } from "../commands";
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import { Note } from "../lexical/api";
+import { isBeforeEvent } from "@/utils";
 import { NodeEventPlugin } from "@lexical/react/LexicalNodeEventPlugin";
 import { mergeRegister } from "@lexical/utils";
 import {
@@ -50,8 +51,7 @@ export function NoteControlsPlugin() {
       const top = targetRectangle.y - anchorRectangle.y;
       const left =
         targetRectangle.x -
-        anchorRectangle.x -
-        parseFloat(getComputedStyle(targetElement, ":before").width);
+        anchorRectangle.x;
       //TODO work on the relevant test
       setMenuStyle({
         transform: `translate(${left}px, ${top}px) translate(-100%, 0)`,
@@ -71,6 +71,8 @@ export function NoteControlsPlugin() {
   };
 
   const rootMouseMove = (event: MouseEvent) => {
+    //move controls to the hovered note (li)
+    //additionally highligh note dot (li::before) if it's hovered
     //it would be easier to assign this listener to ListItemNode instead of RootNode
     //the problem is that indented ListItem element don't extend to the left side of the RootNode element
     //this is also why, it's better to find list items on the very right side of the RootNode element
@@ -83,10 +85,15 @@ export function NoteControlsPlugin() {
         parseFloat(editorComputedStyle.borderRightWidth) -
         1,
       event.y
-    );
-    li &&
-      li.tagName.toLowerCase() === "li" &&
-      setMenuPosition(li as HTMLElement);
+    ) as HTMLElement;
+    if (li && li.tagName.toLowerCase() === "li") {
+      setMenuPosition(li);
+
+      const beforeContent = isBeforeEvent(li, event)
+        ? '"\uF519"' //bi-record-fill icon
+        : '"\uF51A"'; //bi-record icon
+      li.style.setProperty("--hovered-note-before-content", beforeContent);
+    }
   };
 
   useEffect(() => {
