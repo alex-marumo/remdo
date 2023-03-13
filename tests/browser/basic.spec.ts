@@ -337,5 +337,10 @@ test("quick menu - invalid hot key", async ({ page }) => {
   expect(await getHTML(page)).not.toContain(",,");
 });
 
+
+test("screen", async ({ page }) => {
+  await expect(page).toHaveScreenshot();
+});
+
 //FIXME add a test for deleting folded notes
 //FIXME test clicking outside of the menu

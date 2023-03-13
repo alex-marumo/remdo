@@ -1,6 +1,6 @@
 import { Layout } from "./components/Layout";
 import Editor from "@/components/Editor";
-import "./App.css";
+import "./App.scss";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";

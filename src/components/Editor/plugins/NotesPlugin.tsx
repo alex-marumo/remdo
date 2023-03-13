@@ -2,7 +2,6 @@ import { NOTES_FOLD_COMMAND } from "../commands";
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import { Navigation } from "./NavigationPlugin";
 import { NoteControlsPlugin } from "./NoteControlsPlugin";
-import "./NotesPlugin.css";
 import { SearchPlugin } from "./SearchPlugin";
 import { Note } from "../lexical/api";
 import {

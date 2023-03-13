@@ -1,41 +1,65 @@
-@import '/node_modules/bootstrap-icons/font/bootstrap-icons';
+@import "/node_modules/bootstrap-icons/font/bootstrap-icons";
+
+#hovered-note-menu {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
 
 .editor-input {
+  position: relative;
   margin-top: 3px;
   margin-bottom: 3px;
   padding-left: 1.5rem !important;
-  position: relative;
-}
 
-.editor-input .li-nested {
-  list-style-type: none;
-}
+  /* font */
+  .strikethrough {
+    text-decoration: line-through;
+  }
 
-/* hide time travel */
-.editor-input .tree-view-output > button {
-  display: none;
-}
+  .subscript {
+    vertical-align: sub;
+    font-size: smaller;
+  }
 
-/* font */
-.editor-input .strikethrough {
-  text-decoration: line-through;
-}
+  .superscript {
+    vertical-align: super;
+    font-size: smaller;
+  }
 
-.editor-input .subscript {
-  vertical-align: sub;
-  font-size: smaller;
-}
+  .underline {
+    text-decoration: underline;
+  }
 
-.editor-input .superscript {
-  vertical-align: super;
-  font-size: smaller;
-}
+  /* note */
 
-.editor-input .underline {
-  text-decoration: underline;
-}
+  ul {
+    list-style-type: none;
+    list-style-image: none;
+    list-style-position: outside;
+  }
 
-.editor-input li {
-  @extend .bi;
-  @extend .bi-record;
+  li {
+    @extend .bi;
+    @extend .bi-record;
+    --hovered-note-before-content: "\F51A"; /* bi-record */
+  }
+
+  li::before {
+    vertical-align: middle;
+    cursor: pointer;
+    padding: 0.5em;
+    pointer-events: all;
+    content: "\F51A"; /* bi-record */
+    color: var(--bs-secondary);
+    font-size: 0.6em;
+  }
+
+  li:hover::before {
+    content: var(--hovered-note-before-content);
+  }
+
+  li.li-nested::before {
+    display: none;
+  }
 }
