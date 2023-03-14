@@ -24,9 +24,15 @@ getActiveEditorState() (not available publicly) returns a different state than e
 Vite and it's HMR cause errorOnKlassMismatch when saving custom's node source file
 think about nested lists and CSS
 
-tsconfig options: https://vitejs.dev/guide/features.html#typescript 
+//TODO reading or just passing editor state should be enough, re-check in the newer lexical version
+editor.update(() => {
+key = $getNearestNodeFromDOMNode(event.target).getKey();
+});
 
-bootstrap vs tailwind css vs windicss
+
+TODO refactor dom event listeners
+
+tsconfig options: https://vitejs.dev/guide/features.html#typescript 
 
 https://github.com/nfl/react-helmet
 
@@ -36,10 +42,6 @@ runtime (also replaces npm/yarn)
 
 https://www.npmjs.com/package/match-sorter
 
-//TODO reading or just passing editor state should be enough, re-check in the newer lexical version
-editor.update(() => {
-key = $getNearestNodeFromDOMNode(event.target).getKey();
-});
 
 there is no $isLexicalNode function and there is no way to implement is on your own
 
@@ -48,13 +50,16 @@ throw Error("error") in update works, but throw "error" is silently eaten
 git submodule update --init --recursive
 
 TODO improve tiny-invariant in production
-TODO install lexical from npm to improve intelisense, add only missing path files, add a test that compare installed version and the one from
 potentially use https://github.com/speedskater/babel-plugin-rewire
 TODO add a warning about jsdom/querySelectorAll, potentially also using rewire
 
 TODO fail all kinds of tests if there is an exception in browser's console
 
 TODO unit tests cause browser to disconnect, fix reconnecting
+
+
+TODO https://mdbootstrap.com/
+
 
 Watched lexical issues:
 https://github.com/facebook/lexical/issues/3763

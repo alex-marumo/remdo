@@ -1,11 +1,6 @@
-import {
-  ElementNode,
-  $getNodeByKey,
-  $isTextNode,
-  $createTextNode,
-  EditorState,
-} from "lexical";
 import { LexicalNode } from "@lexical/LexicalNode";
+import { getActiveEditor, getActiveEditorState } from "@lexical/LexicalUpdates";
+import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
 import {
   $createListItemNode,
   $createListNode,
@@ -13,9 +8,17 @@ import {
   ListItemNode,
 } from "@lexical/list";
 import { ListNode, ListItemNode as LexicalListItemNode } from "@lexical/list";
-import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
 import { findNearestListItemNode } from "@lexical/list/utils";
-import { getActiveEditor, getActiveEditorState } from "@lexical/LexicalUpdates";
+import {
+  ElementNode,
+  $getNodeByKey,
+  $isTextNode,
+  $createTextNode,
+  EditorState,
+  $getSelection,
+  $isRangeSelection,
+} from "lexical";
+
 //TODO
 //create folder api and split this to Note and NotesState
 
@@ -302,3 +305,12 @@ LexicalListItemNode.prototype.getFold = function () {
 LexicalListItemNode.prototype.setFold = function (fold: boolean): void {
   this.getWritable().__fold = !!fold;
 };
+
+export function getNotesFromSelection() {
+  const selection = $getSelection();
+  if (!$isRangeSelection(selection)) {
+    return [];
+  }
+  //TODO add support for multiple selection
+  return [Note.from(selection.focus.key)];
+}

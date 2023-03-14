@@ -2,9 +2,10 @@ import {
   NOTES_OPEN_QUICK_MENU,
   NOTES_MOVE_COMMAND,
   NOTES_SEARCH_COMMAND,
+  NOTES_TOGGLE_FOLD_COMMAND,
 } from "../commands";
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
-import { Note } from "../lexical/api";
+import { getNotesFromSelection, Note } from "../lexical/api";
 import { INSERT_ORDERED_LIST_COMMAND } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
 import { SELECTION_CHANGE_COMMAND } from "lexical";
@@ -52,7 +53,7 @@ class NoteMenuOption {
   }
 }
 
-function MenuOptions({ closeMenu, position }) {
+function MenuOptions({ closeMenu, position, notes }) {
   const [editor] = useNotesLexicalComposerContext();
   const [highlightedOptionIndex, setHighlightedOptionIndex] = useState(null);
   const options = useMemo(
@@ -61,14 +62,8 @@ function MenuOptions({ closeMenu, position }) {
         title: "<b>F</b>old",
         icon: <i className="bi bi-arrows-collapse" />,
         action: () => {
-          //TODO use a directive
-          editor.fullUpdate(() => {
-            const selection = $getSelection();
-            if (!$isRangeSelection(selection)) {
-              return false;
-            }
-            const note = Note.from(selection.focus.key);
-            note.fold = !note.fold;
+          editor.dispatchCommand(NOTES_TOGGLE_FOLD_COMMAND, {
+            notes,
           });
         },
       }),
@@ -104,7 +99,7 @@ function MenuOptions({ closeMenu, position }) {
           editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined),
       }),
     ],
-    [editor]
+    [editor, notes]
   );
 
   useEffect(() => {
@@ -113,6 +108,7 @@ function MenuOptions({ closeMenu, position }) {
         KEY_ENTER_COMMAND,
         (event: KeyboardEvent) => {
           options[highlightedOptionIndex].action();
+          closeMenu();
           event.preventDefault();
           event.stopImmediatePropagation();
           return true;
@@ -206,6 +202,7 @@ function MenuOptions({ closeMenu, position }) {
             }}
             onClick={() => {
               option.action();
+              closeMenu();
             }}
           >
             <button className="dropdown-item" type="button">
@@ -233,6 +230,7 @@ export function QuickMenuPlugin() {
   const hotKeyPressed = useRef(false);
   const [position, setPosition] = useState<{ x: number; y: number }>(null);
   const anchorElement = editor.getRootElement()?.parentElement;
+  const [notes, setNotes] = useState<Note[]>([]);
 
   const updatePosition = useCallback(
     ({ x, y }) => {
@@ -260,6 +258,7 @@ export function QuickMenuPlugin() {
             return false;
           }
           hotKeyPressed.current = false;
+          setNotes(getNotesFromSelection());
           updatePosition(
             window.getSelection().getRangeAt(0).getBoundingClientRect()
           );
@@ -267,10 +266,11 @@ export function QuickMenuPlugin() {
         },
         COMMAND_PRIORITY_CRITICAL
       ),
-      editor.registerCommand<{ x: number; y: number }>(
+      editor.registerCommand<{ x: number; y: number; notes: Note[] }>(
         NOTES_OPEN_QUICK_MENU,
-        position => {
-          updatePosition(position);
+        ({ x, y, notes }) => {
+          setNotes(notes);
+          updatePosition({ x, y });
           return true;
         },
         COMMAND_PRIORITY_LOW
@@ -289,6 +289,7 @@ export function QuickMenuPlugin() {
               return false;
             }}
             position={position}
+            notes={notes}
           />
         )}
       </div>,

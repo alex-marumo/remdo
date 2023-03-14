@@ -24,7 +24,13 @@ export function NoteControlsPlugin() {
   const menuClick = e => {
     e.preventDefault();
     const { x, y, height } = e.target.getBoundingClientRect();
-    editor.dispatchCommand(NOTES_OPEN_QUICK_MENU, { x, y: y + height });
+    editor.update(() => {
+      editor.dispatchCommand(NOTES_OPEN_QUICK_MENU, {
+        x,
+        y: y + height,
+        notes: [Note.from($getNearestNodeFromDOMNode(noteElement))],
+      });
+    });
   };
 
   const updateNoteState = useCallback(
@@ -51,6 +57,8 @@ export function NoteControlsPlugin() {
       const top = targetRectangle.y - anchorRectangle.y;
       const left = targetRectangle.x - anchorRectangle.x;
       //TODO work on the relevant test
+      //TODO consider using a similar approach to the one that's used in QuickMenuPlugin
+      //TODO remove code duplicated with rootMouseMove
       setMenuStyle({
         transform: `translate(${left}px, ${top}px) translate(-100%, 0)`,
       });
@@ -61,8 +69,7 @@ export function NoteControlsPlugin() {
   const toggleFold = event => {
     event.preventDefault();
     editor.fullUpdate(() => {
-      const node = $getNearestNodeFromDOMNode(noteElement);
-      const note = Note.from(node);
+      const note = Note.from($getNearestNodeFromDOMNode(noteElement));
       note.fold = !note.fold;
       updateNoteState(noteElement, { fold: note.fold });
     });

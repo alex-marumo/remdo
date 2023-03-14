@@ -1,9 +1,9 @@
-import { NOTES_FOLD_COMMAND } from "../commands";
+import { NOTES_TOGGLE_FOLD_COMMAND } from "../commands";
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
+import { Note } from "../lexical/api";
 import { Navigation } from "./NavigationPlugin";
 import { NoteControlsPlugin } from "./NoteControlsPlugin";
 import { SearchPlugin } from "./SearchPlugin";
-import { Note } from "../lexical/api";
 import {
   $createListNode,
   $createListItemNode,
@@ -142,15 +142,16 @@ export function NotesPlugin({ anchorElement }) {
         listItemNode.select();
       }),
       editor.registerCommand(
-        NOTES_FOLD_COMMAND,
-        () => {
-          //TODO create notes API for that
-          const selection = $getSelection();
-          if (!$isRangeSelection(selection)) {
+        NOTES_TOGGLE_FOLD_COMMAND,
+        ({ notes }) => {
+          if (!notes.length) {
             return false;
           }
           editor.fullUpdate(() => {
-            Note.from(selection.focus.key).fold = true;
+            const fold = !notes[0].fold;
+            notes.forEach(note => {
+              note.fold = fold;
+            });
           });
           return true;
         },
