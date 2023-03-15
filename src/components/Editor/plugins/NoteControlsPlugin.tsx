@@ -28,7 +28,7 @@ export function NoteControlsPlugin() {
       editor.dispatchCommand(NOTES_OPEN_QUICK_MENU, {
         x,
         y: y + height,
-        notes: [Note.from($getNearestNodeFromDOMNode(noteElement))],
+        noteKeys: [$getNearestNodeFromDOMNode(noteElement).getKey()],
       });
     });
   };

@@ -19,6 +19,7 @@ function countFilesByExtension() {
   return execSync(cmd).toString().trim();
 }
 
+//TODO skip binary files
 function countCodeLines() {
   const cmd = `./utils.sh repo_files | \
       grep -v package-lock.json | \

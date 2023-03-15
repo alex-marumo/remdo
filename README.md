@@ -29,7 +29,7 @@ editor.update(() => {
 key = $getNearestNodeFromDOMNode(event.target).getKey();
 });
 
-
+TODO consider changing rootElement to ul/li instead of adjusting schema in rootTransform
 TODO refactor dom event listeners
 
 tsconfig options: https://vitejs.dev/guide/features.html#typescript 

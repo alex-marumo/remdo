@@ -4,6 +4,7 @@ import {
   NOTES_MOVE_COMMAND,
   NOTES_SEARCH_COMMAND,
   NOTES_TOGGLE_FOLD_COMMAND,
+  NOTES_FOCUS_COMMAND,
 } from "../commands";
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import { getNotesFromSelection, Note } from "../lexical/api";
@@ -52,7 +53,7 @@ class NoteMenuOption {
   }
 }
 
-function MenuOptions({ closeMenu, position, notes }) {
+function MenuOptions({ closeMenu, position, noteKeys }) {
   const [editor] = useNotesLexicalComposerContext();
   const [highlightedOptionIndex, setHighlightedOptionIndex] = useState(null);
   const options = useMemo(
@@ -62,7 +63,7 @@ function MenuOptions({ closeMenu, position, notes }) {
         icon: <i className="bi bi-arrows-collapse" />,
         action: () =>
           editor.dispatchCommand(NOTES_TOGGLE_FOLD_COMMAND, {
-            notes,
+            noteKeys,
           }),
       }),
       new NoteMenuOption({
@@ -78,7 +79,8 @@ function MenuOptions({ closeMenu, position, notes }) {
       new NoteMenuOption({
         title: "Go <b>h</b>ome",
         icon: <i className="bi bi-house-door" />,
-        action: () => editor.dispatchCommand(NOTES_SEARCH_COMMAND, undefined),
+        action: () =>
+          editor.dispatchCommand(NOTES_FOCUS_COMMAND, { key: "root" }),
       }),
       new NoteMenuOption({
         title: "<b>Z</b>oom in",
@@ -97,7 +99,7 @@ function MenuOptions({ closeMenu, position, notes }) {
           editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined),
       }),
     ],
-    [editor, notes]
+    [editor, noteKeys]
   );
 
   useEffect(() => {
@@ -229,7 +231,7 @@ export function QuickMenuPlugin() {
   const hotKeyPressed = useRef(false);
   const [position, setPosition] = useState<{ x: number; y: number }>(null);
   const anchorElement = editor.getRootElement()?.parentElement;
-  const [notes, setNotes] = useState<Note[]>([]);
+  const [noteKeys, setNoteKeys] = useState([]);
 
   const updatePosition = useCallback(
     ({ x, y }) => {
@@ -257,7 +259,7 @@ export function QuickMenuPlugin() {
             return false;
           }
           hotKeyPressed.current = false;
-          setNotes(getNotesFromSelection());
+          setNoteKeys(getNotesFromSelection().map(n => n.lexicalKey));
           updatePosition(
             window.getSelection().getRangeAt(0).getBoundingClientRect()
           );
@@ -265,10 +267,10 @@ export function QuickMenuPlugin() {
         },
         COMMAND_PRIORITY_CRITICAL
       ),
-      editor.registerCommand<{ x: number; y: number; notes: Note[] }>(
+      editor.registerCommand<{ x: number; y: number; noteKeys: string[] }>(
         NOTES_OPEN_QUICK_MENU,
-        ({ x, y, notes }) => {
-          setNotes(notes);
+        ({ x, y, noteKeys }) => {
+          setNoteKeys(noteKeys);
           updatePosition({ x, y });
           return true;
         },
@@ -288,7 +290,7 @@ export function QuickMenuPlugin() {
               return false;
             }}
             position={position}
-            notes={notes}
+            noteKeys={noteKeys}
           />
         )}
       </div>,

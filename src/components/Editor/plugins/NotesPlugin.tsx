@@ -3,6 +3,7 @@ import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext"
 import { Note } from "../lexical/api";
 import { Navigation } from "./NavigationPlugin";
 import { NoteControlsPlugin } from "./NoteControlsPlugin";
+import "./NotesPlugin.scss";
 import { SearchPlugin } from "./SearchPlugin";
 import {
   $createListNode,
@@ -27,7 +28,6 @@ import PropTypes from "prop-types";
 import { useEffect, useCallback } from "react";
 import React from "react";
 import { createPortal } from "react-dom";
-import "./NotesPlugin.scss";
 
 export function NotesPlugin({ anchorElement }) {
   const [editor] = useNotesLexicalComposerContext();
@@ -144,14 +144,14 @@ export function NotesPlugin({ anchorElement }) {
       }),
       editor.registerCommand(
         NOTES_TOGGLE_FOLD_COMMAND,
-        ({ notes }) => {
-          if (!notes.length) {
+        ({ noteKeys }) => {
+          if (!noteKeys.length) {
             return false;
           }
           editor.fullUpdate(() => {
-            const fold = !notes[0].fold;
-            notes.forEach(note => {
-              note.fold = fold;
+            const fold = !Note.from(noteKeys[0]).fold;
+            noteKeys.forEach(key => {
+              Note.from(key).fold = fold;
             });
           });
           return true;

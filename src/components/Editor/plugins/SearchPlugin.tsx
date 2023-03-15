@@ -36,11 +36,17 @@ function Finder({ stop, filter }) {
   );
 
   useEffect(() => {
-    editor.fullUpdate(() => {
-      NotesState.getActive().setFilter(filter);
-      $setSelection(null);
-    });
-  }, [editor, filter, stop]);
+    editor.fullUpdate(
+      () => {
+        NotesState.getActive().setFilter(filter);
+        $setSelection(null);
+      },
+      { discrete: true }
+    );
+    if (index >= results().length) {
+      setIndex(0);
+    }
+  }, [editor, filter, index, results, stop]);
 
   useEffect(() => {
     return mergeRegister(
@@ -90,7 +96,6 @@ function Finder({ stop, filter }) {
     if (!element) return;
     const position = getOffsetPosition(editor, element);
     const { height } = getComputedStyle(element, "::before"); //get height of ::before pseudo element as height of the main element may change if it's text length is too long
-    console.log("test4", position, height);
     return { ...position, height };
   }, [editor, index, results]);
 
