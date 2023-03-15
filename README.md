@@ -23,11 +23,14 @@ TODO lexical bugs
 getActiveEditorState() (not available publicly) returns a different state than editor.getEditorState() which can cause problems if someone modifies state in editor.update()
 Vite and it's HMR cause errorOnKlassMismatch when saving custom's node source file
 think about nested lists and CSS
+throw Error("error") in update works, but throw "error" is silently eaten
 
 //TODO reading or just passing editor state should be enough, re-check in the newer lexical version
 editor.update(() => {
 key = $getNearestNodeFromDOMNode(event.target).getKey();
 });
+
+there is no $isLexicalNode function and there is no way to implement is on your own
 
 TODO consider changing rootElement to ul/li instead of adjusting schema in rootTransform
 TODO refactor dom event listeners
@@ -41,11 +44,6 @@ runtime (also replaces npm/yarn)
     deno
 
 https://www.npmjs.com/package/match-sorter
-
-
-there is no $isLexicalNode function and there is no way to implement is on your own
-
-throw Error("error") in update works, but throw "error" is silently eaten
 
 git submodule update --init --recursive
 

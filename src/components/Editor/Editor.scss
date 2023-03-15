@@ -8,6 +8,8 @@
   $shadowOffset: 5px;
   $shadowBlurRadius: 5px;
   position: absolute;
+  margin-top: $shadowOffset;
+  margin-left: $shadowOffset;
   top: 0;
   left: 0;
   opacity: 0.5;

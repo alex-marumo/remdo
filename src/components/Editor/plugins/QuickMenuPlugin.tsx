@@ -8,6 +8,7 @@ import {
 } from "../commands";
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import { getNotesFromSelection, Note } from "../lexical/api";
+import { getOffsetPosition } from "@/utils";
 import { INSERT_ORDERED_LIST_COMMAND } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
 import { SELECTION_CHANGE_COMMAND } from "lexical";
@@ -179,10 +180,7 @@ function MenuOptions({ closeMenu, position, noteKeys }) {
     <ul
       className="list-group position-absolute dropdown"
       id="quick-menu"
-      style={{
-        top: position.y + "px",
-        left: position.x + "px",
-      }}
+      style={position}
     >
       <li className="list-group-item">
         <h6 className="dropdown-header">Press a key...</h6>
@@ -229,20 +227,9 @@ function MenuOptions({ closeMenu, position, noteKeys }) {
 export function QuickMenuPlugin() {
   const [editor] = useNotesLexicalComposerContext();
   const hotKeyPressed = useRef(false);
-  const [position, setPosition] = useState<{ x: number; y: number }>(null);
+  const [position, setPosition] = useState<{ left: number; top: number }>(null);
   const anchorElement = editor.getRootElement()?.parentElement;
   const [noteKeys, setNoteKeys] = useState([]);
-
-  const updatePosition = useCallback(
-    ({ x, y }) => {
-      const { x: aX, y: aY } = anchorElement.getBoundingClientRect();
-      setPosition({
-        x: x - aX,
-        y: y - aY,
-      });
-    },
-    [anchorElement]
-  );
 
   //TODO create useCommand hook to simplify that kind of code
   useEffect(() => {
@@ -260,24 +247,24 @@ export function QuickMenuPlugin() {
           }
           hotKeyPressed.current = false;
           setNoteKeys(getNotesFromSelection().map(n => n.lexicalKey));
-          updatePosition(
-            window.getSelection().getRangeAt(0).getBoundingClientRect()
+          setPosition(
+            getOffsetPosition(editor, window.getSelection().getRangeAt(0))
           );
           return true;
         },
         COMMAND_PRIORITY_CRITICAL
       ),
-      editor.registerCommand<{ x: number; y: number; noteKeys: string[] }>(
+      editor.registerCommand<{ left: number; top: number; noteKeys: string[] }>(
         NOTES_OPEN_QUICK_MENU,
-        ({ x, y, noteKeys }) => {
+        ({ left, top, noteKeys }) => {
           setNoteKeys(noteKeys);
-          updatePosition({ x, y });
+          setPosition({ left, top });
           return true;
         },
         COMMAND_PRIORITY_LOW
       )
     );
-  }, [editor, updatePosition]);
+  }, [editor]);
 
   return (
     anchorElement &&

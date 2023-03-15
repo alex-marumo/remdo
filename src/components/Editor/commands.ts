@@ -16,8 +16,8 @@ export const NOTES_SEARCH_COMMAND: LexicalCommand<void> = createCommand(
 );
 
 export const NOTES_OPEN_QUICK_MENU: LexicalCommand<{
-  x: number;
-  y: number;
+  left: number;
+  top: number;
   noteKeys: string[];
 }> = createCommand("NOTES_OPEN_QUICK_MENU");
 

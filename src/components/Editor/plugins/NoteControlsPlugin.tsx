@@ -1,7 +1,7 @@
 import { NOTES_OPEN_QUICK_MENU } from "../commands";
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import { Note } from "../lexical/api";
-import { isBeforeEvent } from "@/utils";
+import { getOffsetPosition, isBeforeEvent } from "@/utils";
 import { NodeEventPlugin } from "@lexical/react/LexicalNodeEventPlugin";
 import { mergeRegister } from "@lexical/utils";
 import {
@@ -23,11 +23,11 @@ export function NoteControlsPlugin() {
 
   const menuClick = e => {
     e.preventDefault();
-    const { x, y, height } = e.target.getBoundingClientRect();
+    const {left, top, height} = getOffsetPosition(editor, e.target);
     editor.update(() => {
       editor.dispatchCommand(NOTES_OPEN_QUICK_MENU, {
-        x,
-        y: y + height,
+        left,
+        top: top + height,
         noteKeys: [$getNearestNodeFromDOMNode(noteElement).getKey()],
       });
     });
@@ -52,15 +52,9 @@ export function NoteControlsPlugin() {
         return;
       }
       updateNoteState(targetElement);
-      const targetRectangle = targetElement.getBoundingClientRect();
-      const anchorRectangle = editor.getRootElement().getBoundingClientRect();
-      const top = targetRectangle.y - anchorRectangle.y;
-      const left = targetRectangle.x - anchorRectangle.x;
-      //TODO work on the relevant test
-      //TODO consider using a similar approach to the one that's used in QuickMenuPlugin
-      //TODO remove code duplicated with rootMouseMove
       setMenuStyle({
-        transform: `translate(${left}px, ${top}px) translate(-100%, 0)`,
+        ...getOffsetPosition(editor, targetElement),
+        transform: `translate(-100%, 0)`,
       });
     },
     [editor, updateNoteState]

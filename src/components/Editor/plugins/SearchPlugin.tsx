@@ -15,16 +15,7 @@ import { LexicalEditor } from "lexical";
 import { KEY_ENTER_COMMAND } from "lexical";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-
-//TODO use it in other places
-function getOffsetPosition(editor: LexicalEditor, element: Element) {
-  const { x, y } = element.getBoundingClientRect();
-  const { x: aX, y: aY } = editor.getRootElement().getBoundingClientRect();
-  return {
-    left: x - aX + 5, //TODO
-    top: y - aY + 5, //TODO
-  };
-}
+import { getOffsetPosition } from "@/utils";
 
 function Finder({ stop, filter }) {
   const [editor] = useNotesLexicalComposerContext();
@@ -166,7 +157,11 @@ export function SearchPlugin() {
         onFocus={() => setFinderActive(true)}
         onBlur={stopSearch}
         className="form-control"
-        placeholder="Search..."
+        placeholder={
+          !finderActive
+            ? "Search..."
+            : "Type to search... (Arrow Down/Up to navigate, Enter to zoom to the highlighted note, Esc to cancel)"
+        }
         role="searchbox"
         id="search"
         autoComplete="off"
