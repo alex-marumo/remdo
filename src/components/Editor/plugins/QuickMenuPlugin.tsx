@@ -1,3 +1,4 @@
+//TODO try to use https://react-bootstrap.github.io/components/dropdowns/ or https://react-bootstrap.github.io/components/overlays/
 import {
   NOTES_OPEN_QUICK_MENU,
   NOTES_MOVE_COMMAND,
@@ -11,8 +12,6 @@ import { mergeRegister } from "@lexical/utils";
 import { SELECTION_CHANGE_COMMAND } from "lexical";
 import { COMMAND_PRIORITY_HIGH, COMMAND_PRIORITY_LOW } from "lexical";
 import {
-  $getSelection,
-  $isRangeSelection,
   CLICK_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
   KEY_BACKSPACE_COMMAND,
@@ -61,11 +60,10 @@ function MenuOptions({ closeMenu, position, notes }) {
       new NoteMenuOption({
         title: "<b>F</b>old",
         icon: <i className="bi bi-arrows-collapse" />,
-        action: () => {
+        action: () =>
           editor.dispatchCommand(NOTES_TOGGLE_FOLD_COMMAND, {
             notes,
-          });
-        },
+          }),
       }),
       new NoteMenuOption({
         title: "<b>M</b>ove to...",
@@ -141,6 +139,7 @@ function MenuOptions({ closeMenu, position, notes }) {
               return false;
             }
             selected.action();
+            closeMenu();
           }
           event.preventDefault();
           return true;

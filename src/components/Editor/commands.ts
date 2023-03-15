@@ -20,3 +20,6 @@ export const NOTES_OPEN_QUICK_MENU: LexicalCommand<{
   y: number;
   notes: Note[];
 }> = createCommand("NOTES_OPEN_QUICK_MENU");
+
+export const NOTES_FOCUS_COMMAND: LexicalCommand<{ key: string }> =
+  createCommand("NOTES_FOCUS_COMMAND");

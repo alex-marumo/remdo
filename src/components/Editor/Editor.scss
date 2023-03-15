@@ -1,11 +1,21 @@
-@import "/node_modules/bootstrap-icons/font/bootstrap-icons";
-
 #hovered-note-menu {
   position: absolute;
   top: 0;
   left: 0;
 }
 
+#highlighter {
+  $shadowOffset: 5px;
+  $shadowBlurRadius: 5px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0.5;
+  z-index: 100;
+  box-shadow: (-$shadowOffset) (-$shadowOffset) ($shadowBlurRadius) 0px var(--bs-red);
+  border-radius: 0.25rem;
+  width: 100px;
+}
 /*
 #hovered-note-menu a:hover {
   box-shadow: 0 0 5px 0px var(--bs-secondary), inset 0 0 5px 0px var(--bs-secondary);
@@ -45,11 +55,6 @@
     list-style-type: none;
     list-style-image: none;
     list-style-position: outside;
-  }
-
-  li {
-    @extend .bi;
-    @extend .bi-record;
   }
 
   li::before {

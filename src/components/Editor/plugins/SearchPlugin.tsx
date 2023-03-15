@@ -1,29 +1,176 @@
+import { NOTES_FOCUS_COMMAND, NOTES_SEARCH_COMMAND } from "../commands";
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import { NotesState } from "../lexical/api";
-import { $setSelection } from "lexical";
-import React, { useEffect, useState } from "react";
+import { mergeRegister } from "@lexical/utils";
+import {
+  $getNearestNodeFromDOMNode,
+  $setSelection,
+  COMMAND_PRIORITY_CRITICAL,
+  COMMAND_PRIORITY_LOW,
+  KEY_ARROW_DOWN_COMMAND,
+  KEY_ARROW_UP_COMMAND,
+  KEY_ESCAPE_COMMAND,
+} from "lexical";
+import { LexicalEditor } from "lexical";
+import { KEY_ENTER_COMMAND } from "lexical";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+
+//TODO use it in other places
+function getOffsetPosition(editor: LexicalEditor, element: Element) {
+  const { x, y } = element.getBoundingClientRect();
+  const { x: aX, y: aY } = editor.getRootElement().getBoundingClientRect();
+  return {
+    left: x - aX + 5, //TODO
+    top: y - aY + 5, //TODO
+  };
+}
+
+function Finder({ stop, filter }) {
+  const [editor] = useNotesLexicalComposerContext();
+  const [index, setIndex] = useState(0);
+
+  const results = useCallback(
+    () => editor.getRootElement().querySelectorAll("li:not(.li-nested)"),
+    [editor]
+  );
+
+  useEffect(() => {
+    editor.fullUpdate(() => {
+      NotesState.getActive().setFilter(filter);
+      $setSelection(null);
+    });
+  }, [editor, filter, stop]);
+
+  useEffect(() => {
+    return mergeRegister(
+      editor.registerCommand(
+        KEY_ESCAPE_COMMAND,
+        () => {
+          stop();
+          return true;
+        },
+        COMMAND_PRIORITY_CRITICAL
+      ),
+      editor.registerCommand(
+        KEY_ARROW_DOWN_COMMAND,
+        () => {
+          setIndex((index + 1) % results().length);
+          return true;
+        },
+        COMMAND_PRIORITY_CRITICAL
+      ),
+      editor.registerCommand(
+        KEY_ARROW_UP_COMMAND,
+        () => {
+          const resultsLength = results().length;
+          setIndex((index - 1 + resultsLength) % resultsLength);
+          return true;
+        },
+        COMMAND_PRIORITY_CRITICAL
+      ),
+      editor.registerCommand(
+        KEY_ENTER_COMMAND,
+        e => {
+          editor.dispatchCommand(NOTES_FOCUS_COMMAND, {
+            key: $getNearestNodeFromDOMNode(results()[index]).getKey(),
+          });
+          stop(e);
+          return true;
+        },
+        COMMAND_PRIORITY_CRITICAL
+      )
+    );
+  }, [editor, index, results, stop]);
+
+  const getHighlighterStyle = useCallback(() => {
+    const _results = results();
+    if (!_results) return;
+    const element = _results[index];
+    if (!element) return;
+    const position = getOffsetPosition(editor, element);
+    const { height } = getComputedStyle(element, "::before"); //get height of ::before pseudo element as height of the main element may change if it's text length is too long
+    console.log("test4", position, height);
+    return { ...position, height };
+  }, [editor, index, results]);
+
+  return (
+    <div
+      id="highlighter"
+      style={getHighlighterStyle()}
+      className={"position-absolute"}
+    />
+  );
+}
 
 export function SearchPlugin() {
   const [editor] = useNotesLexicalComposerContext();
   const [noteFilter, setNoteFilter] = useState("");
+  const searchInputRef = useRef(null);
+  const [finderActive, setFinderActive] = useState(false);
+
+  const stopSearch = useCallback(
+    e => {
+      setFinderActive(false);
+      if (noteFilter) setNoteFilter("");
+      searchInputRef.current.blur();
+      //editor.focus(); doesn't work for some reason
+      editor.getRootElement().focus();
+    },
+    [editor, noteFilter]
+  );
 
   useEffect(() => {
-    editor.fullUpdate(() => {
-      const notesState = NotesState.getActive();
-      notesState.setFilter(noteFilter);
-      $setSelection(null);
-    });
-  }, [editor, noteFilter]);
+    return mergeRegister(
+      editor.registerCommand(
+        NOTES_SEARCH_COMMAND,
+        () => {
+          searchInputRef.current.focus();
+          return true;
+        },
+        COMMAND_PRIORITY_LOW
+      )
+    );
+  }, [editor, noteFilter, stopSearch]);
+
+  const keyDownHandler = useCallback(
+    (e: any) => {
+      const eventMappings = {
+        Escape: KEY_ESCAPE_COMMAND,
+        Enter: KEY_ENTER_COMMAND,
+        ArrowDown: KEY_ARROW_DOWN_COMMAND,
+        ArrowUp: KEY_ARROW_UP_COMMAND,
+      };
+
+      if (e.key in eventMappings) {
+        editor.dispatchCommand(eventMappings[e.key], e);
+        e.preventDefault();
+      }
+    },
+    [editor]
+  );
 
   return (
-    <input
-      type="text"
-      value={noteFilter}
-      onChange={e => setNoteFilter(e.target.value)}
-      className="form-control"
-      placeholder="Search..."
-      role="searchbox"
-      id="search"
-    />
+    <>
+      <input
+        ref={searchInputRef}
+        type="text"
+        value={noteFilter}
+        onChange={e => setNoteFilter(e.target.value)}
+        onKeyDown={keyDownHandler}
+        onFocus={() => setFinderActive(true)}
+        onBlur={stopSearch}
+        className="form-control"
+        placeholder="Search..."
+        role="searchbox"
+        id="search"
+        autoComplete="off"
+      />
+      {finderActive &&
+        createPortal(
+          <Finder stop={stopSearch} filter={noteFilter} />,
+          editor.getRootElement().parentElement
+        )}
+    </>
   );
 }

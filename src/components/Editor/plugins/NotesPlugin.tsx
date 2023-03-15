@@ -27,6 +27,7 @@ import PropTypes from "prop-types";
 import { useEffect, useCallback } from "react";
 import React from "react";
 import { createPortal } from "react-dom";
+import "./NotesPlugin.scss";
 
 export function NotesPlugin({ anchorElement }) {
   const [editor] = useNotesLexicalComposerContext();

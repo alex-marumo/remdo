@@ -1,3 +1,5 @@
+import { COMMAND_PRIORITY_LOW } from "../../../../lexical/packages/lexical/src/LexicalEditor";
+import { NOTES_FOCUS_COMMAND } from "../commands";
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import { Note } from "../lexical/api";
 import { isBeforeEvent } from "@/utils";
@@ -78,7 +80,15 @@ export function Navigation({ anchorElement }) {
         ) {
           setFocus(noteID);
         }
-      })
+      }),
+      editor.registerCommand(
+        NOTES_FOCUS_COMMAND,
+        ({ key }) => {
+          setFocus(key);
+          return true;
+        },
+        COMMAND_PRIORITY_LOW
+      )
     );
   });
 
