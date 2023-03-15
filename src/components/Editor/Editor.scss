@@ -8,29 +8,22 @@
   $shadowOffset: 5px;
   $shadowBlurRadius: 5px;
   position: absolute;
-  margin-top: $shadowOffset;
-  margin-left: $shadowOffset;
   top: 0;
   left: 0;
   opacity: 0.5;
   z-index: 100;
-  box-shadow: (-$shadowOffset) (-$shadowOffset) ($shadowBlurRadius) 0px var(--bs-red);
+  margin-top: $shadowOffset;
+  margin-left: $shadowOffset;
+  box-shadow: (-$shadowOffset) (-$shadowOffset) ($shadowBlurRadius) 0px
+    var(--bs-red);
   border-radius: 0.25rem;
   width: 100px;
 }
-/*
-#hovered-note-menu a:hover {
-  box-shadow: 0 0 5px 0px var(--bs-secondary), inset 0 0 5px 0px var(--bs-secondary);
-  border-radius: 100%;
-}
-*/
 
 .editor-input {
-  --hovered-note-before-content: "\F51A"; /* bi-record */
   position: relative;
   margin-top: 3px;
   margin-bottom: 3px;
-  padding-left: 1.5rem !important;
 
   /* font */
   .strikethrough {
@@ -64,13 +57,21 @@
     cursor: pointer;
     padding: 0.5em;
     pointer-events: all;
-    content: "\F51A"; /* bi-record */
+    content: "\F51A"; //bi-record
     color: var(--bs-secondary);
     font-size: 0.6em;
   }
 
+  li.note-folded::before {
+    content: "\F51B"; //bi-record2-fill
+  }
+
   li:hover::before {
-    content: var(--hovered-note-before-content);
+    content: var(--hovered-note-before-content, "\F51A"); //bi-record
+  }
+
+  li.note-folded:hover::before {
+    content: var(--hovered-note-before-content, "\F51B"); //bi-record2-fill
   }
 
   li.li-nested::before {

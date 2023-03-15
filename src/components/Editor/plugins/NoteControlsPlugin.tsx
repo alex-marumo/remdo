@@ -23,7 +23,7 @@ export function NoteControlsPlugin() {
 
   const menuClick = e => {
     e.preventDefault();
-    const {left, top, height} = getOffsetPosition(editor, e.target);
+    const { left, top, height } = getOffsetPosition(editor, e.target);
     editor.update(() => {
       editor.dispatchCommand(NOTES_OPEN_QUICK_MENU, {
         left,
@@ -90,7 +90,7 @@ export function NoteControlsPlugin() {
 
       const beforeContent = isBeforeEvent(li, event)
         ? '"\uF519"' //bi-record-fill icon
-        : '"\uF51A"'; //bi-record icon
+        : null;
       editor
         .getRootElement()
         .style.setProperty("--hovered-note-before-content", beforeContent);
