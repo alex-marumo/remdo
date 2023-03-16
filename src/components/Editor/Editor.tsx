@@ -26,6 +26,7 @@ import { useState } from "react";
 import React from "react";
 import { WebsocketProvider } from "y-websocket";
 import { Doc } from "yjs";
+import { IndexeddbPersistence } from "y-indexeddb";
 
 function providerFactory(id: string, yjsDocMap: Map<string, Doc>): Provider {
   let doc = yjsDocMap.get(id);
@@ -36,6 +37,13 @@ function providerFactory(id: string, yjsDocMap: Map<string, Doc>): Provider {
   } else {
     doc.load();
   }
+
+  const idbProvider = new IndexeddbPersistence(id, doc);
+
+  idbProvider.on("synced", () => {
+    console.log("local db synced");
+  });
+
   const wsProvider = new WebsocketProvider(
     "ws://athena:8080",
     "notes/0/" + id,
