@@ -11,7 +11,6 @@ import {
   KEY_ARROW_UP_COMMAND,
   KEY_ESCAPE_COMMAND,
 } from "lexical";
-import { LexicalEditor } from "lexical";
 import { KEY_ENTER_COMMAND } from "lexical";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -106,12 +105,17 @@ export function SearchPlugin() {
   const [finderActive, setFinderActive] = useState(false);
 
   const stopSearch = useCallback(
-    e => {
+    () => {
       setFinderActive(false);
       if (noteFilter) setNoteFilter("");
       searchInputRef.current.blur();
-      //editor.focus(); doesn't work for some reason
-      editor.getRootElement().focus();
+      editor.fullUpdate(
+        () => {
+          NotesState.getActive().setFilter("");
+        },
+        { discrete: true }
+      );
+      editor.focus();
     },
     [editor, noteFilter]
   );
@@ -127,7 +131,7 @@ export function SearchPlugin() {
         COMMAND_PRIORITY_LOW
       )
     );
-  }, [editor, noteFilter, stopSearch]);
+  }, [editor]);
 
   const keyDownHandler = useCallback(
     (e: any) => {

@@ -24,6 +24,9 @@
   position: relative;
   margin-top: 3px;
   margin-bottom: 3px;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-bottom: .5rem !important;
 
   /* font */
   .strikethrough {
@@ -50,6 +53,7 @@
     list-style-type: none;
     list-style-image: none;
     list-style-position: outside;
+    margin-bottom: 0;
   }
 
   li::before {

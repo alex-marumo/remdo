@@ -2,7 +2,6 @@ TODO create lint test case
 
 TODO /home/dev/project/lexical/packages/lexical-playground/vite.config.js contains problematic **DEV** replacement
 try to remove and reinstall warning
-TODO remove autocomplete
 
 TODO https://github.com/welldone-software/why-did-you-render
 TODO https://dmitripavlutin.com/react-usecallback/
@@ -10,12 +9,9 @@ TODO try using lexical dev tools
 TODO https://lexical.dev/docs/concepts/dom-events#3-use-nodeeventplugin
 TODO https://github.com/facebook/lexical/discussions
 use that in own project
-TODO doxygen or something similar
 TODO https://code.visualstudio.com/Docs/languages/javascript#_code-actions-on-save
 $nodesOfType + it's flat search
 TODO work on listeners (for example to update content and structure of breadcrumbs)
-
-TODO check LexicalTypeahead and how it generates (hides?) nodes may be useful for filtering notes
 
 FIXME very wired behavior with url pointing to an not existing note
 
@@ -60,13 +56,13 @@ TODO https://mdbootstrap.com/
 
 
 Watched lexical issues:
+list: https://github.com/facebook/lexical/issues/2951
 https://github.com/facebook/lexical/issues/3763
 https://github.com/facebook/lexical/issues/3670
 https://github.com/facebook/lexical/issues/3567
 https://github.com/facebook/lexical/issues/3433
 https://github.com/facebook/lexical/issues/3255
 https://github.com/facebook/lexical/issues/3085
-https://github.com/facebook/lexical/issues/2951
 https://github.com/facebook/lexical/issues/2845
 https://github.com/facebook/lexical/issues/2791
 https://github.com/facebook/lexical/issues/2127
