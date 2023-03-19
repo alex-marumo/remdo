@@ -39,7 +39,9 @@
     "test-unit-watch": "VITE_DISABLECOLLAB=true npx vitest --ui",
     "test-unit-preview": "cd data && SERVER_MODE=vitest_preview PORT=3001 npx vitest-preview",
     "test": "npm run test-unit && npm run test-browser",
-    "kill-npm-processes": "ps -eaf | grep 'npm run' | awk '{print $2}' |  xargs kill"
+    "kill-npm-processes": "ps -eaf | grep 'npm run' | awk '{print $2}' |  xargs kill",
+    "load": "./utils.sh run_serialization load",
+    "save": "./utils.sh run_serialization save"
   },
   "browserslist": {
     "production": [

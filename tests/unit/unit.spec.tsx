@@ -1,206 +1,30 @@
-import App from "@/App";
-import { Note, NotesState } from "../../src/components/Editor/lexical/api";
-import { TestContext as ComponentTestContext } from "@/components/Editor/plugins/DevComponentTestPlugin";
+import { checkChildren, createChildren, debug, testUpdate } from "./common";
+import { Note, NotesState } from "@/components/Editor/lexical/api";
 import { $isListNode, $isListItemNode } from "@lexical/list";
-import {
-  BoundFunctions,
-  getAllByRole,
-  queries,
-  render,
-  RenderResult,
-  within,
-} from "@testing-library/react";
-import fs from "fs";
-import { $createTextNode, $getRoot, $setSelection } from "lexical";
-import type { ElementNode } from "lexical";
-import path from "path";
-import React from "react";
-import { describe, it, afterAll, expect, beforeEach, afterEach } from "vitest";
+import { $createTextNode, $getRoot, $setSelection, ElementNode } from "lexical";
+import { describe, it, expect, beforeEach } from "vitest";
 
-function debug() {
-  const CACHE_FOLDER = path.join(process.cwd(), "data", ".vitest-preview");
-  //content directly copied from vitest-preview to change the cache folder
 
-  function createCacheFolderIfNeeded() {
-    if (!fs.existsSync(CACHE_FOLDER)) {
-      fs.mkdirSync(CACHE_FOLDER, {
-        recursive: true,
-      });
-    }
-  }
-
-  function debug() {
-    createCacheFolderIfNeeded();
-    fs.writeFileSync(
-      path.join(CACHE_FOLDER, "index.html"),
-      document.documentElement.outerHTML
-    );
-  }
-  //end of copied code
-
-  debug();
-}
-
-declare module "vitest" {
-  export interface TestContext {
-    _component?: RenderResult;
-    queries?: BoundFunctions<
-      typeof queries & { getAllNotNestedIListItems: typeof getAllByRole.bind }
-    >;
-    lexicalUpdate: (fn: () => void) => void;
-  }
-}
-
-/** Runs test in Lexical editor update context */
-function testUpdate(
-  title: string,
-  fn: ({ root, context, rootNode }) => void,
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  runner: Function = it
-) {
-  if (fn.constructor.name == "AsyncFunction") {
-    throw Error("Async functions can't be wrapped with update");
-  }
-  return runner(title, context => {
+describe("API", async () => {
+  beforeEach(async context => {
     context.lexicalUpdate(() => {
-      const rootNode = $getRoot();
-      fn({ context, root: Note.from(rootNode), rootNode });
+      $getRoot().clear();
     });
-    debug();
-  });
-}
-
-testUpdate.only = (title: string, fn) => {
-  testUpdate(title, fn, it.only);
-};
-
-testUpdate.skip = (title: string, fn) => {
-  testUpdate(title, fn, it.skip);
-};
-
-//TODO consider changing that function to accept structure parameter like that:
-//    const structure = checkStructure(root, {
-//  root: {
-//    note0,
-//    note1: {
-//      note2,
-//    },
-//  },
-//});
-//in such a case ids would not be available, but these can be compared to text
-//or just skipped
-function checkChildren(
-  notes: Array<Note>,
-  expectedChildrenArrays: Array<Array<Note>>
-) {
-  let expectedCount = 0;
-  notes.forEach((note, idx) => {
-    const expectedChildren = expectedChildrenArrays[idx] || [];
-    expectedCount += expectedChildren.length;
-    //note.text and idx are added in case of an error, so it's easier to notice which node causes the issue
-    expect([note.text, idx, ...note.children]).toStrictEqual([
-      note.text,
-      idx,
-      ...expectedChildren,
-    ]);
-    expect(note.hasChildren).toEqual(expectedChildren.length > 0);
-    for (const child of note.children) {
-      expect(child).toBeInstanceOf(Note);
-    }
-  });
-  expect(notes).toHaveLength(expectedCount + 1); //+1 for root which is not listed as a child
-}
-
-function createChildren(note: Note, count: number): [Array<Note>, ...Note[]] {
-  const start = [...note.children].length;
-  for (let i = 0; i < count; ++i) {
-    note.createChild(`note${start + i}`);
-  }
-  const n: Array<Note> = [note, ...note.children];
-  const n1: Array<Note> = [...note.children];
-
-  return [n, ...n1];
-}
-
-beforeEach(async context => {
-  let editor = null;
-  function testHandler(ed) {
-    editor = ed;
-  }
-  //TODO test only editor, without router, layout, etc. required editor to abstract from routes
-  const component = render(
-    <ComponentTestContext.Provider value={{ testHandler }}>
-      <h1 className="text-center text-warning">Unit tests</h1>
-      <App />
-    </ComponentTestContext.Provider>
-  );
-
-  const editorElement = component.getByRole("textbox");
-
-  context._component = component;
-  context.queries = within(editorElement, {
-    ...queries,
-    getAllNotNestedIListItems: () =>
-      context.queries
-        .getAllByRole("listitem")
-        .filter(li => !li.classList.contains("li-nested")),
+    //this have to be a separate, discrete update, so appropriate listener can
+    //be fired afterwards and create the default root note
+    context.lexicalUpdate(() => {
+      $getRoot()
+        .getChildren()
+        .find($isListNode)
+        .getFirstChildOrThrow()
+        .append($createTextNode("note0"));
+  
+      //otherwise we can get some errors about missing functions in the used
+      //DOM implementation
+      $setSelection(null);
+    });
   });
 
-  context.lexicalUpdate = updateFunction => {
-    let err = null;
-    editor.fullUpdate(
-      function () {
-        try {
-          return updateFunction();
-        } catch (e) {
-          err = e;
-        }
-      },
-      { discrete: true }
-    );
-    if (err) {
-      //rethrow after finishing update
-      throw err;
-    }
-  };
-
-  if (!process.env.VITE_DISABLECOLLAB) {
-    //wait for yjs to connect via websocket and init the editor content
-    while (editorElement.children.length == 0) {
-      await new Promise(r => setTimeout(r, 10));
-    }
-  }
-
-  context.lexicalUpdate(() => {
-    $getRoot().clear();
-  });
-  //this have to be a separate, discrete update, so appropriate listener can
-  //be fired afterwards and create the default root note
-  context.lexicalUpdate(() => {
-    $getRoot()
-      .getChildren()
-      .find($isListNode)
-      .getFirstChildOrThrow()
-      .append($createTextNode("note0"));
-
-    //otherwise we can get some errors about missing functions in the used
-    //DOM implementation
-    $setSelection(null);
-  });
-});
-
-afterEach(async context => {
-  //an ugly workaround - to give a chance for yjs to sync
-  await new Promise(r => setTimeout(r, 10));
-  context._component.unmount();
-});
-
-afterAll(async () => {
-  //an ugly workaround - otherwise we may loose some messages written to console
-  await new Promise(r => setTimeout(r, 10));
-});
-
-describe("editor init", async () => {
   testUpdate("create notes", ({ rootNode }) => {
     expect(rootNode.getChildrenSize()).toEqual(1);
     expect(rootNode.getChildren()[0]).toSatisfy($isListNode);
@@ -212,9 +36,7 @@ describe("editor init", async () => {
     const liNode: ElementNode = listNode.getFirstChild();
     expect(liNode.getChildrenSize()).toBe(1);
   });
-});
 
-describe("API", async () => {
   testUpdate("create notes", ({ root }) => {
     const note0 = [...root.children][0];
     const notes = [root, note0];

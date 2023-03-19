@@ -51,6 +51,14 @@ function trim_playwright {
     cat | grep -Ev 'To open last HTML report run|npx playwright show-report data'
 }
 
+function run_serialization {
+    if [ "$#" -ne 2 ]; then
+        echo "Usage: $SCRIPT_PATH run_serialization [load|save] [serialization_file]"
+        exit 1
+    fi
+    VITEST_SERIALIZATION_FILE=$2 npx vitest --no-api run serialization -t $1
+}
+
 if [ "$#" -eq 0 ]; then
     wrong_usage
 fi

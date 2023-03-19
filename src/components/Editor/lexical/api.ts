@@ -1,5 +1,5 @@
-import { LexicalNode } from "@lexical/LexicalNode";
 import { getActiveEditor, getActiveEditorState } from "@lexical/LexicalUpdates";
+import { LexicalNode } from "@lexical/LexicalNode";
 import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
 import {
   $createListItemNode,

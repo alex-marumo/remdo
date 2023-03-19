@@ -7,7 +7,7 @@ import {
 import { LexicalEditor } from "lexical";
 import { EditorUpdateOptions } from "lexical/LexicalEditor";
 
-interface NotesLexicalEditor extends LexicalEditor {
+export interface NotesLexicalEditor extends LexicalEditor {
   fullUpdate(updateFunction: () => void, options?: EditorUpdateOptions): void;
 }
 
