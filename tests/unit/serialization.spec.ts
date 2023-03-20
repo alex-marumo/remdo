@@ -1,5 +1,6 @@
 import "./common";
 import fs from "fs";
+import { CLEAR_HISTORY_COMMAND } from "lexical";
 import path from "path";
 import { it } from "vitest";
 
@@ -26,4 +27,5 @@ it("load", context => {
     serializedEditorState
   );
   context.editor.setEditorState(initialEditorState);
+  context.editor.dispatchCommand(CLEAR_HISTORY_COMMAND, null);
 });
