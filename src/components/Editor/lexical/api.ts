@@ -303,6 +303,7 @@ LexicalListItemNode.prototype.getFold = function () {
 };
 
 LexicalListItemNode.prototype.setFold = function (fold: boolean): void {
+  console.log("setFold", fold);
   this.getWritable().__fold = !!fold;
 };
 

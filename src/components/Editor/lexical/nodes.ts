@@ -13,19 +13,15 @@ export function applyNodePatches(NodeType: any) {
     and doesn't rename original types
     */
   patch(NodeType, "updateDOM", function (oldMethod, prevNode, dom, config) {
-    const lexicalState = getNotesEditorState();
     //lexicalMethod has to be placed first as it may have some side effects
     return (
-      //TODO just checking lexicalState._notesFilterChanged is necessary but not sufficient
-      //it may be more efficient to actually check if node will be different after updateDOM
-      //for example when it was already filtered out and still needs to be
-      oldMethod(prevNode, dom, config) || lexicalState._notesFilterChanged
+      //TODO perform an actual check
+      oldMethod(prevNode, dom, config) || true
     );
   });
 
   patch(NodeType, "createDOM", function (oldMethod, config, editor) {
     const notesState = NotesState.getActive();
-
     //
     // search filter
     //
@@ -40,33 +36,41 @@ export function applyNodePatches(NodeType: any) {
       }
       if (!Note.from(this).text.includes(notesState.filter)) {
         return document.createElement("div");
+      } else {
+        //during search focus and fold are ignored
+        return oldMethod(config, editor);
       }
     }
 
     //
-    // focus
+    // focus & fold
     //
+    //TODO simplify
+    const note = Note.from(this);
+    const parents = [...note.parents];
     if (
       !notesState.focus ||
       notesState.focus.parentKey === this.getKey() ||
       notesState.focus.nodeKey === this.getKey() ||
-      //init note here (i.e. after the previous conditions are checked)
-      //and check if it or one of it's parents is focused
-      (note =>
-        [note, ...note.parents].some(
-          p => p.lexicalKey === notesState.focus.nodeKey
-        ))(Note.from(this))
+      [note, ...note.parents].some(
+        p => p.lexicalKey === notesState.focus.nodeKey
+      )
     ) {
       //
       // is fold?
       //
-      const note = Note.from(this);
-      if ([...note.parents].some(p => p.fold)) {
-        //TODO should be specific to ListNode
-        return document.createElement("div");
+      if (notesState?.focus?.nodeKey !== note.lexicalKey) {
+        for (const p of parents) {
+          if (p.fold) {
+            return document.createElement("div");
+          }
+          if (p.lexicalKey === notesState.focus?.nodeKey) {
+            break;
+          }
+        }
       }
       const dom: HTMLElement = oldMethod(config, editor);
-      if(note.fold) {
+      if (note.fold) {
         addClassNamesToElement(dom, "note-folded");
       }
       return dom;
