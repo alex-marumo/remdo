@@ -285,7 +285,7 @@ export class Note {
   }
 
   set fold(value) {
-    !this.isRoot && this.lexicalNode.setFold(value);
+    !this.isRoot && this.lexicalNode.setFold(value && this.hasChildren);
   }
 }
 
@@ -303,7 +303,6 @@ LexicalListItemNode.prototype.getFold = function () {
 };
 
 LexicalListItemNode.prototype.setFold = function (fold: boolean): void {
-  console.log("setFold", fold);
   this.getWritable().__fold = !!fold;
 };
 

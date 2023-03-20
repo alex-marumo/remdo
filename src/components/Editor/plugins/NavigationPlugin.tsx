@@ -84,7 +84,7 @@ export function Navigation({ anchorElement }) {
       editor.registerCommand(
         NOTES_FOCUS_COMMAND,
         ({ key }) => {
-          setFocus(key);
+          navigate(`/note/${key}`);
           return true;
         },
         COMMAND_PRIORITY_LOW
