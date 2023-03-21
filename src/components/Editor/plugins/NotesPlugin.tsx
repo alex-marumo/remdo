@@ -1,4 +1,4 @@
-import { NOTES_TOGGLE_FOLD_COMMAND } from "../commands";
+import { NOTES_MOVE_COMMAND, NOTES_TOGGLE_FOLD_COMMAND } from "../commands";
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import { Note } from "../lexical/api";
 import { Navigation } from "./NavigationPlugin";
@@ -11,6 +11,7 @@ import {
   $isListNode,
   $isListItemNode,
 } from "@lexical/list";
+import { ListItemNode } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
 import { KEY_BACKSPACE_COMMAND } from "lexical";
 import {
@@ -154,6 +155,16 @@ export function NotesPlugin({ anchorElement }) {
               Note.from(key).fold = fold;
             });
           });
+          return true;
+        },
+        COMMAND_PRIORITY_LOW
+      ),
+      editor.registerCommand(
+        NOTES_MOVE_COMMAND,
+        ({ keys, targetKey }) => {
+          const moved: ListItemNode = $getNodeByKey(keys[0]);
+          const target: ListItemNode = $getNodeByKey(targetKey);
+          target.insertAfter(moved);
           return true;
         },
         COMMAND_PRIORITY_LOW

@@ -1,7 +1,7 @@
 //TODO try to use https://react-bootstrap.github.io/components/dropdowns/ or https://react-bootstrap.github.io/components/overlays/
 import {
   NOTES_OPEN_QUICK_MENU,
-  NOTES_MOVE_COMMAND,
+  NOTES_START_MOVING_COMMAND,
   NOTES_SEARCH_COMMAND,
   NOTES_TOGGLE_FOLD_COMMAND,
   NOTES_FOCUS_COMMAND,
@@ -70,7 +70,8 @@ function MenuOptions({ closeMenu, position, noteKeys }) {
       new NoteMenuOption({
         title: "<b>M</b>ove to...",
         icon: <i className="bi bi-arrow-right-square" />,
-        action: () => editor.dispatchCommand(NOTES_MOVE_COMMAND, undefined),
+        action: () =>
+          editor.dispatchCommand(NOTES_START_MOVING_COMMAND, { keys: noteKeys }),
       }),
       new NoteMenuOption({
         title: "<b>S</b>earch...",
