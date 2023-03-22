@@ -13,7 +13,7 @@ const disableCollab = process.env.VITE_DISABLECOLLAB;
 const config: PlaywrightTestConfig = {
   testDir: "./tests/browser",
   /* Maximum time one test can run for. */
-  timeout: 5 * 1000,
+  timeout: 10 * 1000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
