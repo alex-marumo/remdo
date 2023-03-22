@@ -138,7 +138,7 @@
           "clear": true,
           "group": "test",
           "close": true
-        },
+        }
         /*"problemMatcher": {
           "owner": "javascript",
           "fileLocation": ["relative", "${workspaceFolder}/tests/browser"],
@@ -170,7 +170,7 @@
           "clear": true,
           "group": "test",
           "close": true
-        },
+        }
         /*"problemMatcher": {
           "owner": "javascript",
           "fileLocation": ["relative", "${workspaceFolder}"],
@@ -227,48 +227,8 @@
           "runOn": "folderOpen",
           "instanceLimit": 1
         }
-      },
-      {
-        "group": "test",
-        "label": "browser report",
-        "command": "npm run test-report",
-        "type": "shell",
-        "icon": {
-          "id": "report"
-        },
-        "isBackground": true,
-        "presentation": {
-          "panel": "dedicated",
-          "clear": true,
-          "group": "server",
-          "close": true
-        },
-        "runOptions": {
-          "runOn": "folderOpen",
-          "instanceLimit": 1
-        }
-      },
-      {
-        "group": "test",
-        "label": "unit preview",
-        "command": "npm run test-unit-preview",
-        "type": "shell",
-        "icon": {
-          "id": "open-preview"
-        },
-        "isBackground": true,
-        "presentation": {
-          "panel": "dedicated",
-          "clear": true,
-          "group": "server",
-          "close": true
-        },
-        "runOptions": {
-          "instanceLimit": 1
-        }
       }
     ],
-
     "version": "2.0.0"
   }
 }

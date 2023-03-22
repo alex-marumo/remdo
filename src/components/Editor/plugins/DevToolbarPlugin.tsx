@@ -27,20 +27,6 @@ export const DevToolbarPlugin = ({ editorBottom }) => {
     });
   };
 
-  const DifferentPortSameHostLink = ({ title, port, children }) => {
-    return (
-      <a
-        href={`${location.protocol}//${location.hostname}:${port}`}
-        target="_blank"
-        rel="noreferrer"
-        className="btn btn-link float-end"
-      >
-        {children}
-        {title}
-      </a>
-    );
-  };
-
   const toggleShowDebug = useCallback(() => {
     setShowDebugState(!showDebug);
     editor.update(() => {
@@ -81,13 +67,22 @@ export const DevToolbarPlugin = ({ editorBottom }) => {
       >
         Test
       </button>
-      <DifferentPortSameHostLink title="Vitest Preview" port="3001">
+      <a
+        href="/data/playwright-report/"
+        target="_blank"
+        className="btn btn-link float-end"
+      >
         <IconVitest />
-      </DifferentPortSameHostLink>
-      <DifferentPortSameHostLink title="Playwright Report" port="9323">
+        Vitest Preview
+      </a>
+      <a
+        href="/data/playwright-report/"
+        target="_blank"
+        className="btn btn-link float-end"
+      >
         <IconPlaywright />
-      </DifferentPortSameHostLink>
-
+        Playwright Report
+      </a>
       <button
         type="button"
         className="btn btn-link float-end"
