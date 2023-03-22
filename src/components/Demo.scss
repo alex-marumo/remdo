@@ -1,0 +1,26 @@
+@use "/node_modules/bootstrap-icons/font/bootstrap-icons";
+@use "/node_modules/bootstrap/scss/bootstrap.scss";
+
+.window {
+  border: 1px solid var(--bs-secondary-border-subtle);
+  width: 200px;
+  text-shadow: 4px 4px 2px rgba(255, 255, 255, 0.4);
+  box-shadow: 4px 4px 0px;
+
+  transform-style: preserve-3d;
+  //transform: perspective(200px) rotateX(25deg) rotateY(-25deg);
+
+  .title {
+    @extend .bg-secondary;
+    //@extend .text-secondary;
+    //background-color: var(--bs-secondary-bg);
+    //color: var(--bs-secondary-bg-subtle);
+    text-align: center;
+    text-shadow: none;
+
+    i {
+      color: var(--bs-yellow);
+    }
+  }
+}
+

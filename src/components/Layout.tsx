@@ -10,6 +10,9 @@ export function Layout() {
             <NavLink className="nav-link" to="/">Home</NavLink>
           </li>
           <li className="nav-item">
+            <NavLink className="nav-link" to="/demo">Demo</NavLink>
+          </li>
+          <li className="nav-item">
             <NavLink className="nav-link" to="/about">About</NavLink>
           </li>
         </ul>

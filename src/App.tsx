@@ -1,6 +1,7 @@
+import "./App.scss";
+import { Demo } from "./components/Demo";
 import { Layout } from "./components/Layout";
 import Editor from "@/components/Editor";
-import "./App.scss";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
@@ -17,6 +18,7 @@ function App() {
               <Route path="note/:noteID" element="</>"></Route>
             </Route>
             <Route path="about" element={<div>About</div>} />
+            <Route path="demo" element={<Demo />} />
             <Route path="*" element={<Navigate to="/" />}></Route>
           </Route>
         </Routes>
