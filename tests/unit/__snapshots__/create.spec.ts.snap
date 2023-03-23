@@ -1,6 +1,6 @@
 // Vitest Snapshot v1
 
-exports[`create > create 1`] = `
+exports[`create > minimize 1`] = `
 "root:
   type: root
   children:

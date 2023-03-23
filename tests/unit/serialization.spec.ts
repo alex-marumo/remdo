@@ -1,5 +1,5 @@
 import "./common";
-import { getDataPath, lexicalStateKeyCompare, loadEditorStateFromFile } from "./common";
+import { getDataPath, lexicalStateKeyCompare, loadEditorState } from "./common";
 import fs from "fs";
 import path from "path";
 import { it } from "vitest";
@@ -41,5 +41,5 @@ it("save", ({ editor }) => {
 });
 
 it("load", ({ editor }) => {
-  loadEditorStateFromFile(editor, getDataFileName());
+  loadEditorState(editor, getDataFileName());
 });

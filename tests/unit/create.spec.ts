@@ -1,4 +1,4 @@
-import { lexicalStateKeyCompare, loadEditorStateFromFile } from "./common";
+import { lexicalStateKeyCompare, loadEditorState } from "./common";
 import yaml from "js-yaml";
 import { LexicalEditor } from "lexical";
 import { describe, it } from "vitest";
@@ -6,7 +6,7 @@ import { describe, it } from "vitest";
 /**
  *  converts editor state to JSON with removed defaults
  */
-function getMinimizedEditorState(editor: LexicalEditor) {
+function getMinimizedState(editor: LexicalEditor) {
   type Node = Array<Node> | object;
   function walk(node: Node) {
     function minimize(node: object) {
@@ -68,18 +68,21 @@ function getMinimizedEditorState(editor: LexicalEditor) {
   const editorState = editor.getEditorState();
   const state = JSON.parse(JSON.stringify(editorState)); // clone deeply
   walk(state);
-  return state;
+
+  return yaml.dump(state, {
+    noArrayIndent: true,
+    sortKeys: lexicalStateKeyCompare,
+  });
 }
 
 describe("create", async () => {
+  it("minimize", async ({ editor, expect }) => {
+    loadEditorState(editor, "basic");
+    expect(getMinimizedState(editor)).toMatchSnapshot();
+  });
+
   it("create", async ({ editor, expect }) => {
-    loadEditorStateFromFile(editor, "basic");
-    const state = getMinimizedEditorState(editor);
-    expect(
-      yaml.dump(state, {
-        noArrayIndent: true,
-        sortKeys: lexicalStateKeyCompare,
-      })
-    ).toMatchSnapshot();
+    loadEditorState(editor, "basic");
+    //expect(getMinimizedState(editor)).toMatchSnapshot();
   });
 });

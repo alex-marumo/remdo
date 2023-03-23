@@ -133,7 +133,7 @@ export function getDataPath(name: string) {
   return path.join(__dirname, "..", "data", name + ".json");
 }
 
-export function loadEditorStateFromFile(editor: LexicalEditor, name: string) {
+export function loadEditorState(editor: LexicalEditor, name: string) {
   const dataPath = getDataPath(name);
   console.log("Loading from", dataPath);
   const serializedEditorState = fs.readFileSync(dataPath).toString();
