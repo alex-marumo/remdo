@@ -1,4 +1,4 @@
-import { loadEditorStateFromFile } from "./common";
+import { lexicalStateKeyCompare, loadEditorStateFromFile } from "./common";
 import yaml from "js-yaml";
 import { LexicalEditor } from "lexical";
 import { describe, it } from "vitest";
@@ -78,16 +78,7 @@ describe("create", async () => {
     expect(
       yaml.dump(state, {
         noArrayIndent: true,
-        sortKeys: (a, b) => {
-          // put children at the end
-          if (a === "children") {
-            return 1;
-          }
-          if (b === "children") {
-            return -1;
-          }
-          return a.localeCompare(b);
-        },
+        sortKeys: lexicalStateKeyCompare,
       })
     ).toMatchSnapshot();
   });

@@ -29,10 +29,13 @@ declare module "vitest" {
   }
 }
 
+/**
+ * Modified version of vitest-preview debug function
+ * to save the file in a different location
+ */
 export function debug() {
   const CACHE_FOLDER = path.join(process.cwd(), "data", ".vitest-preview");
   //content directly copied from vitest-preview to change the cache folder
-
   function createCacheFolderIfNeeded() {
     if (!fs.existsSync(CACHE_FOLDER)) {
       fs.mkdirSync(CACHE_FOLDER, {
@@ -49,7 +52,6 @@ export function debug() {
     );
   }
   //end of copied code
-
   debug();
 }
 
@@ -138,6 +140,17 @@ export function loadEditorStateFromFile(editor: LexicalEditor, name: string) {
   const editorState = editor.parseEditorState(serializedEditorState);
   editor.setEditorState(editorState);
   editor.dispatchCommand(CLEAR_HISTORY_COMMAND, null);
+}
+
+/** put children at the end */
+export function lexicalStateKeyCompare(a: any, b: any) {
+  if (a === "children") {
+    return 1;
+  }
+  if (b === "children") {
+    return -1;
+  }
+  return a.localeCompare(b);
 }
 
 beforeEach(async context => {
