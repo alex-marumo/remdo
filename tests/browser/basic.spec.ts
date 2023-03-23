@@ -51,7 +51,7 @@ test("indent outdent", async ({ page }) => {
 
   //select note2
   await getNoteLocator(page, "note2").selectText();
-  page.locator(".editor-input li :text('note2')").selectText();
+  await page.locator(".editor-input li :text('note2')").selectText();
 
   //indent
   await page.keyboard.press("Tab");

@@ -27,7 +27,7 @@ const config: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  workers: disableCollab ? 10 : 1,
+  workers: disableCollab ? 30 : 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ["html", { open: "never", outputFolder: "./data/playwright-report" }],
