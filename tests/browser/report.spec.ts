@@ -23,6 +23,7 @@ function countFilesByExtension() {
 function countCodeLines() {
   const cmd = `./utils.sh repo_files | \
       grep -v package-lock.json | \
+      grep -v __snapshots__ | \
       xargs wc -l | \
       tail -n 1 | \
       awk '{print $1}'`;

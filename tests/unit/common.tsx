@@ -11,7 +11,8 @@ import {
   within,
 } from "@testing-library/react";
 import fs from "fs";
-import { $getRoot } from "lexical";
+import { $getRoot, CLEAR_HISTORY_COMMAND } from "lexical";
+import { LexicalEditor } from "lexical";
 import path from "path";
 import React from "react";
 import { it, afterAll, expect, beforeEach, afterEach } from "vitest";
@@ -24,6 +25,7 @@ declare module "vitest" {
     >;
     lexicalUpdate: (fn: () => void) => void;
     editor: NotesLexicalEditor;
+    expect: typeof expect;
   }
 }
 
@@ -123,6 +125,19 @@ export function createChildren(
   const n1: Array<Note> = [...note.children];
 
   return [n, ...n1];
+}
+
+export function getDataPath(name: string) {
+  return path.join(__dirname, "..", "data", name + ".json");
+}
+
+export function loadEditorStateFromFile(editor: LexicalEditor, name: string) {
+  const dataPath = getDataPath(name);
+  console.log("Loading from", dataPath);
+  const serializedEditorState = fs.readFileSync(dataPath).toString();
+  const editorState = editor.parseEditorState(serializedEditorState);
+  editor.setEditorState(editorState);
+  editor.dispatchCommand(CLEAR_HISTORY_COMMAND, null);
 }
 
 beforeEach(async context => {

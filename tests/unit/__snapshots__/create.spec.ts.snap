@@ -1,0 +1,26 @@
+// Vitest Snapshot v1
+
+exports[`create > create 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - type: listitem
+      value: 1
+      children:
+      - text: sample0
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: sample1
+            type: text
+"
+`;

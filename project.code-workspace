@@ -38,10 +38,12 @@
     },
     "cSpell.words": [
       "linebreak",
+      "listitem",
       "middlewares",
       "outdent",
       "strikethrough",
-      "viewports"
+      "viewports",
+      "Vitest"
     ],
     "cSpell.ignoreWords": [
       "DISABLECOLLAB",
