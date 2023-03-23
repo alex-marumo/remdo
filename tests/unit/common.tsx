@@ -15,6 +15,7 @@ import { $getRoot, CLEAR_HISTORY_COMMAND } from "lexical";
 import { LexicalEditor } from "lexical";
 import path from "path";
 import React from "react";
+import { getDataPath } from "tests/common";
 import { it, afterAll, expect, beforeEach, afterEach } from "vitest";
 
 declare module "vitest" {
@@ -127,10 +128,6 @@ export function createChildren(
   const n1: Array<Note> = [...note.children];
 
   return [n, ...n1];
-}
-
-export function getDataPath(name: string) {
-  return path.join(__dirname, "..", "data", name + ".json");
 }
 
 export function loadEditorState(editor: LexicalEditor, name: string) {

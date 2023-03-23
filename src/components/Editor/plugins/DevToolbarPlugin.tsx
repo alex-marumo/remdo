@@ -1,13 +1,42 @@
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import TreeViewPlugin from "@lexical/playground/plugins/TreeViewPlugin";
-import { CLEAR_EDITOR_COMMAND } from "lexical";
+import { CLEAR_EDITOR_COMMAND, CLEAR_HISTORY_COMMAND } from "lexical";
 import React, { useCallback, useState } from "react";
 import { createPortal } from "react-dom";
+
+function EditorStateInput() {
+  const [editor] = useNotesLexicalComposerContext();
+  const loadEditorState = () => {
+    const editorStateElement: HTMLTextAreaElement = document.getElementById(
+      "editor-state"
+    ) as HTMLTextAreaElement;
+    const serializedEditorState = editorStateElement.value;
+    const editorState = editor.parseEditorState(serializedEditorState);
+    editor.setEditorState(editorState);
+    editor.dispatchCommand(CLEAR_HISTORY_COMMAND, null);
+    editorStateElement.value = "";
+  };
+
+  return (
+    <div>
+      <textarea id="editor-state"></textarea>
+      <br />
+      <button
+        type="button"
+        className="btn btn-primary"
+        onClick={loadEditorState}
+      >
+        Submit Editor State
+      </button>
+    </div>
+  );
+}
 
 export const DevToolbarPlugin = ({ editorBottom }) => {
   const [editor] = useNotesLexicalComposerContext();
   const [showDebug, setShowDebugState] = useState(true);
   const [darkMode, setDarkMode] = useState(getDarkMode());
+  const [showEditorStateInput, setShowEditorStateInput] = useState(false);
 
   function getDarkMode() {
     return document.documentElement.dataset.bsTheme === "dark";
@@ -19,12 +48,9 @@ export const DevToolbarPlugin = ({ editorBottom }) => {
     });
   };
 
-  const testAction = event => {
+  const toggleEditorStateInput = event => {
     event.preventDefault();
-    console.clear();
-    editor.fullUpdate(() => {
-      console.log("testing");
-    });
+    setShowEditorStateInput(!showEditorStateInput);
   };
 
   const toggleShowDebug = useCallback(() => {
@@ -63,9 +89,9 @@ export const DevToolbarPlugin = ({ editorBottom }) => {
       <button
         type="button"
         className="btn btn-link float-end"
-        onClick={testAction}
+        onClick={toggleEditorStateInput}
       >
-        Test
+        Load State
       </button>
       <a
         href="/data/playwright-report/"
@@ -92,13 +118,11 @@ export const DevToolbarPlugin = ({ editorBottom }) => {
         {showDebug ? "Hide Debug" : "Show Debug"}
       </button>
       {editorBottom &&
+        showEditorStateInput &&
+        createPortal(<EditorStateInput />, editorBottom)}
+      {editorBottom &&
         showDebug &&
-        createPortal(
-          <div>
-            <TreeViewPlugin />
-          </div>,
-          editorBottom
-        )}
+        createPortal(<TreeViewPlugin />, editorBottom)}
     </>
   );
 };

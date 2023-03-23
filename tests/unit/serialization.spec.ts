@@ -1,14 +1,15 @@
 import "./common";
-import { getDataPath, lexicalStateKeyCompare, loadEditorState } from "./common";
+import { lexicalStateKeyCompare, loadEditorState } from "./common";
 import fs from "fs";
 import path from "path";
+import { getDataPath } from "tests/common";
 import { it } from "vitest";
 
 function getDataFileName() {
   return path.basename(process.env.VITEST_SERIALIZATION_FILE);
 }
 
-/** 
+/**
  * uses lexicalStateKeyCompare to put children at the end for easier reading
  */
 function sortObjectKeys(obj: any): any {

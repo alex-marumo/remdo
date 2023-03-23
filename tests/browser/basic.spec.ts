@@ -1,35 +1,13 @@
-//breaks if lexical-playground dependencies are installed
 import {
   assertHTML,
   clearEditor,
-  focusEditor,
-  getHTML,
+  getEditorHTML,
   html,
-  prettifyHTML,
-} from "../../lexical/packages/lexical-playground/__tests__/utils/index.mjs";
-import { getNote } from "./index";
+} from "./common";
+import { getNoteLocator } from "./common";
 import { test, expect } from "@playwright/test";
 
-// eslint-disable-next-line no-unused-vars
-async function logHTML(page) {
-  const html = await getHTML(page);
-  console.log(prettifyHTML(html));
-}
-
 test.beforeEach(async ({ page }) => {
-  page.on("console", message => {
-    if (["warning", "error"].includes(message.type())) {
-      console.error(`${message.type} inside the browser: `, message.text());
-      throw Error(message.text());
-    }
-  });
-  page.on("pageerror", err => {
-    console.error("Error inside the browser: ", err.message);
-    throw err;
-  });
-
-  await page.goto("");
-  await focusEditor(page);
   await clearEditor(page);
 
   await page.keyboard.type("note1");
@@ -69,10 +47,11 @@ test("content", async ({ page }) => {
 });
 
 test("indent outdent", async ({ page }) => {
-  const expectedHTMLBase = await getHTML(page);
+  const expectedHTMLBase = await getEditorHTML(page);
 
   //select note2
-  await getNote(page, "note2").selectText();
+  await getNoteLocator(page, "note2").selectText();
+  page.locator(".editor-input li :text('note2')").selectText();
 
   //indent
   await page.keyboard.press("Tab");
@@ -111,12 +90,12 @@ test("indent outdent", async ({ page }) => {
 
 test("indent outdent with children", async ({ page }) => {
   //make note 3 child of note2
-  await getNote(page, "note3").selectText();
+  await getNoteLocator(page, "note3").selectText();
   await page.keyboard.press("Tab");
-  const expectedHTML1 = await getHTML(page);
+  const expectedHTML1 = await getEditorHTML(page);
 
   //indent note2
-  await getNote(page, "note2").selectText();
+  await getNoteLocator(page, "note2").selectText();
   await page.keyboard.press("Tab");
 
   const expectedHTMLIndented = html`
@@ -148,7 +127,7 @@ test("indent outdent with children", async ({ page }) => {
 });
 
 test("create empty notes", async ({ page }) => {
-  await getNote(page, "note3").selectText();
+  await getNoteLocator(page, "note3").selectText();
 
   await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
@@ -168,7 +147,7 @@ test("create empty notes", async ({ page }) => {
 });
 
 test.fixme("menu follows selection", async ({ page }) => {
-  const note = getNote(page, "note2");
+  const note = getNoteLocator(page, "note2");
   await note.selectText();
   const noteBB = await note.boundingBox();
   const menu = page.locator("#hovered-note-menu");
@@ -195,17 +174,17 @@ test("change root", async ({ page }) => {
   );
 
   //make note3 child of note2
-  await getNote(page, "note3").selectText();
+  await getNoteLocator(page, "note3").selectText();
   await page.keyboard.press("Tab");
 
   //focus on note2 and make sure that only it and it's child are visible
   const el = await page.$("ul > li :text('note2')");
   const box = await el.boundingBox();
-  const preFocusHTML = await getHTML(page);
+  const preFocusHTML = await getEditorHTML(page);
 
   //playwright locators don't support ::before pseudo element, so this is a workaround to click it
   await page.mouse.click(box.x - 1, box.y + box.height / 2);
-  const html = await getHTML(page);
+  const html = await getEditorHTML(page);
   expect(html).not.toContain("note1");
   expect(html).toContain("note2");
   expect(html).toContain("note3");
@@ -225,13 +204,13 @@ test("search", async ({ page }) => {
   const searchInput = page.locator("#search");
 
   await searchInput.type("note");
-  let html = await getHTML(page);
+  let html = await getEditorHTML(page);
   expect(html).toContain("note1");
   expect(html).toContain("note2");
   expect(html).toContain("note3");
 
   await searchInput.type("2");
-  html = await getHTML(page);
+  html = await getEditorHTML(page);
   expect(html).not.toContain("note1");
   expect(html).toContain("note2");
   expect(html).not.toContain("note3");
@@ -242,11 +221,11 @@ async function prepareMenu(page) {
   const menuLocator = page.locator("#quick-menu");
   await expect(menuLocator).toHaveCount(0);
 
-  await getNote(page, "note3").selectText();
+  await getNoteLocator(page, "note3").selectText();
   await page.keyboard.press("Tab");
-  expect(await getHTML(page)).toContain("note3");
+  expect(await getEditorHTML(page)).toContain("note3");
 
-  await getNote(page, "note2").selectText();
+  await getNoteLocator(page, "note2").selectText();
   await page.keyboard.press("ArrowRight");
   await page.keyboard.press("Shift");
   await page.waitForTimeout(10);
@@ -255,7 +234,7 @@ async function prepareMenu(page) {
 }
 
 async function checkMenu(page) {
-  expect(await getHTML(page)).not.toContain("note3"); //folded
+  expect(await getEditorHTML(page)).not.toContain("note3"); //folded
 }
 
 test("quick menu", async ({ page }) => {
@@ -279,7 +258,7 @@ test("quick menu - hot key", async ({ page }) => {
 
   await page.keyboard.press("f"); //fold
 
-  expect(await getHTML(page)).not.toContain("note3"); //folded
+  expect(await getEditorHTML(page)).not.toContain("note3"); //folded
 });
 
 test("quick menu - click", async ({ page }) => {
@@ -315,8 +294,8 @@ test("quick menu - esc", async ({ page }) => {
 
   await page.keyboard.press("Escape");
 
-  expect(await getHTML(page)).toContain("note3"); //not folded
-  expect(await getHTML(page)).not.toContain(",,");
+  expect(await getEditorHTML(page)).toContain("note3"); //not folded
+  expect(await getEditorHTML(page)).not.toContain(",,");
 });
 
 test("quick menu - backspace", async ({ page }) => {
@@ -324,8 +303,8 @@ test("quick menu - backspace", async ({ page }) => {
 
   await page.keyboard.press("Backspace");
 
-  expect(await getHTML(page)).toContain("note3"); //not folded
-  expect(await getHTML(page)).not.toContain(",,");
+  expect(await getEditorHTML(page)).toContain("note3"); //not folded
+  expect(await getEditorHTML(page)).not.toContain(",,");
 });
 
 test("quick menu - invalid hot key", async ({ page }) => {
@@ -333,8 +312,8 @@ test("quick menu - invalid hot key", async ({ page }) => {
 
   await page.keyboard.press("$");
 
-  expect(await getHTML(page)).toContain("note3"); //not folded
-  expect(await getHTML(page)).not.toContain(",,");
+  expect(await getEditorHTML(page)).toContain("note3"); //not folded
+  expect(await getEditorHTML(page)).not.toContain(",,");
 });
 
 
