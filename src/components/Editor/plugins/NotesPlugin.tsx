@@ -1,6 +1,7 @@
 import { NOTES_MOVE_COMMAND, NOTES_TOGGLE_FOLD_COMMAND } from "../commands";
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import { Note } from "../lexical/api";
+import { $isTargetWithinDecorator } from "../lexical/utils";
 import { Navigation } from "./NavigationPlugin";
 import { NoteControlsPlugin } from "./NoteControlsPlugin";
 import "./NotesPlugin.scss";
@@ -12,8 +13,8 @@ import {
   $isListItemNode,
 } from "@lexical/list";
 import { ListItemNode } from "@lexical/list";
-import { $getNearestBlockElementAncestorOrThrow, mergeRegister } from "@lexical/utils";
-import { $isRootNode, DELETE_CHARACTER_COMMAND, KEY_BACKSPACE_COMMAND } from "lexical";
+import { mergeRegister } from "@lexical/utils";
+import { DELETE_CHARACTER_COMMAND, KEY_BACKSPACE_COMMAND } from "lexical";
 import {
   RootNode,
   INSERT_PARAGRAPH_COMMAND,
@@ -29,20 +30,20 @@ import PropTypes from "prop-types";
 import { useEffect, useCallback } from "react";
 import React from "react";
 import { createPortal } from "react-dom";
-import { $isTargetWithinDecorator } from "../lexical/utils";
 
 export function NotesPlugin({ anchorElement }) {
   const [editor] = useNotesLexicalComposerContext();
 
-  const rootKeyDownListener = useCallback(
-    //TODO add browser test and move this somewhere else
-    (e: KeyboardEvent) => {
+  const handleReorder = useCallback(
+    //ARROW_UP and ARROW_DOWN commands can't be used here because they are not 
+    //triggered when meta key is pressed
+    (event: KeyboardEvent) => {
       if (
-        e.metaKey &&
-        (e.key === "ArrowDown" || e.key === "ArrowUp") &&
-        !(e.altKey || e.shiftKey || e.ctrlKey)
+        event.metaKey &&
+        (event.key === "ArrowDown" || event.key === "ArrowUp") &&
+        !(event.altKey || event.shiftKey || event.ctrlKey)
       ) {
-        e.preventDefault();
+        event.preventDefault();
         editor.update(() => {
           const selection = $getSelection();
 
@@ -52,7 +53,7 @@ export function NotesPlugin({ anchorElement }) {
 
           const nodesInSelection = selection.getNodes();
           const note = Note.from(nodesInSelection[0]);
-          if (e.key === "ArrowDown") {
+          if (event.key === "ArrowDown") {
             note.moveDown();
           } else {
             note.moveUp();
@@ -65,12 +66,9 @@ export function NotesPlugin({ anchorElement }) {
 
   useEffect(() => {
     return mergeRegister(
-      //TODO double check if the listener callback is stable between calls to this code
-      editor.registerRootListener((rootElement, prevRootElement) => {
-        rootElement &&
-          rootElement.addEventListener("keydown", rootKeyDownListener);
-        prevRootElement &&
-          prevRootElement.removeEventListener("keydown", rootKeyDownListener);
+      editor.registerRootListener((root, prevRoot) => {
+        root && root.addEventListener("keydown", handleReorder);
+        prevRoot && prevRoot.removeEventListener("keydown", handleReorder);
       }),
       editor.registerCommand(
         //test case "create empty notes"
@@ -171,13 +169,13 @@ export function NotesPlugin({ anchorElement }) {
         COMMAND_PRIORITY_LOW
       ),
       editor.registerCommand<KeyboardEvent>(
-        //copied from lexical/packages/lexical-rich-text/src/index.ts 
+        //copied from lexical/packages/lexical-rich-text/src/index.ts
         //to change the behavior when backsapce is pressed at the beginning of a
         //list item node and delete the list item instead of outdenting it
         //the only difference in the implementation is the commented out code
         //and the priority of the command
         KEY_BACKSPACE_COMMAND,
-        (event) => {
+        event => {
           if ($isTargetWithinDecorator(event.target as HTMLElement)) {
             return false;
           }
@@ -186,9 +184,9 @@ export function NotesPlugin({ anchorElement }) {
             return false;
           }
           event.preventDefault();
-          const {anchor} = selection;
+          const { anchor } = selection;
           const anchorNode = anchor.getNode();
-  
+
           /*
           if (
             selection.isCollapsed() &&
@@ -203,10 +201,10 @@ export function NotesPlugin({ anchorElement }) {
           */
           return editor.dispatchCommand(DELETE_CHARACTER_COMMAND, true);
         },
-        COMMAND_PRIORITY_LOW,
-      ),  
+        COMMAND_PRIORITY_LOW
+      )
     );
-  }, [editor, rootKeyDownListener]);
+  }, [editor, handleReorder]);
 
   return (
     <>

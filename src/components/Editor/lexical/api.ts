@@ -1,5 +1,5 @@
-import { getActiveEditor, getActiveEditorState } from "@lexical/LexicalUpdates";
 import { LexicalNode } from "@lexical/LexicalNode";
+import { getActiveEditor, getActiveEditorState } from "@lexical/LexicalUpdates";
 import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
 import {
   $createListItemNode,
@@ -241,32 +241,41 @@ export class Note {
 
   moveDown() {
     const lexicalNode = this.lexicalNode;
-    let nextNode = lexicalNode.getNextSibling();
-    if (!nextNode) {
+    let nodeWithChildren = null;
+    let targetNode: ListItemNode = lexicalNode.getNextSibling();
+    if (!targetNode) {
       return;
     }
-    const listNode = this._listNode();
-    if (listNode) {
-      //if this has some children (which implies having listNode) then we have to go one node down
-      nextNode = nextNode.getNextSibling();
-      if (!nextNode) {
+    if (isNestedLI(targetNode)) {
+      nodeWithChildren = targetNode;
+      targetNode = targetNode.getNextSibling();
+      if (!targetNode) {
         return;
       }
     }
-    nextNode.insertAfter(lexicalNode);
-    if (listNode) {
-      lexicalNode.insertAfter(listNode.getParentOrThrow());
+    {
+      const targetNext: ListItemNode = targetNode.getNextSibling();
+      targetNode =
+        targetNext && isNestedLI(targetNext) ? targetNext : targetNode;
     }
+    targetNode.insertAfter(lexicalNode);
+    nodeWithChildren && lexicalNode.insertAfter(nodeWithChildren);
   }
 
   moveUp() {
     const lexicalNode = this.lexicalNode;
-    const prevNode = lexicalNode.getPreviousSibling();
-    if (!prevNode) {
+    let targetNode: ListItemNode = lexicalNode.getPreviousSibling();
+    if (!targetNode) {
       return;
     }
+    if (isNestedLI(targetNode)) {
+      targetNode = targetNode.getPreviousSibling();
+      if (!targetNode) {
+        return;
+      }
+    }
     const listNode = this._listNode();
-    prevNode.insertBefore(lexicalNode);
+    targetNode.insertBefore(lexicalNode);
     if (listNode) {
       lexicalNode.insertAfter(listNode.getParentOrThrow());
     }

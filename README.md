@@ -56,7 +56,7 @@ TODO https://mdbootstrap.com/
 
 
 Watched lexical issues:
-list: https://github.com/facebook/lexical/issues/
+list: https://github.com/facebook/lexical/issues/2951
 schema: https://github.com/facebook/lexical/issues/3833
 https://github.com/facebook/lexical/issues/3763
 https://github.com/facebook/lexical/issues/3670

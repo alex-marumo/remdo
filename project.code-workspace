@@ -126,7 +126,7 @@
       },
       {
         "group": "test",
-        "label": "browser tests",
+        "label": "browser watch",
         "command": "npm run test-browser-watch",
         "type": "shell",
         "icon": {

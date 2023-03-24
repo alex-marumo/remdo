@@ -94,7 +94,7 @@ export const DevToolbarPlugin = ({ editorBottom }) => {
         Load State
       </button>
       <a
-        href="/data/playwright-report/"
+        href="/data/.vitest-preview/"
         target="_blank"
         className="btn btn-link float-end"
       >

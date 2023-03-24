@@ -319,7 +319,6 @@ export default defineConfig({
   },
   test: {
     include: ["tests/unit/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    exclude: process.env.VITEST_SERIALIZATION_FILE ? [] : ["tests/unit/serialization.spec.ts"],
     environment: "jsdom",
     open: false,
     threads: !process.env.VITE_DISABLECOLLAB,

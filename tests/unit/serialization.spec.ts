@@ -3,11 +3,9 @@ import { lexicalStateKeyCompare, loadEditorState } from "./common";
 import fs from "fs";
 import path from "path";
 import { getDataPath } from "tests/common";
-import { it } from "vitest";
+import { it, TestAPI } from "vitest";
 
-function getDataFileName() {
-  return path.basename(process.env.VITEST_SERIALIZATION_FILE);
-}
+const SERIALIZATION_FILE = process.env.VITEST_SERIALIZATION_FILE;
 
 /**
  * uses lexicalStateKeyCompare to put children at the end for easier reading
@@ -31,8 +29,8 @@ function sortObjectKeys(obj: any): any {
   return sortedObj;
 }
 
-it("save", ({ editor }) => {
-  const dataPath = getDataPath(getDataFileName());
+it.runIf(process.env.VITEST_SERIALIZATION_FILE)("save", ({ editor }) => {
+  const dataPath = path.basename(SERIALIZATION_FILE);
   console.log("Saving to", dataPath);
   const editorState = JSON.parse(JSON.stringify(editor.getEditorState()));
   const sortedJsonObj = sortObjectKeys(editorState);
@@ -41,6 +39,9 @@ it("save", ({ editor }) => {
   fs.writeFileSync(dataPath, sortedJson);
 });
 
-it("load", ({ editor }) => {
-  loadEditorState(editor, getDataFileName());
+it.runIf(process.env.VITEST_SERIALIZATION_FILE)("load", ({ editor }) => {
+  const dataFileName = path.basename(SERIALIZATION_FILE);
+  const dataPath = getDataPath(dataFileName);
+  console.log("Loading from", dataPath);
+  loadEditorState(editor, dataFileName);
 });

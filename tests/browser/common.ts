@@ -33,7 +33,6 @@ export async function getEditorHTML(page: Page) {
 export async function loadEditorState(page: Page, file: string) {
   await page.click("text=Load State");
   const dataPath = getDataPath(file);
-  console.log("Loading from", dataPath);
   const serializedEditorState = fs.readFileSync(dataPath).toString();
   await page.locator("#editor-state").fill(serializedEditorState);
   await page.click("text=Submit Editor State");

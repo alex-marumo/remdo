@@ -1,6 +1,10 @@
 import { getEditorHTML, getNoteLocator, loadEditorState } from "../common";
 import { expect, test } from "@playwright/test";
 
+/*
+just a basic test to make sure that the key bindings work
+more complex cases are checked in the unit tests
+*/
 test("reorder flat", async ({ page }) => {
   await loadEditorState(page, "flat");
   expect(await getEditorHTML(page)).toMatchSnapshot("base");
