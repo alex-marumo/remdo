@@ -29,7 +29,7 @@
                 "format": 0,
                 "mode": "normal",
                 "style": "",
-                "text": "inbox",
+                "text": "Init: git submodule update --init --recursive ",
                 "type": "text",
                 "version": 1
               }
@@ -48,7 +48,7 @@
                 "format": 0,
                 "mode": "normal",
                 "style": "",
-                "text": "projects",
+                "text": "ToDo",
                 "type": "text",
                 "version": 1
               }
@@ -85,69 +85,9 @@
                         "format": 0,
                         "mode": "normal",
                         "style": "",
-                        "text": "project0",
+                        "text": "create lint test case",
                         "type": "text",
                         "version": 1
-                      }
-                    ]
-                  },
-                  {
-                    "direction": "ltr",
-                    "format": "",
-                    "indent": 1,
-                    "type": "listitem",
-                    "value": 2,
-                    "version": 1,
-                    "children": [
-                      {
-                        "direction": "ltr",
-                        "format": "",
-                        "indent": 0,
-                        "listType": "bullet",
-                        "start": 1,
-                        "tag": "ul",
-                        "type": "list",
-                        "version": 1,
-                        "children": [
-                          {
-                            "direction": "ltr",
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 1,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "task0",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 2,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "task1",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          }
-                        ]
                       }
                     ]
                   },
@@ -164,7 +104,45 @@
                         "format": 0,
                         "mode": "normal",
                         "style": "",
-                        "text": "project1",
+                        "text": "consider changing rootElement to ul/li instead of adjusting schema in rootTransform",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ]
+                  },
+                  {
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 3,
+                    "version": 1,
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "fail all kinds of tests if there is an exception in browser's console",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ]
+                  },
+                  {
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 4,
+                    "version": 1,
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "add a warning about jsdom/querySelectorAll, potentially using rewire",
                         "type": "text",
                         "version": 1
                       }
@@ -187,7 +165,7 @@
                 "format": 0,
                 "mode": "normal",
                 "style": "",
-                "text": "reference",
+                "text": "FixMe",
                 "type": "text",
                 "version": 1
               }
@@ -224,7 +202,747 @@
                         "format": 0,
                         "mode": "normal",
                         "style": "",
-                        "text": "requirements",
+                        "text": "Enter at the end of folded note",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ]
+                  },
+                  {
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 2,
+                    "version": 1,
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "very wired behaviour with url pointing to an not existing note",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ]
+                  },
+                  {
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 3,
+                    "version": 1,
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "unit tests cause browser to disconnect, fix reconnecting",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "listitem",
+            "value": 4,
+            "version": 1,
+            "children": [
+              {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Before production",
+                "type": "text",
+                "version": 1
+              }
+            ]
+          },
+          {
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "listitem",
+            "value": 5,
+            "version": 1,
+            "children": [
+              {
+                "direction": "ltr",
+                "format": "",
+                "indent": 0,
+                "listType": "bullet",
+                "start": 1,
+                "tag": "ul",
+                "type": "list",
+                "version": 1,
+                "children": [
+                  {
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 1,
+                    "version": 1,
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "improve tiny-invariant in production",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "listitem",
+            "value": 5,
+            "version": 1,
+            "children": [
+              {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Lexical bugs",
+                "type": "text",
+                "version": 1
+              }
+            ]
+          },
+          {
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "listitem",
+            "value": 6,
+            "version": 1,
+            "children": [
+              {
+                "direction": "ltr",
+                "format": "",
+                "indent": 0,
+                "listType": "bullet",
+                "start": 1,
+                "tag": "ul",
+                "type": "list",
+                "version": 1,
+                "children": [
+                  {
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 1,
+                    "version": 1,
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "Noted",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ]
+                  },
+                  {
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 2,
+                    "version": 1,
+                    "children": [
+                      {
+                        "direction": "ltr",
+                        "format": "",
+                        "indent": 0,
+                        "listType": "bullet",
+                        "start": 1,
+                        "tag": "ul",
+                        "type": "list",
+                        "version": 1,
+                        "children": [
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 1,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "getActiveEditorState() (not available publicly) returns a different state than editor.getEditorState() which can cause problems if someone modifies state in editor.update()",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 2,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "Vite and it's HMR cause errorOnKlassMismatch when saving custom's node source file",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 3,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "throw Error(\"error\") in update works, but throw \"error\" is silently eaten",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 4,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "Reading or just passing editor state should be enough, re-check in the newer lexical version:",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 5,
+                            "version": 1,
+                            "children": [
+                              {
+                                "direction": "ltr",
+                                "format": "",
+                                "indent": 0,
+                                "listType": "bullet",
+                                "start": 1,
+                                "tag": "ul",
+                                "type": "list",
+                                "version": 1,
+                                "children": [
+                                  {
+                                    "direction": "ltr",
+                                    "format": "",
+                                    "indent": 3,
+                                    "type": "listitem",
+                                    "value": 1,
+                                    "version": 1,
+                                    "children": [
+                                      {
+                                        "detail": 0,
+                                        "format": 0,
+                                        "mode": "normal",
+                                        "style": "",
+                                        "text": "editor.update(() => {key = $getNearestNodeFromDOMNode(event.target).getKey();});",
+                                        "type": "text",
+                                        "version": 1
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 5,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "there is no $isLexicalNode function and there is no way to implement is on your own",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 2,
+                    "version": 1,
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "Watched",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ]
+                  },
+                  {
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 3,
+                    "version": 1,
+                    "children": [
+                      {
+                        "direction": "ltr",
+                        "format": "",
+                        "indent": 0,
+                        "listType": "bullet",
+                        "start": 1,
+                        "tag": "ul",
+                        "type": "list",
+                        "version": 1,
+                        "children": [
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 1,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "Watched lexical issues:list: https://github.com/facebook/lexical/issues/2951",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 2,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "schema: https://github.com/facebook/lexical/issues/3833",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 3,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "https://github.com/facebook/lexical/issues/3763",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 4,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "https://github.com/facebook/lexical/issues/3670",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 5,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "https://github.com/facebook/lexical/issues/3567",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 6,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "https://github.com/facebook/lexical/issues/3433",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 7,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "https://github.com/facebook/lexical/issues/3255",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 8,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "https://github.com/facebook/lexical/issues/3085",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 9,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "https://github.com/facebook/lexical/issues/2845",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 10,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "https://github.com/facebook/lexical/issues/2791",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 11,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "https://github.com/facebook/lexical/issues/2127",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 12,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "https://github.com/facebook/lexical/issues/1707",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 13,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "https://github.com/facebook/lexical/issues/1604",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 14,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "https://github.com/facebook/lexical/issues/1311",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "listitem",
+            "value": 6,
+            "version": 1,
+            "children": [
+              {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Deps to consider",
+                "type": "text",
+                "version": 1
+              }
+            ]
+          },
+          {
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "listitem",
+            "value": 7,
+            "version": 1,
+            "children": [
+              {
+                "direction": "ltr",
+                "format": "",
+                "indent": 0,
+                "listType": "bullet",
+                "start": 1,
+                "tag": "ul",
+                "type": "list",
+                "version": 1,
+                "children": [
+                  {
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 1,
+                    "version": 1,
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "bin/deno - Why?",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ]
+                  },
+                  {
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 2,
+                    "version": 1,
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "https://www.npmjs.com/package/match-sorter",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ]
+                  },
+                  {
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 3,
+                    "version": 1,
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "https://mdbootstrap.com/",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ]
+                  },
+                  {
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 4,
+                    "version": 1,
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "https://github.com/speedskater/babel-plugin-rewire",
                         "type": "text",
                         "version": 1
                       }

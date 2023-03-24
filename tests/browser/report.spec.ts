@@ -15,11 +15,10 @@ function countFiles() {
 }
 
 function countFilesByExtension() {
-  const cmd = `./utils.sh repo_files | sed -e 's/.*\\.//' | sort | uniq -c | sort -rn | awk '{ printf "%s %s; ", $1, $2 }'`;
+  const cmd = `./utils.sh repo_files | grep -v __snapshots__ | sed -e 's/.*\\.//' | sort | uniq -c | sort -rn | awk '{ printf "%s %s; ", $1, $2 }'`;
   return execSync(cmd).toString().trim();
 }
 
-//TODO skip binary files
 function countCodeLines() {
   const cmd = `./utils.sh repo_files | \
       grep -v package-lock.json | \
