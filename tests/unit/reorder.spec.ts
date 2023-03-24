@@ -1,8 +1,9 @@
 import { loadEditorState } from "./common";
 import { it } from "vitest";
 
-it("create", async ({ editor, expect }) => {
-  loadEditorState(editor, "flat");
+it("reorder flat", async ({ editor, expect }) => {
+  const [root, note0, note1, note2] = loadEditorState(editor, "flat");
+  console.log(root, note0, note1, note2);
   //expect(getMinimizedState(editor)).toMatchSnapshot();
   //const [note0, note1, note2] = load("flat");
   //const [note0, subNote0, note1, subNote1] = load("tree");

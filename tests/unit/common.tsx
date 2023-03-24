@@ -11,13 +11,13 @@ import {
   within,
 } from "@testing-library/react";
 import fs from "fs";
+import yaml from "js-yaml";
 import { $getRoot, CLEAR_HISTORY_COMMAND } from "lexical";
 import { LexicalEditor } from "lexical";
 import path from "path";
 import React from "react";
 import { getDataPath } from "tests/common";
 import { it, afterAll, expect, beforeEach, afterEach } from "vitest";
-import yaml from "js-yaml";
 
 declare module "vitest" {
   export interface TestContext {
@@ -132,12 +132,24 @@ export function createChildren(
 }
 
 export function loadEditorState(editor: LexicalEditor, name: string) {
+  function walk(node: Note, notes: Note[]) {
+    notes.push(node);
+    for (const child of node.children) {
+      walk(child, notes);
+    }
+  }
+
   const dataPath = getDataPath(name);
   console.log("Loading from", dataPath);
   const serializedEditorState = fs.readFileSync(dataPath).toString();
   const editorState = editor.parseEditorState(serializedEditorState);
   editor.setEditorState(editorState);
   editor.dispatchCommand(CLEAR_HISTORY_COMMAND, null);
+  const notes: Note[] = [];
+  editor.update(() => {
+    walk(Note.from($getRoot()), notes);
+  });
+  return notes;
 }
 
 /** put children at the end */
