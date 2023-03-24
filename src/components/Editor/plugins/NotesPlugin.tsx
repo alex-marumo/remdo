@@ -12,8 +12,8 @@ import {
   $isListItemNode,
 } from "@lexical/list";
 import { ListItemNode } from "@lexical/list";
-import { mergeRegister } from "@lexical/utils";
-import { KEY_BACKSPACE_COMMAND } from "lexical";
+import { $getNearestBlockElementAncestorOrThrow, mergeRegister } from "@lexical/utils";
+import { $isRootNode, DELETE_CHARACTER_COMMAND, KEY_BACKSPACE_COMMAND } from "lexical";
 import {
   RootNode,
   INSERT_PARAGRAPH_COMMAND,
@@ -29,6 +29,7 @@ import PropTypes from "prop-types";
 import { useEffect, useCallback } from "react";
 import React from "react";
 import { createPortal } from "react-dom";
+import { $isTargetWithinDecorator } from "../lexical/utils";
 
 export function NotesPlugin({ anchorElement }) {
   const [editor] = useNotesLexicalComposerContext();
@@ -168,7 +169,42 @@ export function NotesPlugin({ anchorElement }) {
           return true;
         },
         COMMAND_PRIORITY_LOW
-      )
+      ),
+      editor.registerCommand<KeyboardEvent>(
+        //copied from lexical/packages/lexical-rich-text/src/index.ts 
+        //to change the behavior when backsapce is pressed at the beginning of a
+        //list item node and delete the list item instead of outdenting it
+        //the only difference in the implementation is the commented out code
+        //and the priority of the command
+        KEY_BACKSPACE_COMMAND,
+        (event) => {
+          if ($isTargetWithinDecorator(event.target as HTMLElement)) {
+            return false;
+          }
+          const selection = $getSelection();
+          if (!$isRangeSelection(selection)) {
+            return false;
+          }
+          event.preventDefault();
+          const {anchor} = selection;
+          const anchorNode = anchor.getNode();
+  
+          /*
+          if (
+            selection.isCollapsed() &&
+            anchor.offset === 0 &&
+            !$isRootNode(anchorNode)
+          ) {
+            const element = $getNearestBlockElementAncestorOrThrow(anchorNode);
+            if (element.getIndent() > 0) {
+              return editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, undefined);
+            }
+          }
+          */
+          return editor.dispatchCommand(DELETE_CHARACTER_COMMAND, true);
+        },
+        COMMAND_PRIORITY_LOW,
+      ),  
     );
   }, [editor, rootKeyDownListener]);
 

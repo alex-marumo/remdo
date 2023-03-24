@@ -37,10 +37,13 @@
       "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "cSpell.words": [
+      "backsapce",
       "linebreak",
       "listitem",
       "middlewares",
       "outdent",
+      "outdented",
+      "outdenting",
       "strikethrough",
       "viewports",
       "Vitest"

@@ -9,6 +9,8 @@ import {
 } from "../../lexical/packages/lexical-playground/__tests__/utils/index.mjs";
 import { test } from "@playwright/test";
 import { Locator, Page } from "playwright";
+import { getDataPath } from "../common.js";
+import fs from "fs";
 
 export function getNoteLocator(page: Page, text: string): Locator {
   return page.locator(".editor-input li :text('" + text + "')");
@@ -27,13 +29,25 @@ export async function getEditorHTML(page: Page) {
   return prettifyHTML(await getHTML(page));
 }
 
-const SKIP_CONSOLE_MESSAGES = [
-  "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
-  "[vite] connecting...",
-  "[vite] connected.",
-];
+//TODO use it in basic.spec.ts
+export async function loadEditorState(page: Page, file: string) {
+  await page.click("text=Load State");
+  const dataPath = getDataPath(file);
+  console.log("Loading from", dataPath);
+  const serializedEditorState = fs.readFileSync(dataPath).toString();
+  await page.locator("#editor-state").fill(serializedEditorState);
+  await page.click("text=Submit Editor State");
+  await page.click("text=Load State");
+}
+
 
 test.beforeEach(async ({ page }) => {
+  const SKIP_CONSOLE_MESSAGES = [
+    "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+    "[vite] connecting...",
+    "[vite] connected.",
+  ];
+  
   page.on("console", message => {
     //console.log(message.text());
     //console.log(SKIP_CONSOLE_MESSAGES.includes(message.text()));
