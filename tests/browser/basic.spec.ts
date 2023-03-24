@@ -317,7 +317,7 @@ test("quick menu - invalid hot key", async ({ page }) => {
 });
 
 
-test("screen", async ({ page }) => {
+test("home page", async ({ page }) => {
   await page.locator("text='Hide Debug'").click();
   await expect(page).toHaveScreenshot();
 });

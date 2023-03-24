@@ -12,6 +12,7 @@ const disableCollab = process.env.VITE_DISABLECOLLAB;
 
 const config: PlaywrightTestConfig = {
   testDir: "./tests/browser",
+  snapshotPathTemplate: '{testDir}/{testFileDir}/__snapshots__/{testFileName}/{testName}_{arg}{ext}',
   /* Maximum time one test can run for. */
   timeout: 20 * 1000,
   expect: {
