@@ -66,7 +66,7 @@ export const DevToolbarPlugin = ({ editorBottom }) => {
   }, [darkMode]);
 
   return (
-    <>
+    <div className="d-none d-lg-block">
       <button
         type="button"
         className="btn btn-link float-end"
@@ -123,7 +123,7 @@ export const DevToolbarPlugin = ({ editorBottom }) => {
       {editorBottom &&
         showDebug &&
         createPortal(<TreeViewPlugin />, editorBottom)}
-    </>
+    </div>
   );
 };
 

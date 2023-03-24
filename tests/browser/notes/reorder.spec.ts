@@ -9,19 +9,19 @@ test("reorder flat", async ({ page }) => {
   await loadEditorState(page, "flat");
   expect(await getEditorHTML(page)).toMatchSnapshot("base");
 
-  await getNoteLocator(page, "sample2").selectText();
+  await getNoteLocator(page, "note2").selectText();
 
   await page.keyboard.press("Meta+ArrowUp");
-  expect(await getEditorHTML(page)).toMatchSnapshot("sample2 moved up");
+  expect(await getEditorHTML(page)).toMatchSnapshot("note2 moved up");
 
   await page.keyboard.press("Meta+ArrowUp");
-  expect(await getEditorHTML(page)).toMatchSnapshot("sample2 moved up x2");
+  expect(await getEditorHTML(page)).toMatchSnapshot("note2 moved up x2");
 
   await page.keyboard.press("Meta+ArrowUp"); //noop
-  expect(await getEditorHTML(page)).toMatchSnapshot("sample2 moved up x2");
+  expect(await getEditorHTML(page)).toMatchSnapshot("note2 moved up x2");
 
   await page.keyboard.press("Meta+ArrowDown");
-  expect(await getEditorHTML(page)).toMatchSnapshot("sample2 moved up");
+  expect(await getEditorHTML(page)).toMatchSnapshot("note2 moved up");
 
   await page.keyboard.press("Meta+ArrowDown");
   expect(await getEditorHTML(page)).toMatchSnapshot("base");

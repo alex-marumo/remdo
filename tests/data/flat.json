@@ -29,7 +29,7 @@
                 "format": 0,
                 "mode": "normal",
                 "style": "",
-                "text": "sample0",
+                "text": "note0",
                 "type": "text",
                 "version": 1
               }
@@ -48,7 +48,7 @@
                 "format": 0,
                 "mode": "normal",
                 "style": "",
-                "text": "sample1",
+                "text": "note1",
                 "type": "text",
                 "version": 1
               }
@@ -67,7 +67,7 @@
                 "format": 0,
                 "mode": "normal",
                 "style": "",
-                "text": "sample2",
+                "text": "note2",
                 "type": "text",
                 "version": 1
               }

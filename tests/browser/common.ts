@@ -7,18 +7,19 @@ import {
   assertHTML,
   html,
 } from "../../lexical/packages/lexical-playground/__tests__/utils/index.mjs";
-import { test } from "@playwright/test";
-import { Locator, Page } from "playwright";
 import { getDataPath } from "../common.js";
+import { test } from "@playwright/test";
 import fs from "fs";
+import { Locator, Page } from "playwright";
 
 export function getNoteLocator(page: Page, text: string): Locator {
   return page.locator(".editor-input li :text('" + text + "')");
 }
 
 export async function clickEndOfNote(page: Page, text: string) {
-  const { width, height } = await getNoteLocator(page, text).boundingBox();
-  await getNoteLocator(page, "sample0").click({
+  const noteLocator = getNoteLocator(page, text);
+  const { width, height } = await noteLocator.boundingBox();
+  await noteLocator.click({
     position: { x: width - 1, y: height / 2 },
   });
 }
@@ -39,14 +40,13 @@ export async function loadEditorState(page: Page, file: string) {
   await page.click("text=Load State");
 }
 
-
 test.beforeEach(async ({ page }) => {
   const SKIP_CONSOLE_MESSAGES = [
     "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
     "[vite] connecting...",
     "[vite] connected.",
   ];
-  
+
   page.on("console", message => {
     //console.log(message.text());
     //console.log(SKIP_CONSOLE_MESSAGES.includes(message.text()));

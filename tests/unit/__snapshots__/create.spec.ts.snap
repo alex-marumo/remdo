@@ -9,7 +9,7 @@ exports[`create > minimize 1`] = `
     - type: listitem
       value: 1
       children:
-      - text: sample0
+      - text: note0
         type: text
     - type: listitem
       value: 2
@@ -20,7 +20,7 @@ exports[`create > minimize 1`] = `
           type: listitem
           value: 1
           children:
-          - text: sample1
+          - text: note1
             type: text
 "
 `;

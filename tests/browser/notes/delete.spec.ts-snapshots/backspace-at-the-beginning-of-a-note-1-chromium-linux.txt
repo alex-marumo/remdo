@@ -1,3 +1,3 @@
 <ul>
-  <li value="1" dir="ltr"><span data-lexical-text="true">sample0</span></li>
+  <li value="1" dir="ltr"><span data-lexical-text="true">note0</span></li>
 </ul>

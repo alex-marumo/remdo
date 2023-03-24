@@ -30,7 +30,7 @@ function sortObjectKeys(obj: any): any {
 }
 
 it.runIf(process.env.VITEST_SERIALIZATION_FILE)("save", ({ editor }) => {
-  const dataPath = path.basename(SERIALIZATION_FILE);
+  const dataPath = getDataPath(path.basename(SERIALIZATION_FILE));
   console.log("Saving to", dataPath);
   const editorState = JSON.parse(JSON.stringify(editor.getEditorState()));
   const sortedJsonObj = sortObjectKeys(editorState);

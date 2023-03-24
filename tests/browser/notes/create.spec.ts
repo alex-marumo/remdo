@@ -8,7 +8,7 @@ test("load editor state", async ({ page }) => {
 
 test("add first child to note with existing children", async ({ page }) => {
   await loadEditorState(page, "basic");
-  await clickEndOfNote(page, "sample0");
+  await clickEndOfNote(page, "note0");
   await page.keyboard.press("Enter");
   expect(await getEditorHTML(page)).toMatchSnapshot();
 });
