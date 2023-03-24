@@ -10,7 +10,6 @@ function countPhraseInTrackedFiles(phrase) {
 
 function countFiles() {
   const cmd = `./utils.sh repo_files | wc -l`;
-  console.log(cmd);
   return parseInt(execSync(cmd).toString());
 }
 
@@ -23,6 +22,8 @@ function countCodeLines() {
   const cmd = `./utils.sh repo_files | \
       grep -v package-lock.json | \
       grep -v __snapshots__ | \
+      grep -v __snapshots__ | \
+      grep -vE "^tests/data/" | \
       xargs wc -l | \
       tail -n 1 | \
       awk '{print $1}'`;
