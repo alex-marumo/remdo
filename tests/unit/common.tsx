@@ -131,10 +131,24 @@ export function createChildren(
   return [n, ...n1];
 }
 
+/**
+ * loads editor state from a file with the given @name
+ * @returns a record of all notes in the editor, with their text in 
+ * camelCase as keys
+ */
 export function loadEditorState(editor: LexicalEditor, name: string) {
-  function walk(node: Note, notes: Note[]) {
-    notes.push(node);
-    for (const child of node.children) {
+  type Notes = Record<string, Note>;
+
+  function toCamelCase(str: string): string {
+    return str
+      .trim()
+      .toLowerCase()
+      .replace(/(\s+)(\w)/g, (_, __, letter) => letter.toUpperCase());
+  }
+
+  function walk(note: Note, notes: Notes) {
+    notes[toCamelCase(note.text)] = note;
+    for (const child of note.children) {
       walk(child, notes);
     }
   }
@@ -145,7 +159,7 @@ export function loadEditorState(editor: LexicalEditor, name: string) {
   const editorState = editor.parseEditorState(serializedEditorState);
   editor.setEditorState(editorState);
   editor.dispatchCommand(CLEAR_HISTORY_COMMAND, null);
-  const notes: Note[] = [];
+  const notes: Notes = {};
   editor.update(() => {
     walk(Note.from($getRoot()), notes);
   });

@@ -1,56 +1,48 @@
-import { loadEditorState } from "./common";
+import { getMinimizedState, loadEditorState } from "./common";
 import { it } from "vitest";
 
-it("reorder flat", async ({ editor, expect }) => {
-  const [root, note0, note1, note2] = loadEditorState(editor, "flat");
-  console.log(root, note0, note1, note2);
-  //expect(getMinimizedState(editor)).toMatchSnapshot();
-  //const [note0, note1, note2] = load("flat");
-  //const [note0, subNote0, note1, subNote1] = load("tree");
+it("reorder flat", async ({ editor, expect, lexicalUpdate }) => {
+  const { note0 } = loadEditorState(editor, "flat");
+  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+
+  lexicalUpdate(() => note0.moveDown());
+  expect(getMinimizedState(editor)).toMatchSnapshot("note0 down");
+
+  lexicalUpdate(() => note0.moveDown());
+  expect(getMinimizedState(editor)).toMatchSnapshot("note0 down x2");
+
+  lexicalUpdate(() => note0.moveDown()); //noop
+  expect(getMinimizedState(editor)).toMatchSnapshot("note0 down x2");
+
+  lexicalUpdate(() => note0.moveUp());
+  expect(getMinimizedState(editor)).toMatchSnapshot("note0 down");
+
+  lexicalUpdate(() => note0.moveUp());
+  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+
+  lexicalUpdate(() => note0.moveUp()); //noop
+  expect(getMinimizedState(editor)).toMatchSnapshot("base");
 });
 
-/*
-testUpdate("move", ({ root }) => {
-    const [notes, note0, note1, note2] = createChildren(root, 2);
-    checkChildren(notes, [[note0, note1, note2]]);
+it("reorder tree", async ({ editor, expect, lexicalUpdate }) => {
+  const { note0, subNote0 } = loadEditorState(editor, "tree");
+  expect(getMinimizedState(editor)).toMatchSnapshot("base");
 
-    note0.moveDown();
-    checkChildren(notes, [[note1, note0, note2]]);
+  lexicalUpdate(() => note0.moveDown());
+  expect(getMinimizedState(editor)).toMatchSnapshot("note0 down");
 
-    note0.moveDown();
-    checkChildren(notes, [[note1, note2, note0]]);
+  lexicalUpdate(() => note0.moveDown()); //noop
+  expect(getMinimizedState(editor)).toMatchSnapshot("note0 down");
 
-    note0.moveDown(); // no effect
-    checkChildren(notes, [[note1, note2, note0]]);
-  });
+  lexicalUpdate(() => note0.moveUp());
+  expect(getMinimizedState(editor)).toMatchSnapshot("base");
 
-  testUpdate("move down and up with children", ({ root }) => {
-    const [notes, note0, note1, note2, note3] = createChildren(root, 3);
-    checkChildren(notes, [[note0, note1, note2, note3]]);
+  lexicalUpdate(() => note0.moveUp()); //noop
+  expect(getMinimizedState(editor)).toMatchSnapshot("base");
 
-    note1.indent(); //make note1 a child of note0
-    const children0 = [[note0, note2, note3], [note1]];
-    checkChildren(notes, children0);
+  lexicalUpdate(() => subNote0.moveUp()); //noop
+  expect(getMinimizedState(editor)).toMatchSnapshot("base");
 
-    note0.moveDown(); //move note0 and it's child
-    const children1 = [[note2, note0, note3], [note1]];
-    checkChildren(notes, children1);
-
-    note0.moveDown(); //do it again
-    const children2 = [[note2, note3, note0], [note1]];
-    checkChildren(notes, children2);
-
-    note0.moveDown(); //do it again with no effect
-    checkChildren(notes, children2);
-
-    note0.moveUp();
-    checkChildren(notes, children1);
-
-    note0.moveUp();
-    checkChildren(notes, children0);
-
-    note0.moveUp(); //no effect
-    checkChildren(notes, children0);
-  });
-
-*/
+  lexicalUpdate(() => subNote0.moveDown()); //noop
+  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+});

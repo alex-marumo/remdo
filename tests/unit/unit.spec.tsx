@@ -1,3 +1,4 @@
+//TODO refactor using loadEditorState
 import { checkChildren, createChildren, debug, testUpdate } from "./common";
 import { Note, NotesState } from "@/components/Editor/lexical/api";
 import { $isListNode, $isListItemNode } from "@lexical/list";
