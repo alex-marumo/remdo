@@ -14,6 +14,8 @@ const SERIALIZATION_FILE = process.env.VITEST_SERIALIZATION_FILE;
 it.runIf(process.env.VITEST_SERIALIZATION_FILE)("load", ({ editor }) => {
   const dataFileName = path.basename(SERIALIZATION_FILE);
   const dataPath = getDataPath(dataFileName);
+  console.log();
+  console.log();
   console.log("Loading from", dataPath);
   loadEditorState(editor, dataFileName);
 });

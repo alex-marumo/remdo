@@ -133,7 +133,7 @@ export function createChildren(
 
 /**
  * loads editor state from a file with the given @name
- * @returns a record of all notes in the editor, with their text in 
+ * @returns a record of all notes in the editor, with their text in
  * camelCase as keys
  */
 export function loadEditorState(editor: LexicalEditor, name: string) {
@@ -154,7 +154,6 @@ export function loadEditorState(editor: LexicalEditor, name: string) {
   }
 
   const dataPath = getDataPath(name);
-  console.log("Loading from", dataPath);
   const serializedEditorState = fs.readFileSync(dataPath).toString();
   const editorState = editor.parseEditorState(serializedEditorState);
   editor.setEditorState(editorState);
@@ -195,7 +194,13 @@ export function getMinimizedState(editor: LexicalEditor) {
           tag: "ul",
           version: 1,
         },
-        listitem: { direction: "ltr", format: "", indent: 0, version: 1 },
+        listitem: {
+          direction: "ltr",
+          format: "",
+          indent: 0,
+          version: 1,
+          fold: false,
+        },
         text: {
           detail: 0,
           format: 0,
@@ -225,7 +230,7 @@ export function getMinimizedState(editor: LexicalEditor) {
       }
     }
 
-    if (["number", "string"].includes(typeof node)) {
+    if (["number", "string", "boolean"].includes(typeof node)) {
       return;
     } else if (node instanceof Array) {
       for (let i = 0; i < node.length; i++) {

@@ -1,15 +1,18 @@
 import { NotesState, Note, getNotesEditorState } from "./api";
 import { patch } from "@/utils";
-import { $isListNode } from "@lexical/list";
+import { $isListNode, ListItemNode } from "@lexical/list";
 import { addClassNamesToElement } from "@lexical/utils";
+import { EditorConfig, NodeKey } from "lexical";
+import { LexicalNode } from "lexical";
+
 
 export function applyNodePatches(NodeType: any) {
   /*
     This function customizes updateDOM and createDOM (see below) in an existing
     lexical node class. An alternative would be to use lexical node replacement
-    mechanism, but this turns off TextNode merging (see TextNote.isSimpleText() ) 
-    it could be fixed, but an additional benefit is that this method is simpler, 
-    shorter (doesn't require to implement importJSON, clone, etc.)
+    mechanism, but this turns off TextNode merging (see TextNote.isSimpleText()) 
+    This could be fixed, but an additional benefit is that this method is 
+    simpler, shorter (doesn't require to implement importJSON, clone, etc.)
     and doesn't rename original types
     */
   patch(NodeType, "updateDOM", function (oldMethod, prevNode, dom, config) {
@@ -79,3 +82,26 @@ export function applyNodePatches(NodeType: any) {
     }
   });
 }
+
+//TODO can't use patch because it's static
+const oldClone = ListItemNode.clone;
+ListItemNode.clone = function(oldNode: ListItemNode) {
+  const newNode = oldClone(oldNode);
+  newNode.__fold = oldNode.__fold ?? false;
+  return newNode;
+}
+
+//can't use patch because it's static
+const oldImportJSON = ListItemNode.importJSON;
+ListItemNode.importJSON = function(serializedNode) {
+  const node = oldImportJSON(serializedNode);
+  node.__fold = serializedNode.fold;
+  return node;
+};
+
+patch(ListItemNode, "exportJSON", function(oldExportJSON) {
+  return {
+    ...oldExportJSON(),
+    fold: this.__fold
+  }
+});

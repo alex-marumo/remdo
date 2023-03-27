@@ -1,0 +1,155 @@
+// Vitest Snapshot v1
+
+exports[`fold > base 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note1
+            type: text
+"
+`;
+
+exports[`fold > base 2`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note1
+            type: text
+"
+`;
+
+exports[`fold > folded 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - fold: true
+      type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note1
+            type: text
+"
+`;
+
+exports[`fold > folded 2`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - fold: true
+      type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note1
+            type: text
+"
+`;
+
+exports[`load folded 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - fold: true
+      type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note1
+            type: text
+"
+`;
+
+exports[`modify folded 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - fold: true
+      type: listitem
+      value: 1
+      children:
+      - text: note0 - modified
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note1
+            type: text
+"
+`;
