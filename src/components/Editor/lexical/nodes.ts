@@ -113,17 +113,23 @@ patch(
   ListItemNode,
   "insertNewAfter",
   function (old, selection: RangeSelection, restoreSelection = true) {
-    // the default implementation inserts new element as the next sibling
-    // this code inserts the new element as a first child if some already exists
-    // or falls back to the default implementation
-
-    let childrenListNode: ListNode = this.getNextSibling()
+    // if the current element doesn't have children this code does the same what
+    // the original method does, which is inserting a new element after the
+    // current
+    // if the current element has children, the new element is inserted as a 
+    // first child (if the current element is not folded) or after children list
+    const nextListItem = this.getNextSibling();
+    let childrenListNode: ListNode = nextListItem
       ?.getChildren()
       .find($isListNode);
 
     const newElement = old(selection, restoreSelection);
 
-    childrenListNode?.getFirstChild()?.insertBefore(newElement);
+    if (this.getFold()) {
+      nextListItem?.insertAfter(newElement);
+    } else {
+      childrenListNode?.getFirstChild()?.insertBefore(newElement);
+    }
 
     return newElement;
   }
