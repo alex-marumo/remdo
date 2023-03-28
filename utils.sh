@@ -52,11 +52,24 @@ function trim_playwright {
 }
 
 function run_serialization {
-    if [ "$#" -ne 2 ]; then
+    if [ "$#" -lt 2 ]; then
         echo "Usage: $SCRIPT_PATH run_serialization [load|save] [serialization_file]"
         exit 1
     fi
-    VITEST_SERIALIZATION_FILE=$2 npx vitest --no-api run serialization -t $1
+    VITEST_SERIALIZATION_FILE=$2 npx vitest --no-api run serialization -t $1 $3
+}
+
+#loads data from the file and saves it back repeatedly
+function start_notes {
+    FILE=data/notes.json
+    echo "Loading $FILE"
+    npm run load $FILE
+    while true; do
+        echo "Saving $FILE"
+        sleep 1
+        npm run save $FILE -- &>/dev/null
+        git -C data diff --stat
+    done
 }
 
 if [ "$#" -eq 0 ]; then
