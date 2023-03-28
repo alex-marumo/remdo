@@ -1,10 +1,13 @@
 import { NotesState, Note, getNotesEditorState } from "./api";
 import { patch } from "@/utils";
-import { $isListNode, ListItemNode } from "@lexical/list";
+import {
+  $createListItemNode,
+  $isListNode,
+  ListItemNode,
+  ListNode,
+} from "@lexical/list";
 import { addClassNamesToElement } from "@lexical/utils";
-import { EditorConfig, NodeKey } from "lexical";
-import { LexicalNode } from "lexical";
-
+import { RangeSelection } from "lexical";
 
 export function applyNodePatches(NodeType: any) {
   /*
@@ -85,23 +88,43 @@ export function applyNodePatches(NodeType: any) {
 
 //TODO can't use patch because it's static
 const oldClone = ListItemNode.clone;
-ListItemNode.clone = function(oldNode: ListItemNode) {
+ListItemNode.clone = function (oldNode: ListItemNode) {
   const newNode = oldClone(oldNode);
   newNode.__fold = oldNode.__fold ?? false;
   return newNode;
-}
+};
 
 //can't use patch because it's static
 const oldImportJSON = ListItemNode.importJSON;
-ListItemNode.importJSON = function(serializedNode) {
+ListItemNode.importJSON = function (serializedNode) {
   const node = oldImportJSON(serializedNode);
-  node.__fold = serializedNode.fold;
+  node.__fold = serializedNode["fold"] ?? false;
   return node;
 };
 
-patch(ListItemNode, "exportJSON", function(oldExportJSON) {
+patch(ListItemNode, "exportJSON", function (oldExportJSON) {
   return {
     ...oldExportJSON(),
-    fold: this.__fold
-  }
+    fold: this.__fold,
+  };
 });
+
+patch(
+  ListItemNode,
+  "insertNewAfter",
+  function (old, selection: RangeSelection, restoreSelection = true) {
+    // the default implementation inserts new element as the next sibling
+    // this code inserts the new element as a first child if some already exists
+    // or falls back to the default implementation
+
+    let childrenListNode: ListNode = this.getNextSibling()
+      ?.getChildren()
+      .find($isListNode);
+
+    const newElement = old(selection, restoreSelection);
+
+    childrenListNode?.getFirstChild()?.insertBefore(newElement);
+
+    return newElement;
+  }
+);

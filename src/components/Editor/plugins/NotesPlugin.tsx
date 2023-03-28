@@ -102,6 +102,7 @@ export function NotesPlugin({ anchorElement }) {
         COMMAND_PRIORITY_HIGH
       ),
       editor.registerCommand(
+        //TODO handled twice, here and below explain and move it to a separate file
         KEY_BACKSPACE_COMMAND,
         (event: KeyboardEvent | null) => {
           //do not allow to delete top level list item node as otherwise the document structure may be invalid
