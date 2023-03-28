@@ -18,6 +18,7 @@
         "children": [
           {
             "direction": "ltr",
+            "fold": false,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -37,6 +38,7 @@
           },
           {
             "direction": "ltr",
+            "fold": false,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -56,6 +58,7 @@
           },
           {
             "direction": "ltr",
+            "fold": false,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -74,10 +77,51 @@
                 "children": [
                   {
                     "direction": "ltr",
+                    "fold": false,
                     "format": "",
                     "indent": 1,
                     "type": "listitem",
                     "value": 1,
+                    "version": 1,
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "marking notes as checked",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ]
+                  },
+                  {
+                    "direction": "ltr",
+                    "fold": false,
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 2,
+                    "version": 1,
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "folding all nodes up to a specific level",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ]
+                  },
+                  {
+                    "direction": "ltr",
+                    "fold": false,
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 3,
                     "version": 1,
                     "children": [
                       {
@@ -93,10 +137,11 @@
                   },
                   {
                     "direction": "ltr",
+                    "fold": false,
                     "format": "",
                     "indent": 1,
                     "type": "listitem",
-                    "value": 2,
+                    "value": 4,
                     "version": 1,
                     "children": [
                       {
@@ -112,10 +157,11 @@
                   },
                   {
                     "direction": "ltr",
+                    "fold": false,
                     "format": "",
                     "indent": 1,
                     "type": "listitem",
-                    "value": 3,
+                    "value": 5,
                     "version": 1,
                     "children": [
                       {
@@ -131,10 +177,11 @@
                   },
                   {
                     "direction": "ltr",
+                    "fold": false,
                     "format": "",
                     "indent": 1,
                     "type": "listitem",
-                    "value": 4,
+                    "value": 6,
                     "version": 1,
                     "children": [
                       {
@@ -147,6 +194,26 @@
                         "version": 1
                       }
                     ]
+                  },
+                  {
+                    "direction": "ltr",
+                    "fold": false,
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 7,
+                    "version": 1,
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "switch to the latest stable lexical version",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ]
                   }
                 ]
               }
@@ -154,6 +221,7 @@
           },
           {
             "direction": "ltr",
+            "fold": true,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -173,6 +241,7 @@
           },
           {
             "direction": "ltr",
+            "fold": false,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -191,29 +260,11 @@
                 "children": [
                   {
                     "direction": "ltr",
+                    "fold": false,
                     "format": "",
                     "indent": 1,
                     "type": "listitem",
                     "value": 1,
-                    "version": 1,
-                    "children": [
-                      {
-                        "detail": 0,
-                        "format": 0,
-                        "mode": "normal",
-                        "style": "",
-                        "text": "Enter at the end of folded note",
-                        "type": "text",
-                        "version": 1
-                      }
-                    ]
-                  },
-                  {
-                    "direction": "ltr",
-                    "format": "",
-                    "indent": 1,
-                    "type": "listitem",
-                    "value": 2,
                     "version": 1,
                     "children": [
                       {
@@ -229,10 +280,11 @@
                   },
                   {
                     "direction": "ltr",
+                    "fold": false,
                     "format": "",
                     "indent": 1,
                     "type": "listitem",
-                    "value": 3,
+                    "value": 2,
                     "version": 1,
                     "children": [
                       {
@@ -252,6 +304,7 @@
           },
           {
             "direction": "ltr",
+            "fold": true,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -271,6 +324,7 @@
           },
           {
             "direction": "ltr",
+            "fold": false,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -289,6 +343,7 @@
                 "children": [
                   {
                     "direction": "ltr",
+                    "fold": false,
                     "format": "",
                     "indent": 1,
                     "type": "listitem",
@@ -312,6 +367,7 @@
           },
           {
             "direction": "ltr",
+            "fold": true,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -331,6 +387,7 @@
           },
           {
             "direction": "ltr",
+            "fold": false,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -349,6 +406,7 @@
                 "children": [
                   {
                     "direction": "ltr",
+                    "fold": false,
                     "format": "",
                     "indent": 1,
                     "type": "listitem",
@@ -368,6 +426,7 @@
                   },
                   {
                     "direction": "ltr",
+                    "fold": false,
                     "format": "",
                     "indent": 1,
                     "type": "listitem",
@@ -386,6 +445,7 @@
                         "children": [
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -405,6 +465,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -424,6 +485,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -443,6 +505,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -462,6 +525,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -480,6 +544,7 @@
                                 "children": [
                                   {
                                     "direction": "ltr",
+                                    "fold": false,
                                     "format": "",
                                     "indent": 3,
                                     "type": "listitem",
@@ -503,6 +568,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -526,6 +592,7 @@
                   },
                   {
                     "direction": "ltr",
+                    "fold": false,
                     "format": "",
                     "indent": 1,
                     "type": "listitem",
@@ -545,6 +612,7 @@
                   },
                   {
                     "direction": "ltr",
+                    "fold": false,
                     "format": "",
                     "indent": 1,
                     "type": "listitem",
@@ -563,6 +631,7 @@
                         "children": [
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -582,6 +651,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -601,6 +671,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -620,6 +691,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -639,6 +711,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -658,6 +731,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -677,6 +751,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -696,6 +771,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -715,6 +791,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -734,6 +811,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -753,6 +831,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -772,6 +851,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -791,6 +871,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -810,6 +891,7 @@
                           },
                           {
                             "direction": "ltr",
+                            "fold": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
@@ -837,6 +919,7 @@
           },
           {
             "direction": "ltr",
+            "fold": true,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -856,6 +939,7 @@
           },
           {
             "direction": "ltr",
+            "fold": false,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -874,6 +958,7 @@
                 "children": [
                   {
                     "direction": "ltr",
+                    "fold": false,
                     "format": "",
                     "indent": 1,
                     "type": "listitem",
@@ -893,6 +978,7 @@
                   },
                   {
                     "direction": "ltr",
+                    "fold": false,
                     "format": "",
                     "indent": 1,
                     "type": "listitem",
@@ -912,6 +998,7 @@
                   },
                   {
                     "direction": "ltr",
+                    "fold": false,
                     "format": "",
                     "indent": 1,
                     "type": "listitem",
@@ -931,6 +1018,7 @@
                   },
                   {
                     "direction": "ltr",
+                    "fold": false,
                     "format": "",
                     "indent": 1,
                     "type": "listitem",
