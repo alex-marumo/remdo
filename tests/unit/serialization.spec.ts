@@ -1,5 +1,5 @@
 /**
- * These are not real tests, but rather helpers to load/save the editor state 
+ * These are not real tests, but rather helpers to load/save the editor state
  * to/from file using command line.
  */
 import "./common";
@@ -11,16 +11,15 @@ import { it, TestAPI } from "vitest";
 
 const SERIALIZATION_FILE = process.env.VITEST_SERIALIZATION_FILE;
 
-it.runIf(process.env.VITEST_SERIALIZATION_FILE)("load", ({ editor }) => {
-  const dataFileName = path.basename(SERIALIZATION_FILE);
-  const dataPath = getDataPath(dataFileName);
+it.runIf(SERIALIZATION_FILE)("load", ({ editor }) => {
+  const dataPath = getDataPath(SERIALIZATION_FILE);
   console.log();
   console.log();
   console.log("Loading from", dataPath);
-  loadEditorState(editor, dataFileName);
+  loadEditorState(editor, dataPath);
 });
 
-it.runIf(process.env.VITEST_SERIALIZATION_FILE)("save", ({ editor }) => {
+it.runIf(SERIALIZATION_FILE)("save", ({ editor }) => {
   /**
    * uses lexicalStateKeyCompare to put children at the end for easier reading
    */
@@ -43,7 +42,7 @@ it.runIf(process.env.VITEST_SERIALIZATION_FILE)("save", ({ editor }) => {
     return sortedObj;
   }
 
-  const dataPath = getDataPath(path.basename(SERIALIZATION_FILE));
+  const dataPath = getDataPath(SERIALIZATION_FILE);
   console.log("Saving to", dataPath);
   const editorState = JSON.parse(JSON.stringify(editor.getEditorState()));
   const sortedJsonObj = sortObjectKeys(editorState);
