@@ -367,7 +367,7 @@
           },
           {
             "direction": "ltr",
-            "fold": true,
+            "fold": false,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -457,7 +457,7 @@
                                 "format": 0,
                                 "mode": "normal",
                                 "style": "",
-                                "text": "getActiveEditorState() (not available publicly) returns a different state than editor.getEditorState() which can cause problems if someone modifies state in editor.update()",
+                                "text": "list.toggleChecked() should use getChecked",
                                 "type": "text",
                                 "version": 1
                               }
@@ -477,7 +477,7 @@
                                 "format": 0,
                                 "mode": "normal",
                                 "style": "",
-                                "text": "Vite and it's HMR cause errorOnKlassMismatch when saving custom's node source file",
+                                "text": "getActiveEditorState() (not available publicly) returns a different state than editor.getEditorState() which can cause problems if someone modifies state in editor.update()",
                                 "type": "text",
                                 "version": 1
                               }
@@ -497,7 +497,7 @@
                                 "format": 0,
                                 "mode": "normal",
                                 "style": "",
-                                "text": "throw Error(\"error\") in update works, but throw \"error\" is silently eaten",
+                                "text": "Vite and it's HMR cause errorOnKlassMismatch when saving custom's node source file",
                                 "type": "text",
                                 "version": 1
                               }
@@ -517,7 +517,7 @@
                                 "format": 0,
                                 "mode": "normal",
                                 "style": "",
-                                "text": "Reading or just passing editor state should be enough, re-check in the newer lexical version:",
+                                "text": "throw Error(\"error\") in update works, but throw \"error\" is silently eaten",
                                 "type": "text",
                                 "version": 1
                               }
@@ -530,6 +530,26 @@
                             "indent": 2,
                             "type": "listitem",
                             "value": 5,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "Reading or just passing editor state should be enough, re-check in the newer lexical version:",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "fold": false,
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 6,
                             "version": 1,
                             "children": [
                               {
@@ -572,7 +592,7 @@
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
-                            "value": 5,
+                            "value": 6,
                             "version": 1,
                             "children": [
                               {

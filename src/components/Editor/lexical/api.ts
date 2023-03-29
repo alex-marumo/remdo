@@ -296,6 +296,25 @@ export class Note {
   set fold(value) {
     !this.isRoot && this.lexicalNode.setFold(value && this.hasChildren);
   }
+
+  get checked() {
+    return !this.isRoot && this.lexicalNode.getChecked();
+  }
+
+  set checked(value) {
+    !this.isRoot && this._walk(note => note.lexicalNode.setChecked(value));
+  }
+
+  toggleChecked() {
+    !this.isRoot && this._walk(note => note.lexicalNode.toggleChecked());
+  }
+
+  _walk(walker: (node: Note) => void) {
+    walker(this);
+    for (const child of this.children) {
+      child._walk(walker);
+    }
+  }
 }
 
 //TODO move somewhere else

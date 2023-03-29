@@ -61,13 +61,27 @@ function run_serialization {
 
 #loads data from the file and saves it back repeatedly
 function start_notes {
+    process_group_id=""
+
+    cleanup() {
+        echo "Killing all child processes..."
+        kill -- -$process_group_id
+        exit 0
+    }
+
+    trap cleanup SIGINT
+
     FILE=data/notes.json
     echo "Loading $FILE"
     npm run load $FILE
     while true; do
         echo "Saving $FILE"
         sleep 1
+
         npm run save $FILE -- &>/dev/null
+        process_group_id=$!
+        wait $!
+
         git -C data diff --stat
     done
 }

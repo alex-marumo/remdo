@@ -218,6 +218,12 @@ playgroundResolveAlias.unshift(
     replacement: path.resolve("./lexical/packages/lexical/src/LexicalNode.ts"),
   },
   {
+    find: "@lexical/list/formatList",
+    replacement: path.resolve(
+      "./lexical/packages/lexical-list/src/formatList.ts"
+    ),
+  },
+  {
     find: "@",
     replacement: path.resolve("./src"),
   }

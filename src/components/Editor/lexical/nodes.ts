@@ -1,13 +1,14 @@
-import { NotesState, Note, getNotesEditorState } from "./api";
+import { NotesState, Note } from "./api";
 import { patch } from "@/utils";
 import {
-  $createListItemNode,
   $isListNode,
   ListItemNode,
   ListNode,
 } from "@lexical/list";
-import { addClassNamesToElement } from "@lexical/utils";
-import { RangeSelection } from "lexical";
+import { updateChildrenListItemValue } from "@lexical/list/formatList";
+import { addClassNamesToElement, removeClassNamesFromElement } from "@lexical/utils";
+import { LexicalNode, RangeSelection } from "lexical";
+import { EditorConfig } from "lexical";
 
 export function applyNodePatches(NodeType: any) {
   /*
@@ -86,21 +87,17 @@ export function applyNodePatches(NodeType: any) {
   });
 }
 
-//TODO can't use patch because it's static
-const oldClone = ListItemNode.clone;
-ListItemNode.clone = function (oldNode: ListItemNode) {
+patch(ListItemNode, "clone", function (oldClone, oldNode: ListItemNode) {
   const newNode = oldClone(oldNode);
   newNode.__fold = oldNode.__fold ?? false;
   return newNode;
-};
+});
 
-//can't use patch because it's static
-const oldImportJSON = ListItemNode.importJSON;
-ListItemNode.importJSON = function (serializedNode) {
+patch(ListItemNode, "importJSON", function (oldImportJSON, serializedNode) {
   const node = oldImportJSON(serializedNode);
   node.__fold = serializedNode["fold"] ?? false;
   return node;
-};
+});
 
 patch(ListItemNode, "exportJSON", function (oldExportJSON) {
   return {
@@ -116,7 +113,7 @@ patch(
     // if the current element doesn't have children this code does the same what
     // the original method does, which is inserting a new element after the
     // current
-    // if the current element has children, the new element is inserted as a 
+    // if the current element has children, the new element is inserted as a
     // first child (if the current element is not folded) or after children list
     const nextListItem = this.getNextSibling();
     let childrenListNode: ListNode = nextListItem
@@ -134,3 +131,56 @@ patch(
     return newElement;
   }
 );
+
+patch(ListItemNode, "transform", function (old, node: LexicalNode) {
+  return (node: LexicalNode) => {
+    const parent = node.getParent();
+    if ($isListNode(parent)) {
+      updateChildrenListItemValue(parent);
+      //remdo: set checked regardless of parent type
+      /*
+      if ( parent.getListType() !== "check" && node.getChecked() != null) {
+        node.setChecked(undefined);
+      }
+      */
+    }
+  };
+});
+
+//TODO this method is patched twice, here and above
+patch(ListItemNode, "createDOM", function (old, config: EditorConfig, editor) {
+  /* 
+  add/remove checked class as needed
+  it's also done in $setListItemThemeClassNames, but that implementation depends
+  on parent list type
+  $setListItemThemeClassNames is an unexported and long function, so it's easier
+  to patch createDOM/updateDOM
+  */
+  const dom = old(config, editor);
+  const className = config.theme.list.listitemChecked;
+  if (this.getChecked()) {
+    addClassNamesToElement(dom, className);
+  } else {
+    removeClassNamesFromElement(dom, className);
+  }
+  return dom;
+});
+
+//TODO this method is patched twice, here and above
+patch(ListItemNode, "updateDOM", function (old, prevNode, dom, config) {
+  /* 
+  add/remove checked class as needed
+  it's also done in $setListItemThemeClassNames, but that implementation depends
+  on parent list type
+  $setListItemThemeClassNames is an unexported and long function, so it's easier
+  to patch createDOM/updateDOM
+  */
+  const update = old(prevNode, dom, config);
+  const className = config.theme.list.listitemChecked;
+  if (this.getChecked()) {
+    addClassNamesToElement(dom, className);
+  } else {
+    removeClassNamesFromElement(dom, className)
+  }
+  return update;
+});

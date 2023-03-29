@@ -1,0 +1,247 @@
+// Vitest Snapshot v1
+
+exports[`check/uncheck > base 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+"
+`;
+
+exports[`check/uncheck > base 2`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - checked: true
+      type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+"
+`;
+
+exports[`check/uncheck > checked 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - checked: true
+      type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+"
+`;
+
+exports[`check/uncheck recursively > base 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note1
+            type: text
+"
+`;
+
+exports[`check/uncheck recursively > base 2`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - checked: true
+      type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - checked: true
+          indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note1
+            type: text
+"
+`;
+
+exports[`check/uncheck recursively > checked 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - checked: true
+      type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - checked: true
+          indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note1
+            type: text
+"
+`;
+
+exports[`toggle check > base 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+"
+`;
+
+exports[`toggle check > checked 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - checked: true
+      type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+"
+`;
+
+exports[`toggle check > unchecked 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - checked: false
+      type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+"
+`;
+
+exports[`toggle check recursively > base 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note1
+            type: text
+"
+`;
+
+exports[`toggle check recursively > base 2`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - checked: false
+      type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - checked: false
+          indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note1
+            type: text
+"
+`;
+
+exports[`toggle check recursively > checked 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - checked: true
+      type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - checked: true
+          indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note1
+            type: text
+"
+`;

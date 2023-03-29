@@ -35,7 +35,8 @@ export function NotesPlugin({ anchorElement }) {
   const [editor] = useNotesLexicalComposerContext();
 
   const handleReorder = useCallback(
-    //ARROW_UP and ARROW_DOWN commands can't be used here because they are not 
+    //TODO convert that to custom commands
+    //ARROW_UP and ARROW_DOWN commands can't be used here because they are not
     //triggered when meta key is pressed
     (event: KeyboardEvent) => {
       if (

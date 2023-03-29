@@ -1,10 +1,19 @@
 import { LexicalEditor } from "lexical";
 
-export function patch(Class, methodName, newMethod) {
-  const oldMethod = Class.prototype[methodName];
-  Class.prototype[methodName] = function (...args) {
-    return newMethod.bind(this)(oldMethod.bind(this), ...args);
-  };
+export function patch(Class, methodName: string, newMethod) {
+  if (methodName in Class.prototype) {
+    //bound method
+    const oldMethod = Class.prototype[methodName];
+    Class.prototype[methodName] = function (...args) {
+      return newMethod.bind(this)(oldMethod.bind(this), ...args);
+    };
+  } else {
+    //static method
+    const oldMethod = Class[methodName];
+    Class[methodName] = function (...args) {
+      return newMethod(oldMethod, ...args);
+    };
+  }
 }
 
 /**

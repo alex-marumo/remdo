@@ -1,17 +1,20 @@
-import { DevComponentTestPlugin } from "./plugins/DevComponentTestPlugin";
-import IndentationPlugin from "./plugins/IndentationPlugin";
 import "./Editor.scss";
 import { applyNodePatches } from "./lexical/nodes";
+import { DevComponentTestPlugin } from "./plugins/DevComponentTestPlugin";
 import { DevToolbarPlugin } from "./plugins/DevToolbarPlugin";
-import { QuickMenuPlugin } from "./plugins/QuickMenuPlugin";
+import IndentationPlugin from "./plugins/IndentationPlugin";
 import { NotesPlugin } from "./plugins/NotesPlugin";
+import { QuickMenuPlugin } from "./plugins/QuickMenuPlugin";
 import { ListNode, ListItemNode } from "@lexical/list";
 import "@lexical/playground/index.css";
 import FloatingTextFormatToolbarPlugin from "@lexical/playground/plugins/FloatingTextFormatToolbarPlugin";
 import "@lexical/playground/plugins/FloatingTextFormatToolbarPlugin/index.css";
 import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
 import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
+import {
+  InitialConfigType,
+  LexicalComposer,
+} from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
@@ -19,12 +22,12 @@ import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { Provider } from "@lexical/yjs";
-import { TextNode } from "lexical";
+import { EditorConfig, TextNode } from "lexical";
 import { useState } from "react";
 import React from "react";
+import { IndexeddbPersistence } from "y-indexeddb";
 import { WebsocketProvider } from "y-websocket";
 import { Doc } from "yjs";
-import { IndexeddbPersistence } from "y-indexeddb";
 
 function providerFactory(id: string, yjsDocMap: Map<string, Doc>): Provider {
   let doc = yjsDocMap.get(id);
@@ -75,7 +78,7 @@ export default function Editor() {
     }
   };
 
-  const editorConfig = {
+  const editorConfig: InitialConfigType & { disableCollab: boolean } = {
     onError(error) {
       throw error;
     },
@@ -83,6 +86,8 @@ export default function Editor() {
     nodes: [ListItemNode, ListNode],
     theme: {
       list: {
+        listitem: "li",
+        listitemChecked: "li-checked",
         nested: {
           listitem: "position-relative li-nested",
         },
@@ -100,7 +105,6 @@ export default function Editor() {
       },
     },
     editorState: null,
-    //@ts-ignore
     disableCollab: !!import.meta.env.VITE_DISABLECOLLAB,
   };
 
