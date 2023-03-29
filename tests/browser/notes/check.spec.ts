@@ -1,7 +1,7 @@
 import { getEditorHTML, loadEditorState } from "../common";
 import { expect, test } from "@playwright/test";
 
-test.only("check/uncheck", async ({ page }) => {
+test("check/uncheck", async ({ page }) => {
   await loadEditorState(page, "single");
   expect(await getEditorHTML(page)).toMatchSnapshot("base");
   await page.click("text=note0");

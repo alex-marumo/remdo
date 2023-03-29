@@ -4,13 +4,13 @@ import { it } from "vitest";
 it("fold", async ({ editor, expect, lexicalUpdate }) => {
   const { note0 } = loadEditorState(editor, "basic");
   expect(getMinimizedState(editor)).toMatchSnapshot("base");
-  lexicalUpdate(() => (note0.fold = true));
+  lexicalUpdate(() => (note0.folded = true));
   expect(getMinimizedState(editor)).toMatchSnapshot("folded");
 
-  lexicalUpdate(() => (note0.fold = true)); //noop
+  lexicalUpdate(() => (note0.folded = true)); //noop
   expect(getMinimizedState(editor)).toMatchSnapshot("folded");
 
-  lexicalUpdate(() => (note0.fold = false));
+  lexicalUpdate(() => (note0.folded = false));
   expect(getMinimizedState(editor)).toMatchSnapshot("base");
 });
 

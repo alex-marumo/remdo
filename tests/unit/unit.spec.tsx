@@ -211,7 +211,7 @@ describe("API", async () => {
       const [notes, note0, note1, note2, note3] = createChildren(root, 3);
       note2.indent();
       note1.indent();
-      note0.fold = true;
+      note0.folded = true;
     });
     //TODO check visibility once folding changes rendering instead of just hiding via css
   });

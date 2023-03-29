@@ -249,7 +249,7 @@ test("quick menu", async ({ page }) => {
     menuLocator.locator("li.list-group-item.active")
   ).not.toHaveCount(0);
 
-  await page.keyboard.press("Enter"); //blindly assuming that the first option is fold
+  await page.keyboard.press("Enter"); //blindly assuming that the first option is "fold"
   await checkMenu(page);
 });
 

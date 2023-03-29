@@ -56,7 +56,7 @@ exports[`fold > folded 1`] = `
   children:
   - type: list
     children:
-    - fold: true
+    - folded: true
       type: listitem
       value: 1
       children:
@@ -82,7 +82,7 @@ exports[`fold > folded 2`] = `
   children:
   - type: list
     children:
-    - fold: true
+    - folded: true
       type: listitem
       value: 1
       children:
@@ -108,7 +108,7 @@ exports[`load folded 1`] = `
   children:
   - type: list
     children:
-    - fold: true
+    - folded: true
       type: listitem
       value: 1
       children:
@@ -134,7 +134,7 @@ exports[`modify folded 1`] = `
   children:
   - type: list
     children:
-    - fold: true
+    - folded: true
       type: listitem
       value: 1
       children:

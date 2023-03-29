@@ -18,7 +18,7 @@
         "children": [
           {
             "direction": "ltr",
-            "fold": true,
+            "folded": true,
             "format": "",
             "indent": 0,
             "type": "listitem",

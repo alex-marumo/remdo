@@ -64,11 +64,11 @@ export function applyNodePatches(NodeType: any) {
       )
     ) {
       //
-      // is fold?
+      // is folded?
       //
       if (notesState?.focus?.nodeKey !== note.lexicalKey) {
         for (const p of parents) {
-          if (p.fold) {
+          if (p.folded) {
             return document.createElement("div");
           }
           if (p.lexicalKey === notesState.focus?.nodeKey) {
@@ -77,7 +77,7 @@ export function applyNodePatches(NodeType: any) {
         }
       }
       const dom: HTMLElement = oldMethod(config, editor);
-      if (note.fold) {
+      if (note.folded) {
         addClassNamesToElement(dom, "note-folded");
       }
       return dom;
@@ -89,20 +89,20 @@ export function applyNodePatches(NodeType: any) {
 
 patch(ListItemNode, "clone", function (oldClone, oldNode: ListItemNode) {
   const newNode = oldClone(oldNode);
-  newNode.__fold = oldNode.__fold ?? false;
+  newNode.__folded = oldNode.__folded ?? false;
   return newNode;
 });
 
 patch(ListItemNode, "importJSON", function (oldImportJSON, serializedNode) {
   const node = oldImportJSON(serializedNode);
-  node.__fold = serializedNode["fold"] ?? false;
+  node.__folded = serializedNode["folded"] ?? false;
   return node;
 });
 
 patch(ListItemNode, "exportJSON", function (oldExportJSON) {
   return {
     ...oldExportJSON(),
-    fold: this.__fold,
+    folded: this.__folded,
   };
 });
 
@@ -122,7 +122,7 @@ patch(
 
     const newElement = old(selection, restoreSelection);
 
-    if (this.getFold()) {
+    if (this.getFolded()) {
       nextListItem?.insertAfter(newElement);
     } else {
       childrenListNode?.getFirstChild()?.insertBefore(newElement);

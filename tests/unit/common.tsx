@@ -199,7 +199,7 @@ export function getMinimizedState(editor: LexicalEditor) {
           format: "",
           indent: 0,
           version: 1,
-          fold: false,
+          folded: false,
         },
         text: {
           detail: 0,

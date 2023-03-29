@@ -34,9 +34,9 @@ export function NoteControlsPlugin() {
   };
 
   const updateNoteState = useCallback(
-    (targetElement: HTMLElement, { fold = null } = {}) => {
+    (targetElement: HTMLElement, { folded = null } = {}) => {
       setNoteFolded(
-        fold !== null ? fold : targetElement.classList.contains("note-folded")
+        folded !== null ? folded : targetElement.classList.contains("note-folded")
       );
       setNoteHasChildren(
         targetElement?.nextElementSibling?.classList.contains("li-nested")
@@ -64,8 +64,8 @@ export function NoteControlsPlugin() {
     event.preventDefault();
     editor.fullUpdate(() => {
       const note = Note.from($getNearestNodeFromDOMNode(noteElement));
-      note.fold = !note.fold;
-      updateNoteState(noteElement, { fold: note.fold });
+      note.folded = !note.folded;
+      updateNoteState(noteElement, { folded: note.folded });
     });
   };
 

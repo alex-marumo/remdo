@@ -285,16 +285,12 @@ export class Note {
     NotesState.getActive().setFocus(this);
   }
 
-  get fold() {
-    if (this.isRoot) {
-      //TODO
-      return false;
-    }
-    return this.lexicalNode.getFold();
+  get folded() {
+    return !this.isRoot && this.lexicalNode.getFolded();
   }
 
-  set fold(value) {
-    !this.isRoot && this.lexicalNode.setFold(value && this.hasChildren);
+  set folded(value: boolean) {
+    !this.isRoot && this.lexicalNode.setFolded(value && this.hasChildren);
   }
 
   get checked() {
@@ -320,18 +316,18 @@ export class Note {
 //TODO move somewhere else
 declare module "@lexical/list" {
   interface ListItemNode {
-    getFold(): boolean;
-    setFold(fold: boolean): void;
-    __fold: boolean | null;
+    getFolded(): boolean;
+    setFolded(value: boolean): void;
+    __folded: boolean | null;
   }
 }
 
-LexicalListItemNode.prototype.getFold = function () {
-  return this.getLatest().__fold;
+LexicalListItemNode.prototype.getFolded = function () {
+  return this.getLatest().__folded;
 };
 
-LexicalListItemNode.prototype.setFold = function (fold: boolean): void {
-  this.getWritable().__fold = !!fold;
+LexicalListItemNode.prototype.setFolded = function (value: boolean): void {
+  this.getWritable().__folded = !!value;
 };
 
 export function getNotesFromSelection() {

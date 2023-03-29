@@ -155,9 +155,9 @@ export function NotesPlugin({ anchorElement }) {
             return false;
           }
           editor.fullUpdate(() => {
-            const fold = !Note.from(noteKeys[0]).fold;
+            const folded = !Note.from(noteKeys[0]).folded;
             noteKeys.forEach(key => {
-              Note.from(key).fold = fold;
+              Note.from(key).folded = folded;
             });
           });
           return true;
