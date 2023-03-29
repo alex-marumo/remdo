@@ -14,7 +14,11 @@ import {
 } from "@lexical/list";
 import { ListItemNode } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
-import { DELETE_CHARACTER_COMMAND, KEY_BACKSPACE_COMMAND } from "lexical";
+import {
+  DELETE_CHARACTER_COMMAND,
+  KEY_BACKSPACE_COMMAND,
+  KEY_ENTER_COMMAND,
+} from "lexical";
 import {
   RootNode,
   INSERT_PARAGRAPH_COMMAND,
@@ -186,10 +190,10 @@ export function NotesPlugin({ anchorElement }) {
             return false;
           }
           event.preventDefault();
+          /*
           const { anchor } = selection;
           const anchorNode = anchor.getNode();
 
-          /*
           if (
             selection.isCollapsed() &&
             anchor.offset === 0 &&
@@ -202,6 +206,26 @@ export function NotesPlugin({ anchorElement }) {
           }
           */
           return editor.dispatchCommand(DELETE_CHARACTER_COMMAND, true);
+        },
+        COMMAND_PRIORITY_LOW
+      ),
+      editor.registerCommand<KeyboardEvent>(
+        KEY_ENTER_COMMAND,
+        event => {
+          //toggle check
+          if (!event.metaKey) {
+            return false;
+          }
+          const selection = $getSelection();
+          if (!$isRangeSelection(selection)) {
+            return false;
+          }
+          event.preventDefault();
+
+          const { anchor } = selection;
+          const note = Note.from(anchor.getNode());
+          note.toggleChecked();
+          return true;
         },
         COMMAND_PRIORITY_LOW
       )

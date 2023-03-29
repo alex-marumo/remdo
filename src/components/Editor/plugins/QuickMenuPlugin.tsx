@@ -54,6 +54,7 @@ class NoteMenuOption {
   }
 }
 
+//TODO add option for checking
 function MenuOptions({ closeMenu, position, noteKeys }) {
   const [editor] = useNotesLexicalComposerContext();
   const [highlightedOptionIndex, setHighlightedOptionIndex] = useState(null);
