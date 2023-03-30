@@ -22,7 +22,7 @@ import {
 //TODO
 //create folder api and split this to Note and NotesState
 
-const ROOT_TEXT = "Document";
+const ROOT_TEXT = "root";
 
 interface NotesEditorState extends EditorState {
   _notesFilterChanged?: boolean;
@@ -289,8 +289,17 @@ export class Note {
     return !this.isRoot && this.lexicalNode.getFolded();
   }
 
+  //TODO add setFolded/getFolded to RootNode
   set folded(value: boolean) {
     !this.isRoot && this.lexicalNode.setFolded(value && this.hasChildren);
+  }
+
+  setFoldLevel(level: number) {
+    this._walk(
+      (note, currentLevel) =>
+        !note.isRoot && (note.folded = currentLevel === 0),
+      level === 0 ? -1 : level
+    );
   }
 
   get checked() {
@@ -305,10 +314,16 @@ export class Note {
     !this.isRoot && this._walk(note => note.lexicalNode.toggleChecked());
   }
 
-  _walk(walker: (node: Note) => void) {
-    walker(this);
+  _walk(
+    walker: (node: Note, currentLevel: number) => void,
+    level: number = -1
+  ) {
+    walker(this, level);
+    if (level === 0) {
+      return;
+    }
     for (const child of this.children) {
-      child._walk(walker);
+      child._walk(walker, level - 1);
     }
   }
 }

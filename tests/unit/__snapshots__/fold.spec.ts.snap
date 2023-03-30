@@ -102,6 +102,516 @@ exports[`fold > folded 2`] = `
 "
 `;
 
+exports[`fold to a specific level > base 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note00
+            type: text
+        - indent: 1
+          type: listitem
+          value: 2
+          children:
+          - type: list
+            children:
+            - indent: 2
+              type: listitem
+              value: 1
+              children:
+              - text: note000
+                type: text
+        - indent: 1
+          type: listitem
+          value: 2
+          children:
+          - text: note01
+            type: text
+    - type: listitem
+      value: 2
+      children:
+      - text: note1
+        type: text
+    - type: listitem
+      value: 3
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note10
+            type: text
+        - indent: 1
+          type: listitem
+          value: 2
+          children:
+          - text: note11
+            type: text
+        - indent: 1
+          type: listitem
+          value: 3
+          children:
+          - text: note12
+            type: text
+        - indent: 1
+          type: listitem
+          value: 4
+          children:
+          - type: list
+            children:
+            - indent: 2
+              type: listitem
+              value: 1
+              children:
+              - text: note120
+                type: text
+            - indent: 2
+              type: listitem
+              value: 2
+              children:
+              - type: list
+                children:
+                - indent: 3
+                  type: listitem
+                  value: 1
+                  children:
+                  - text: note1200
+                    type: text
+                - indent: 3
+                  type: listitem
+                  value: 2
+                  children:
+                  - text: note1201
+                    type: text
+"
+`;
+
+exports[`fold to a specific level > folded1 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - folded: true
+      type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note00
+            type: text
+        - indent: 1
+          type: listitem
+          value: 2
+          children:
+          - type: list
+            children:
+            - indent: 2
+              type: listitem
+              value: 1
+              children:
+              - text: note000
+                type: text
+        - indent: 1
+          type: listitem
+          value: 2
+          children:
+          - text: note01
+            type: text
+    - folded: true
+      type: listitem
+      value: 2
+      children:
+      - text: note1
+        type: text
+    - type: listitem
+      value: 3
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note10
+            type: text
+        - indent: 1
+          type: listitem
+          value: 2
+          children:
+          - text: note11
+            type: text
+        - indent: 1
+          type: listitem
+          value: 3
+          children:
+          - text: note12
+            type: text
+        - indent: 1
+          type: listitem
+          value: 4
+          children:
+          - type: list
+            children:
+            - indent: 2
+              type: listitem
+              value: 1
+              children:
+              - text: note120
+                type: text
+            - indent: 2
+              type: listitem
+              value: 2
+              children:
+              - type: list
+                children:
+                - indent: 3
+                  type: listitem
+                  value: 1
+                  children:
+                  - text: note1200
+                    type: text
+                - indent: 3
+                  type: listitem
+                  value: 2
+                  children:
+                  - text: note1201
+                    type: text
+"
+`;
+
+exports[`fold to a specific level > folded2 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - folded: true
+          indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note00
+            type: text
+        - indent: 1
+          type: listitem
+          value: 2
+          children:
+          - type: list
+            children:
+            - indent: 2
+              type: listitem
+              value: 1
+              children:
+              - text: note000
+                type: text
+        - indent: 1
+          type: listitem
+          value: 2
+          children:
+          - text: note01
+            type: text
+    - type: listitem
+      value: 2
+      children:
+      - text: note1
+        type: text
+    - type: listitem
+      value: 3
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note10
+            type: text
+        - indent: 1
+          type: listitem
+          value: 2
+          children:
+          - text: note11
+            type: text
+        - folded: true
+          indent: 1
+          type: listitem
+          value: 3
+          children:
+          - text: note12
+            type: text
+        - indent: 1
+          type: listitem
+          value: 4
+          children:
+          - type: list
+            children:
+            - indent: 2
+              type: listitem
+              value: 1
+              children:
+              - text: note120
+                type: text
+            - indent: 2
+              type: listitem
+              value: 2
+              children:
+              - type: list
+                children:
+                - indent: 3
+                  type: listitem
+                  value: 1
+                  children:
+                  - text: note1200
+                    type: text
+                - indent: 3
+                  type: listitem
+                  value: 2
+                  children:
+                  - text: note1201
+                    type: text
+"
+`;
+
+exports[`fold to a specific level > folded3 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note00
+            type: text
+        - indent: 1
+          type: listitem
+          value: 2
+          children:
+          - type: list
+            children:
+            - indent: 2
+              type: listitem
+              value: 1
+              children:
+              - text: note000
+                type: text
+        - indent: 1
+          type: listitem
+          value: 2
+          children:
+          - text: note01
+            type: text
+    - type: listitem
+      value: 2
+      children:
+      - text: note1
+        type: text
+    - type: listitem
+      value: 3
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note10
+            type: text
+        - indent: 1
+          type: listitem
+          value: 2
+          children:
+          - text: note11
+            type: text
+        - indent: 1
+          type: listitem
+          value: 3
+          children:
+          - text: note12
+            type: text
+        - indent: 1
+          type: listitem
+          value: 4
+          children:
+          - type: list
+            children:
+            - folded: true
+              indent: 2
+              type: listitem
+              value: 1
+              children:
+              - text: note120
+                type: text
+            - indent: 2
+              type: listitem
+              value: 2
+              children:
+              - type: list
+                children:
+                - indent: 3
+                  type: listitem
+                  value: 1
+                  children:
+                  - text: note1200
+                    type: text
+                - indent: 3
+                  type: listitem
+                  value: 2
+                  children:
+                  - text: note1201
+                    type: text
+"
+`;
+
+exports[`fold to a specific level > folded4 1`] = `
+"root:
+  type: root
+  children:
+  - type: list
+    children:
+    - type: listitem
+      value: 1
+      children:
+      - text: note0
+        type: text
+    - type: listitem
+      value: 2
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note00
+            type: text
+        - indent: 1
+          type: listitem
+          value: 2
+          children:
+          - type: list
+            children:
+            - indent: 2
+              type: listitem
+              value: 1
+              children:
+              - text: note000
+                type: text
+        - indent: 1
+          type: listitem
+          value: 2
+          children:
+          - text: note01
+            type: text
+    - type: listitem
+      value: 2
+      children:
+      - text: note1
+        type: text
+    - type: listitem
+      value: 3
+      children:
+      - type: list
+        children:
+        - indent: 1
+          type: listitem
+          value: 1
+          children:
+          - text: note10
+            type: text
+        - indent: 1
+          type: listitem
+          value: 2
+          children:
+          - text: note11
+            type: text
+        - indent: 1
+          type: listitem
+          value: 3
+          children:
+          - text: note12
+            type: text
+        - indent: 1
+          type: listitem
+          value: 4
+          children:
+          - type: list
+            children:
+            - indent: 2
+              type: listitem
+              value: 1
+              children:
+              - text: note120
+                type: text
+            - indent: 2
+              type: listitem
+              value: 2
+              children:
+              - type: list
+                children:
+                - indent: 3
+                  type: listitem
+                  value: 1
+                  children:
+                  - text: note1200
+                    type: text
+                - indent: 3
+                  type: listitem
+                  value: 2
+                  children:
+                  - text: note1201
+                    type: text
+"
+`;
+
 exports[`load folded 1`] = `
 "root:
   type: root

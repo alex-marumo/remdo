@@ -92,21 +92,26 @@ export function Navigation({ anchorElement }) {
     );
   });
 
+  function breadcrumbText(breadcrumb) {
+    //TODO use notes once IDs are supported
+    return breadcrumb.key === "root" ? "Document" : breadcrumb.text;
+  }
+
   return (
     <nav aria-label="breadcrumb">
       <ol className="breadcrumb">
-        {breadcrumbs.map((note, idx, { length }) => {
+        {breadcrumbs.map((breadcrumb, idx, { length }) => {
           return idx + 1 < length ? (
-            <li className="breadcrumb-item" key={note.key}>
-              <Link to={`/note/${note.key}`}>{note.text}</Link>
+            <li className="breadcrumb-item" key={breadcrumb.key}>
+              <Link to={`/note/${breadcrumb.key}`}>{breadcrumbText(breadcrumb)}</Link>
             </li>
           ) : (
             <li
               className="breadcrumb-item active"
               aria-current="page"
-              key={note.key}
+              key={breadcrumb.key}
             >
-              {note.text}
+              {breadcrumbText(breadcrumb)}
             </li>
           );
         })}

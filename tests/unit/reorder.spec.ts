@@ -1,6 +1,7 @@
 import { getMinimizedState, loadEditorState } from "./common";
 import { it } from "vitest";
 
+//FIXME use toEqual instead of trying to name snapshots
 it("reorder flat", async ({ editor, expect, lexicalUpdate }) => {
   const { note0 } = loadEditorState(editor, "flat");
   expect(getMinimizedState(editor)).toMatchSnapshot("base");
