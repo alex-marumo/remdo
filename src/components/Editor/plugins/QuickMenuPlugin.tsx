@@ -227,7 +227,7 @@ function MenuOptions({ closeMenu, position, noteKeys }) {
       <li className="list-group-item">
         <button className="dropdown-item" type="button">
           <i className="bi bi-file-binary" />
-          &nbsp;Press 0-9 to set fold level
+          &nbsp;Press <b>0</b>-<b>9</b> to set fold level
         </button>
       </li>
     </ul>

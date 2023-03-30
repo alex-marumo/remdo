@@ -76,6 +76,7 @@
                 "version": 1,
                 "children": [
                   {
+                    "checked": true,
                     "direction": "ltr",
                     "folded": false,
                     "format": "",
@@ -89,7 +90,7 @@
                         "format": 0,
                         "mode": "normal",
                         "style": "",
-                        "text": "marking notes as checked",
+                        "text": "run/auto-save a specific project - similar to npm run notes but more general",
                         "type": "text",
                         "version": 1
                       }
@@ -109,7 +110,7 @@
                         "format": 0,
                         "mode": "normal",
                         "style": "",
-                        "text": "folding all nodes up to a specific level",
+                        "text": "moving note with children",
                         "type": "text",
                         "version": 1
                       }
@@ -129,7 +130,7 @@
                         "format": 0,
                         "mode": "normal",
                         "style": "",
-                        "text": "create lint test case",
+                        "text": "marking notes as checked",
                         "type": "text",
                         "version": 1
                       }
@@ -149,7 +150,7 @@
                         "format": 0,
                         "mode": "normal",
                         "style": "",
-                        "text": "consider changing rootElement to ul/li instead of adjusting schema in rootTransform",
+                        "text": "folding all nodes up to a specific level",
                         "type": "text",
                         "version": 1
                       }
@@ -169,7 +170,7 @@
                         "format": 0,
                         "mode": "normal",
                         "style": "",
-                        "text": "fail all kinds of tests if there is an exception in browser's console",
+                        "text": "create lint test case",
                         "type": "text",
                         "version": 1
                       }
@@ -189,7 +190,7 @@
                         "format": 0,
                         "mode": "normal",
                         "style": "",
-                        "text": "add a warning about jsdom/querySelectorAll, potentially using rewire",
+                        "text": "consider changing rootElement to ul/li instead of adjusting schema in rootTransform",
                         "type": "text",
                         "version": 1
                       }
@@ -202,6 +203,46 @@
                     "indent": 1,
                     "type": "listitem",
                     "value": 7,
+                    "version": 1,
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "fail all kinds of tests if there is an exception in browser's console",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ]
+                  },
+                  {
+                    "direction": "ltr",
+                    "folded": false,
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 8,
+                    "version": 1,
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "add a warning about jsdom/querySelectorAll, potentially using rewire",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ]
+                  },
+                  {
+                    "direction": "ltr",
+                    "folded": false,
+                    "format": "",
+                    "indent": 1,
+                    "type": "listitem",
+                    "value": 9,
                     "version": 1,
                     "children": [
                       {
@@ -367,7 +408,7 @@
           },
           {
             "direction": "ltr",
-            "folded": false,
+            "folded": true,
             "format": "",
             "indent": 0,
             "type": "listitem",

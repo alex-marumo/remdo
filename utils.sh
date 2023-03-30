@@ -60,7 +60,7 @@ function run_serialization {
 }
 
 #loads data from the file and saves it back repeatedly
-function start_notes {
+function open_document {
     process_group_id=""
 
     cleanup() {
@@ -71,18 +71,18 @@ function start_notes {
 
     trap cleanup SIGINT
 
-    FILE=data/notes.json
+    FILE=$1
     echo "Loading $FILE"
     npm run load $FILE
     while true; do
         echo "Saving $FILE"
         sleep 1
 
-        npm run save $FILE -- &>/dev/null
+        `npm run save $FILE -- &>/dev/null` &
         process_group_id=$!
         wait $!
 
-        git -C data diff --stat
+        git -C `dirname $FILE` diff --stat | grep `basename $FILE`
     done
 }
 
