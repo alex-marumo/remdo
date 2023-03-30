@@ -51,6 +51,10 @@ export class NotesState {
     return this._focus;
   }
 
+  get focusNote() {
+    return new Note(this.focus?.nodeKey ?? "root");
+  }
+
   _readFocus() {
     const focusNodeKey = this._element.dataset.focusNodeKey;
     this._focus =

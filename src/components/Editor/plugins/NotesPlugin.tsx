@@ -1,6 +1,10 @@
-import { NOTES_MOVE_COMMAND, NOTES_TOGGLE_FOLD_COMMAND } from "../commands";
+import {
+  NOTES_MOVE_COMMAND,
+  NOTES_SET_FOLD_LEVEL_COMMAND,
+  NOTES_TOGGLE_FOLD_COMMAND,
+} from "../commands";
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
-import { Note } from "../lexical/api";
+import { Note, NotesState } from "../lexical/api";
 import { $isTargetWithinDecorator } from "../lexical/utils";
 import { Navigation } from "./NavigationPlugin";
 import { NoteControlsPlugin } from "./NoteControlsPlugin";
@@ -170,6 +174,14 @@ export function NotesPlugin({ anchorElement }) {
           const moved: ListItemNode = $getNodeByKey(keys[0]);
           const target: ListItemNode = $getNodeByKey(targetKey);
           target.insertAfter(moved);
+          return true;
+        },
+        COMMAND_PRIORITY_LOW
+      ),
+      editor.registerCommand(
+        NOTES_SET_FOLD_LEVEL_COMMAND,
+        ({ level }) => {
+          NotesState.getActive().focusNote.setFoldLevel(level);
           return true;
         },
         COMMAND_PRIORITY_LOW

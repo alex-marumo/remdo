@@ -38,6 +38,7 @@ export async function loadEditorState(page: Page, file: string) {
   await page.locator("#editor-state").fill(serializedEditorState);
   await page.click("text=Submit Editor State");
   await page.click("text=Load State");
+  await page.click(".editor");
 }
 
 test.beforeEach(async ({ page }) => {

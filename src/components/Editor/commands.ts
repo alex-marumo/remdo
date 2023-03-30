@@ -1,4 +1,3 @@
-import { Note } from "./lexical/api";
 import { createCommand, LexicalCommand } from "lexical";
 
 export const NOTES_TOGGLE_FOLD_COMMAND: LexicalCommand<{ noteKeys: string[] }> =
@@ -20,11 +19,14 @@ export const NOTES_SEARCH_COMMAND: LexicalCommand<void> = createCommand(
   "NOTES_SEARCH_COMMAND"
 );
 
-export const NOTES_OPEN_QUICK_MENU: LexicalCommand<{
+export const NOTES_OPEN_QUICK_MENU_COMMAND: LexicalCommand<{
   left: number;
   top: number;
   noteKeys: string[];
-}> = createCommand("NOTES_OPEN_QUICK_MENU");
+}> = createCommand("NOTES_OPEN_QUICK_MENU_COMMAND");
 
 export const NOTES_FOCUS_COMMAND: LexicalCommand<{ key: string }> =
   createCommand("NOTES_FOCUS_COMMAND");
+
+export const NOTES_SET_FOLD_LEVEL_COMMAND: LexicalCommand<{ level: number }> =
+  createCommand("NOTES_SET_FOLD_LEVEL_COMMAND");

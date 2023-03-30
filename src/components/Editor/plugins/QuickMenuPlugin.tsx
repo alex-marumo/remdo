@@ -1,10 +1,11 @@
 //TODO try to use https://react-bootstrap.github.io/components/dropdowns/ or https://react-bootstrap.github.io/components/overlays/
 import {
-  NOTES_OPEN_QUICK_MENU,
+  NOTES_OPEN_QUICK_MENU_COMMAND,
   NOTES_START_MOVING_COMMAND,
   NOTES_SEARCH_COMMAND,
   NOTES_TOGGLE_FOLD_COMMAND,
   NOTES_FOCUS_COMMAND,
+  NOTES_SET_FOLD_LEVEL_COMMAND,
 } from "../commands";
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import { getNotesFromSelection, Note } from "../lexical/api";
@@ -72,7 +73,9 @@ function MenuOptions({ closeMenu, position, noteKeys }) {
         title: "<b>M</b>ove to...",
         icon: <i className="bi bi-arrow-right-square" />,
         action: () =>
-          editor.dispatchCommand(NOTES_START_MOVING_COMMAND, { keys: noteKeys }),
+          editor.dispatchCommand(NOTES_START_MOVING_COMMAND, {
+            keys: noteKeys,
+          }),
       }),
       new NoteMenuOption({
         title: "<b>S</b>earch...",
@@ -137,6 +140,11 @@ function MenuOptions({ closeMenu, position, noteKeys }) {
             setHighlightedOptionIndex(
               (highlightedOptionIndex - 1 + options.length) % options.length
             );
+          } else if (event.key >= "0" && event.key <= "9") {
+            editor.dispatchCommand(NOTES_SET_FOLD_LEVEL_COMMAND, {
+              level: +event.key,
+            });
+            closeMenu();
           } else {
             const key = event.key.toLowerCase();
             const selected = options.find(o => o.key === key);
@@ -219,7 +227,7 @@ function MenuOptions({ closeMenu, position, noteKeys }) {
       <li className="list-group-item">
         <button className="dropdown-item" type="button">
           <i className="bi bi-file-binary" />
-          &nbsp;Press 1-9 to set fold level
+          &nbsp;Press 0-9 to set fold level
         </button>
       </li>
     </ul>
@@ -257,7 +265,7 @@ export function QuickMenuPlugin() {
         COMMAND_PRIORITY_CRITICAL
       ),
       editor.registerCommand<{ left: number; top: number; noteKeys: string[] }>(
-        NOTES_OPEN_QUICK_MENU,
+        NOTES_OPEN_QUICK_MENU_COMMAND,
         ({ left, top, noteKeys }) => {
           setNoteKeys(noteKeys);
           setPosition({ left, top });

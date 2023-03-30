@@ -1,0 +1,37 @@
+<ul>
+  <li value="1" class="note-folded" dir="ltr">
+    <span class="note-folded" data-lexical-text="true">note0</span>
+  </li>
+  <li value="2" class="position-relative li-nested note-folded">
+    <ul class="note-folded">
+      <div dir="ltr"><div data-lexical-text="true"></div></div>
+      <div>
+        <div>
+          <div dir="ltr"><div data-lexical-text="true"></div></div>
+        </div>
+      </div>
+      <div dir="ltr"><div data-lexical-text="true"></div></div>
+    </ul>
+  </li>
+  <li value="2" class="note-folded" dir="ltr">
+    <span class="note-folded" data-lexical-text="true">note1</span>
+  </li>
+  <li value="3" class="position-relative li-nested note-folded">
+    <ul class="note-folded">
+      <div dir="ltr"><div data-lexical-text="true"></div></div>
+      <div dir="ltr"><div data-lexical-text="true"></div></div>
+      <div dir="ltr"><div data-lexical-text="true"></div></div>
+      <div>
+        <div>
+          <div dir="ltr"><div data-lexical-text="true"></div></div>
+          <div>
+            <div>
+              <div dir="ltr"><div data-lexical-text="true"></div></div>
+              <div dir="ltr"><div data-lexical-text="true"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ul>
+  </li>
+</ul>

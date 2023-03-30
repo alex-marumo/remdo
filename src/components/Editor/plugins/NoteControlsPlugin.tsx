@@ -1,4 +1,4 @@
-import { NOTES_OPEN_QUICK_MENU } from "../commands";
+import { NOTES_OPEN_QUICK_MENU_COMMAND } from "../commands";
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import { Note } from "../lexical/api";
 import { getOffsetPosition, isBeforeEvent } from "@/utils";
@@ -25,7 +25,7 @@ export function NoteControlsPlugin() {
     e.preventDefault();
     const { left, top, height } = getOffsetPosition(editor, e.target);
     editor.update(() => {
-      editor.dispatchCommand(NOTES_OPEN_QUICK_MENU, {
+      editor.dispatchCommand(NOTES_OPEN_QUICK_MENU_COMMAND, {
         left,
         top: top + height,
         noteKeys: [$getNearestNodeFromDOMNode(noteElement).getKey()],
