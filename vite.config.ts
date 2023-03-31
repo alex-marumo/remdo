@@ -262,6 +262,10 @@ export default defineConfig({
     __DEV__: true,
   },
 
+  watch: {
+    clearScreen: false,
+  },
+
   //TODO copied from lexical playground
   plugins: [
     false && {
