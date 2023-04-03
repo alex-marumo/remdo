@@ -1,7 +1,13 @@
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import TreeViewPlugin from "@lexical/playground/plugins/TreeViewPlugin";
-import { CLEAR_EDITOR_COMMAND, CLEAR_HISTORY_COMMAND } from "lexical";
-import React, { useCallback, useState } from "react";
+import { mergeRegister } from "@lexical/utils";
+import { CONNECTED_COMMAND, TOGGLE_CONNECT_COMMAND } from "@lexical/yjs";
+import {
+  CLEAR_EDITOR_COMMAND,
+  CLEAR_HISTORY_COMMAND,
+  COMMAND_PRIORITY_EDITOR,
+} from "lexical";
+import React, { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 function EditorStateInput() {
@@ -33,10 +39,25 @@ function EditorStateInput() {
 }
 
 export const DevToolbarPlugin = ({ editorBottom }) => {
+  const [connected, setConnected] = useState(false);
   const [editor] = useNotesLexicalComposerContext();
   const [showDebug, setShowDebugState] = useState(true);
   const [darkMode, setDarkMode] = useState(getDarkMode());
   const [showEditorStateInput, setShowEditorStateInput] = useState(false);
+
+  useEffect(() => {
+    return mergeRegister(
+      editor.registerCommand<boolean>(
+        CONNECTED_COMMAND,
+        payload => {
+          const isConnected = payload;
+          setConnected(isConnected);
+          return false;
+        },
+        COMMAND_PRIORITY_EDITOR
+      )
+    );
+  }, [editor]);
 
   function getDarkMode() {
     return document.documentElement.dataset.bsTheme === "dark";
@@ -123,6 +144,15 @@ export const DevToolbarPlugin = ({ editorBottom }) => {
       {editorBottom &&
         showDebug &&
         createPortal(<TreeViewPlugin />, editorBottom)}
+      <button
+        type="button"
+        className="btn btn-link float-end"
+        onClick={() => {
+          editor.dispatchCommand(TOGGLE_CONNECT_COMMAND, !connected);
+        }}
+      >
+        {connected ? "Disconnect" : "Connect"}
+      </button>
     </div>
   );
 };

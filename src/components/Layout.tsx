@@ -7,13 +7,19 @@ export function Layout() {
       <nav className="navbar navbar-expand-lg">
         <ul className="navbar-nav">
           <li className="nav-item">
-            <NavLink className="nav-link" to="/">Home</NavLink>
+            <a href="/" className="nav-link">
+              Home
+            </a>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link" to="/demo">Demo</NavLink>
+            <NavLink className="nav-link" to="/demo">
+              Demo
+            </NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link" to="/about">About</NavLink>
+            <NavLink className="nav-link" to="/about">
+              About
+            </NavLink>
           </li>
         </ul>
       </nav>

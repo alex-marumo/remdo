@@ -1,15 +1,21 @@
 import { COMMAND_PRIORITY_LOW } from "../../../../lexical/packages/lexical/src/LexicalEditor";
 import { NOTES_FOCUS_COMMAND } from "../commands";
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
-import { Note } from "../lexical/api";
+import { Note, NotesState } from "../lexical/api";
 import { isBeforeEvent } from "@/utils";
 import { ListItemNode } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
 import { $getNearestNodeFromDOMNode } from "lexical";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import Breadcrumb from "react-bootstrap/Breadcrumb";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import Nav from "react-bootstrap/Nav";
+import NavDropdown from "react-bootstrap/NavDropdown";
+import Navbar from "react-bootstrap/Navbar";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-export function Navigation({ anchorElement }) {
+export function Navigation({ anchorElement, documentID }) {
   const [editor] = useNotesLexicalComposerContext();
   const navigate = useNavigate();
   const locationParams = useParams();
@@ -29,10 +35,13 @@ export function Navigation({ anchorElement }) {
 
           //TODO won't update if path is changed elsewhere
           setBreadcrumbs(
-            [note, ...note.parents].reverse().map(p => ({
-              key: p.lexicalNode.getKey(),
-              text: p.text,
-            }))
+            [note, ...note.parents]
+              .slice(0, -1) //skip root
+              .reverse()
+              .map(p => ({
+                key: p.lexicalNode.getKey(),
+                text: p.text,
+              }))
           );
         },
         { discrete: true }
@@ -92,30 +101,39 @@ export function Navigation({ anchorElement }) {
     );
   });
 
-  function breadcrumbText(breadcrumb) {
-    //TODO use notes once IDs are supported
-    return breadcrumb.key === "root" ? "Document" : breadcrumb.text;
-  }
+  const breadcrumbItems = breadcrumbs.map(
+    ({ key, text }, index, { length }) => (
+      <Breadcrumb.Item
+        key={key}
+        href={`/note/${key}`}
+        active={index === length - 1}
+      >
+        {key === "root" ? "Document" : text}
+      </Breadcrumb.Item>
+    )
+  );
 
+  const documents = NotesState.documents().map(document => (
+    <Dropdown.Item href={`?documentID=${document}`} key={document}>
+      {document}
+    </Dropdown.Item>
+  ));
+
+  //TODO https://react-bootstrap.github.io/components/dropdowns/#custom-dropdown-components
   return (
-    <nav aria-label="breadcrumb">
-      <ol className="breadcrumb">
-        {breadcrumbs.map((breadcrumb, idx, { length }) => {
-          return idx + 1 < length ? (
-            <li className="breadcrumb-item" key={breadcrumb.key}>
-              <Link to={`/note/${breadcrumb.key}`}>{breadcrumbText(breadcrumb)}</Link>
-            </li>
-          ) : (
-            <li
-              className="breadcrumb-item active"
-              aria-current="page"
-              key={breadcrumb.key}
-            >
-              {breadcrumbText(breadcrumb)}
-            </li>
-          );
-        })}
-      </ol>
-    </nav>
+    <div>
+      <Breadcrumb>
+        <Breadcrumb.Item linkAs="div">
+          <Dropdown>
+            <Dropdown.Toggle variant="dark" size="sm" id="dropdown-basic">
+              {documentID}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu variant="dark">{documents}</Dropdown.Menu>
+          </Dropdown>
+        </Breadcrumb.Item>
+        {breadcrumbItems}
+      </Breadcrumb>
+    </div>
   );
 }

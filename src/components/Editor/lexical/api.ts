@@ -92,6 +92,10 @@ export class NotesState {
   static getActive() {
     return new NotesState(getActiveEditor()._rootElement);
   }
+
+  static documents(): string[] {
+    return import.meta.env.VITE_DOCUMENTS?.split(",").filter(Boolean) ?? [];
+  }
 }
 
 export class Note {

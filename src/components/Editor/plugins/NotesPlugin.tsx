@@ -39,7 +39,7 @@ import { useEffect, useCallback } from "react";
 import React from "react";
 import { createPortal } from "react-dom";
 
-export function NotesPlugin({ anchorElement }) {
+export function NotesPlugin({ anchorElement, documentID }) {
   const [editor] = useNotesLexicalComposerContext();
 
   const handleReorder = useCallback(
@@ -246,7 +246,7 @@ export function NotesPlugin({ anchorElement }) {
 
   return (
     <>
-      <Navigation anchorElement={anchorElement} />
+      <Navigation anchorElement={anchorElement} documentID={documentID} />
       <SearchPlugin />
       {createPortal(<NoteControlsPlugin />, anchorElement)}
     </>

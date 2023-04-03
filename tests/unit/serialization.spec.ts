@@ -11,7 +11,7 @@ import { it, TestAPI } from "vitest";
 
 const SERIALIZATION_FILE = process.env.VITEST_SERIALIZATION_FILE;
 
-it.runIf(SERIALIZATION_FILE)("load", ({ editor }) => {
+it.runIf(SERIALIZATION_FILE)("load", ({editor}) => {
   const dataPath = getDataPath(SERIALIZATION_FILE);
   console.log();
   console.log();

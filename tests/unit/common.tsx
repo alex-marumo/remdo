@@ -1,7 +1,8 @@
-import App from "@/App";
+import Editor from "@/components/Editor";
 import { NotesLexicalEditor } from "@/components/Editor/lexical/NotesComposerContext";
 import { Note } from "@/components/Editor/lexical/api";
 import { TestContext as ComponentTestContext } from "@/components/Editor/plugins/DevComponentTestPlugin";
+import { Layout } from "@/components/Layout";
 import {
   BoundFunctions,
   getAllByRole,
@@ -16,12 +17,13 @@ import { $getRoot, CLEAR_HISTORY_COMMAND } from "lexical";
 import { LexicalEditor } from "lexical";
 import path from "path";
 import React from "react";
+import { MemoryRouter, Navigate, Route, Routes } from "react-router-dom";
 import { getDataPath } from "tests/common";
 import { it, afterAll, expect, beforeEach, afterEach } from "vitest";
 
 declare module "vitest" {
   export interface TestContext {
-    _component: RenderResult;
+    component: RenderResult;
     queries: BoundFunctions<
       typeof queries & { getAllNotNestedIListItems: typeof getAllByRole.bind }
     >;
@@ -260,17 +262,34 @@ beforeEach(async context => {
     context.editor = editor;
   }
 
+  const routerEntries = ["/"];
+  const serializationFile = process.env.VITEST_SERIALIZATION_FILE;
+  if(serializationFile) {
+    console.log(serializationFile);
+    routerEntries.push(`/?documentID=${serializationFile}`);
+  }
+
   //TODO test only editor, without router, layout, etc. required editor to abstract from routes
   const component = render(
     <ComponentTestContext.Provider value={{ testHandler }}>
-      <h1 className="text-center text-warning">Unit tests</h1>
-      <App />
+      <MemoryRouter initialEntries={routerEntries}>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route element={<Editor />}>
+              <Route path="" element="</>" index></Route>
+              <Route path="note/:noteID" element="</>"></Route>
+            </Route>
+            <Route path="about" element={<div>About</div>} />
+            <Route path="*" element={<Navigate to="/" />}></Route>
+          </Route>
+        </Routes>
+      </MemoryRouter>
     </ComponentTestContext.Provider>
   );
 
   const editorElement = component.getByRole("textbox");
 
-  context._component = component;
+  context.component = component;
   context.queries = within(editorElement, {
     ...queries,
     getAllNotNestedIListItems: () =>
@@ -310,7 +329,7 @@ afterEach(async context => {
     //an ugly workaround - to give a chance for yjs to sync
     await new Promise(r => setTimeout(r, 10));
   }
-  context._component.unmount();
+  context.component.unmount();
 });
 
 afterAll(async () => {

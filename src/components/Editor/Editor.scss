@@ -31,6 +31,11 @@
   filter: blur(1px);
 }
 
+.editor {
+  flex: auto;
+  position: relative;
+}
+
 .editor-input {
   position: relative;
   margin-top: 3px;
@@ -97,4 +102,8 @@
     text-decoration: line-through;
     color: var(--bs-tertiary-color);
   }
+}
+
+.debug-timetravel-button {
+  display: none;
 }

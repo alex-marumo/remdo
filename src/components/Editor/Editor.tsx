@@ -1,17 +1,13 @@
-import { DevComponentTestPlugin } from "./plugins/DevComponentTestPlugin";
-import IndentationPlugin from "./plugins/IndentationPlugin";
 import "./Editor.scss";
-import { applyNodePatches } from "./lexical/nodes";
-import { DevToolbarPlugin } from "./plugins/DevToolbarPlugin";
-import { QuickMenuPlugin } from "./plugins/QuickMenuPlugin";
-import { NotesPlugin } from "./plugins/NotesPlugin";
 import { ListNode, ListItemNode } from "@lexical/list";
-import "@lexical/playground/index.css";
 import FloatingTextFormatToolbarPlugin from "@lexical/playground/plugins/FloatingTextFormatToolbarPlugin";
 import "@lexical/playground/plugins/FloatingTextFormatToolbarPlugin/index.css";
 import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
 import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
-import { InitialConfigType, LexicalComposer } from "@lexical/react/LexicalComposer";
+import {
+  InitialConfigType,
+  LexicalComposer,
+} from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
@@ -22,12 +18,20 @@ import { Provider } from "@lexical/yjs";
 import { TextNode } from "lexical";
 import { useState } from "react";
 import React from "react";
+import { useLocation } from "react-router-dom";
+import { IndexeddbPersistence } from "y-indexeddb";
 import { WebsocketProvider } from "y-websocket";
 import { Doc } from "yjs";
-import { IndexeddbPersistence } from "y-indexeddb";
+import { applyNodePatches } from "./lexical/nodes";
+import { DevComponentTestPlugin } from "./plugins/DevComponentTestPlugin";
+import { DevToolbarPlugin } from "./plugins/DevToolbarPlugin";
+import IndentationPlugin from "./plugins/IndentationPlugin";
+import { NotesPlugin } from "./plugins/NotesPlugin";
+import { QuickMenuPlugin } from "./plugins/QuickMenuPlugin";
 
 
 function providerFactory(id: string, yjsDocMap: Map<string, Doc>): Provider {
+  console.log("providerFactory", id);
   let doc = yjsDocMap.get(id);
 
   if (doc === undefined) {
@@ -49,7 +53,7 @@ function providerFactory(id: string, yjsDocMap: Map<string, Doc>): Provider {
     "notes/0/" + id,
     doc,
     {
-      connect: false,
+      connect: true,
     }
   );
   wsProvider.shouldConnect = true; //reconnect after disconnecting
@@ -69,6 +73,9 @@ applyNodePatches(ListItemNode);
 export default function Editor() {
   const [floatingAnchorElem, setFloatingAnchorElem] = useState(null);
   const [editorBottom, setEditorBottom] = useState(null);
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const documentID = params.get("documentID") || "main";
 
   const onRef = _floatingAnchorElem => {
     if (_floatingAnchorElem !== null) {
@@ -110,7 +117,7 @@ export default function Editor() {
       <div className="editor-container editor-shell">
         <DevToolbarPlugin editorBottom={editorBottom} />
         {floatingAnchorElem && (
-          <NotesPlugin anchorElement={floatingAnchorElem} />
+          <NotesPlugin anchorElement={floatingAnchorElem} documentID={documentID} />
         )}
         <QuickMenuPlugin />
         <RichTextPlugin
@@ -132,7 +139,7 @@ export default function Editor() {
           <HistoryPlugin />
         ) : (
           <CollaborationPlugin
-            id="main"
+            id={documentID}
             providerFactory={providerFactory}
             shouldBootstrap={true}
           />
