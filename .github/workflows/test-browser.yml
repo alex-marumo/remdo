@@ -15,6 +15,7 @@ jobs:
           ls -a
           echo "sample2"
           pwd
+          chmod a+x ./utils.sh
       - name: Run Playwright Tests
         run: |
           npm run test-browser
