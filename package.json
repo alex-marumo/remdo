@@ -33,7 +33,7 @@
     "websocket": "HOST=0.0.0.0 PORT=8080 YPERSISTENCE=./data/yjsDB npx y-websocket",
     "build": "vite build",
     "eject": "react-scripts eject",
-    "test-browser": "DEBUG=pw:api VITE_DISABLECOLLAB=true npm run test-browser-collab",
+    "test-browser": "VITE_DISABLECOLLAB=true npm run test-browser-collab",
     "test-browser-collab": "npx playwright test --project=chromium",
     "test-browser-watch": "VITE_DISABLECOLLAB=true ./utils.sh watch_repo 'npm run test-browser && echo \"\\x1b[32mDone, waiting for file changes...\\x1b[0m\"'",
     "test-unit": "npx vitest run",
