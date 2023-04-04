@@ -11,11 +11,6 @@ jobs:
       - name: Install Dependencies
         run: |
           npm install
-          echo "sample1"
-          pwd
-          ls -al
-          chmod a+x ./utils.sh
-          echo "done"
       - name: Run Playwright Tests
         run: |
           npm run test-browser

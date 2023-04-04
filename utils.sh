@@ -46,11 +46,6 @@ function wrong_usage {
     exit 1
 }
 
-#removes some unnecessary lines from the end of the playwright output
-function trim_playwright {
-    cat | grep -Ev 'To open last HTML report run|npx playwright show-report data'
-}
-
 function run_serialization {
     if [ "$#" -lt 2 ]; then
         echo "Usage: $SCRIPT_PATH run_serialization [load|save] [serialization_file]"
