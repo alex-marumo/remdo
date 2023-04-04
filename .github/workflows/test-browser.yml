@@ -8,10 +8,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
       - name: Install Dependencies
         run: |
           git submodule update --init --recursive
           npm install
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
       - name: Run Playwright Tests
         run: |
           npm run test-browser
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: data
+          path: data/
+          retention-days: 30
