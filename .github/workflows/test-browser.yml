@@ -11,6 +11,10 @@ jobs:
       - name: Install Dependencies
         run: |
           npm install
+          echo "sample1"
+          ls -a
+          echo "sample2"
+          pwd
       - name: Run Playwright Tests
         run: |
           npm run test-browser
