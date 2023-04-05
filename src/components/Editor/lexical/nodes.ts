@@ -94,6 +94,9 @@ patch(ListItemNode, "clone", function (oldClone, oldNode: ListItemNode) {
 });
 
 patch(ListItemNode, "importJSON", function (oldImportJSON, serializedNode) {
+  //lexical implements multi-level indents by adding some extra styles to the 
+  //node, we don't allow them, so there is no need for the extra styles
+  serializedNode.indent = 0;
   const node = oldImportJSON(serializedNode);
   node.__folded = serializedNode["folded"] ?? false;
   return node;
