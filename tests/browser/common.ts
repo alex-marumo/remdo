@@ -32,6 +32,8 @@ export async function getEditorHTML(page: Page) {
 
 //TODO use it in basic.spec.ts
 export async function loadEditorState(page: Page, file: string) {
+  await page.reload();
+  //console.log(await page.content());
   await page.click("text=Load State");
   const dataPath = getDataPath(file);
   const serializedEditorState = fs.readFileSync(dataPath).toString();

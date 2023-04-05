@@ -26,9 +26,8 @@ const config: PlaywrightTestConfig = {
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  retries: 0,
-  //workers: disableCollab ? 30 : 1, //TODO
-  workers: 1,
+  retries: 1, //when running a sequence of tests it happens that the page is blank for unknown reasons
+  workers: (disableCollab && !process.env.CI) ? 30 : 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ["html", { open: "never", outputFolder: "./data/playwright-report" }],
@@ -80,6 +79,7 @@ const config: PlaywrightTestConfig = {
     } SERVER_MODE=playwright npm run server`,
     port: port,
     timeout: 5 * 1000,
+    reuseExistingServer: !process.env.CI
   },
 };
 
