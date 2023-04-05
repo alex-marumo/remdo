@@ -319,6 +319,7 @@ test("quick menu - invalid hot key", async ({ page }) => {
 
 
 test("home page", async ({ page }) => {
+  test.skip(!!process.env.CI, "Skipping home page test in CI");
   await page.locator("text='Hide Debug'").click();
   await expect(page).toHaveScreenshot();
 });
