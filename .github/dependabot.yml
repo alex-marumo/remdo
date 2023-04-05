@@ -3,15 +3,12 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
-
+        interval: "daily"
   - package-ecosystem: "github-actions"
-      directory: "/"
-      schedule:
+    directory: "/"
+    schedule:
         interval: "daily"
-        
   - package-ecosystem: "gitsubmodule"
-      directory: "/"
-      schedule:
+    directory: "/"
+    schedule:
         interval: "daily"
-  
