@@ -1,5 +1,5 @@
 <ul>
-  <li value="1" class="li-checked" dir="ltr">
+  <li class="li-checked" dir="ltr" value="1">
     <span data-lexical-text="true">note0</span>
   </li>
 </ul>

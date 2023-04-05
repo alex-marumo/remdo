@@ -1,30 +1,30 @@
 <ul>
-  <li value="1" dir="ltr"><span data-lexical-text="true">note0</span></li>
-  <li value="2" class="position-relative li-nested">
+  <li dir="ltr" value="1"><span data-lexical-text="true">note0</span></li>
+  <li class="position-relative li-nested" value="2">
     <ul>
-      <li value="1" dir="ltr"><span data-lexical-text="true">note00</span></li>
-      <li value="2" class="position-relative li-nested">
+      <li dir="ltr" value="1"><span data-lexical-text="true">note00</span></li>
+      <li class="position-relative li-nested" value="2">
         <ul>
-          <li value="1" dir="ltr">
+          <li dir="ltr" value="1">
             <span data-lexical-text="true">note000</span>
           </li>
         </ul>
       </li>
-      <li value="2" dir="ltr"><span data-lexical-text="true">note01</span></li>
+      <li dir="ltr" value="2"><span data-lexical-text="true">note01</span></li>
     </ul>
   </li>
-  <li value="2" dir="ltr"><span data-lexical-text="true">note1</span></li>
-  <li value="3" class="position-relative li-nested">
+  <li dir="ltr" value="2"><span data-lexical-text="true">note1</span></li>
+  <li class="position-relative li-nested" value="3">
     <ul>
-      <li value="1" dir="ltr"><span data-lexical-text="true">note10</span></li>
-      <li value="2" dir="ltr"><span data-lexical-text="true">note11</span></li>
-      <li value="3" dir="ltr"><span data-lexical-text="true">note12</span></li>
-      <li value="4" class="position-relative li-nested">
+      <li dir="ltr" value="1"><span data-lexical-text="true">note10</span></li>
+      <li dir="ltr" value="2"><span data-lexical-text="true">note11</span></li>
+      <li dir="ltr" value="3"><span data-lexical-text="true">note12</span></li>
+      <li class="position-relative li-nested" value="4">
         <ul>
-          <li value="1" class="note-folded" dir="ltr">
+          <li class="note-folded" dir="ltr" value="1">
             <span class="note-folded" data-lexical-text="true">note120</span>
           </li>
-          <li value="2" class="position-relative li-nested note-folded">
+          <li class="position-relative li-nested note-folded" value="2">
             <ul class="note-folded">
               <div dir="ltr"><div data-lexical-text="true"></div></div>
               <div dir="ltr"><div data-lexical-text="true"></div></div>

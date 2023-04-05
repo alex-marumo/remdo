@@ -1,8 +1,8 @@
 <ul>
-  <li value="1" dir="ltr"><span data-lexical-text="true">note0</span></li>
-  <li value="2" class="position-relative li-nested">
+  <li dir="ltr" value="1"><span data-lexical-text="true">note0</span></li>
+  <li class="position-relative li-nested" value="2">
     <ul>
-      <li value="1" dir="ltr"><span data-lexical-text="true">note1</span></li>
+      <li dir="ltr" value="1"><span data-lexical-text="true">note1</span></li>
     </ul>
   </li>
 </ul>

@@ -2,8 +2,6 @@
 import {
   clearEditor,
   focusEditor,
-  getHTML,
-  prettifyHTML,
   assertHTML,
   html,
 } from "../../lexical/packages/lexical-playground/__tests__/utils/index.mjs";
@@ -11,6 +9,7 @@ import { getDataPath } from "../common.js";
 import { test } from "@playwright/test";
 import fs from "fs";
 import { Locator, Page } from "playwright";
+import prettier from "prettier";
 
 export function getNoteLocator(page: Page, text: string): Locator {
   return page.locator(".editor-input li :text('" + text + "')");
@@ -27,7 +26,15 @@ export async function clickEndOfNote(page: Page, text: string) {
 export { assertHTML, clearEditor, html, test };
 
 export async function getEditorHTML(page: Page) {
-  return prettifyHTML(await getHTML(page));
+  const editorHTML = await page.innerHTML("div.editor-input");
+  const prettyHTML = prettier
+    .format(editorHTML, {
+      //@ts-ignore
+      attributeSort: "ASC",
+      parser: "html",
+    })
+    .trim();
+  return prettyHTML;
 }
 
 //TODO use it in basic.spec.ts

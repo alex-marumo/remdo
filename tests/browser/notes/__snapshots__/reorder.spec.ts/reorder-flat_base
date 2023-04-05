@@ -1,5 +1,5 @@
 <ul>
-  <li value="1" dir="ltr"><span data-lexical-text="true">note0</span></li>
-  <li value="2" dir="ltr"><span data-lexical-text="true">note1</span></li>
-  <li value="3" dir="ltr"><span data-lexical-text="true">note2</span></li>
+  <li dir="ltr" value="1"><span data-lexical-text="true">note0</span></li>
+  <li dir="ltr" value="2"><span data-lexical-text="true">note1</span></li>
+  <li dir="ltr" value="3"><span data-lexical-text="true">note2</span></li>
 </ul>

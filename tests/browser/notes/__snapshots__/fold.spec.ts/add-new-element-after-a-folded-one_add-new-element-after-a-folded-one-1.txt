@@ -1,8 +1,8 @@
 <ul>
-  <li value="1" class="note-folded" dir="ltr">
+  <li class="note-folded" dir="ltr" value="1">
     <span class="note-folded" data-lexical-text="true">note0</span>
   </li>
-  <li value="2" class="position-relative li-nested note-folded">
+  <li class="position-relative li-nested note-folded" value="2">
     <ul class="note-folded">
       <div dir="ltr"><div data-lexical-text="true"></div></div>
     </ul>
