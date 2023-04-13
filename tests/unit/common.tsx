@@ -226,13 +226,13 @@ export function getMinimizedState(editor: LexicalEditor) {
       }
 
       for (const key in node) {
-        if (node[key] === d[key]) {
+        if (node[key] === null || node[key] === d[key]) {
           delete node[key];
         }
       }
     }
 
-    if (["number", "string", "boolean"].includes(typeof node)) {
+    if (["number", "string", "boolean"].includes(typeof node) || node === null) {
       return;
     } else if (node instanceof Array) {
       for (let i = 0; i < node.length; i++) {
@@ -321,6 +321,11 @@ beforeEach(async context => {
     while (editorElement.children.length == 0) {
       await new Promise(r => setTimeout(r, 10));
     }
+    //then make sure to clear the editor
+    context.lexicalUpdate(() => {
+      const root = $getRoot();
+      root.clear();
+    });  
   }
 });
 

@@ -213,6 +213,9 @@
         "lexical/packages/lexical-react/src/LexicalTabIndentationPlugin.tsx"
       ],
       "@lexical/list/utils": ["lexical/packages/lexical-list/src/utils.ts"],
+      "@lexical/list/formatList": [
+        "lexical/packages/lexical-list/src/formatList.ts"
+      ],
       "@lexical/LexicalUpdates": [
         "lexical/packages/lexical/src/LexicalUpdates.ts"
       ],

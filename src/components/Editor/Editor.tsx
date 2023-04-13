@@ -31,7 +31,7 @@ import { QuickMenuPlugin } from "./plugins/QuickMenuPlugin";
 
 
 function providerFactory(id: string, yjsDocMap: Map<string, Doc>): Provider {
-  console.log("providerFactory", id);
+  //console.log("providerFactory", id);
   let doc = yjsDocMap.get(id);
 
   if (doc === undefined) {
@@ -41,13 +41,8 @@ function providerFactory(id: string, yjsDocMap: Map<string, Doc>): Provider {
     doc.load();
   }
 
-  /*
   const idbProvider = new IndexeddbPersistence(id, doc);
-  idbProvider.on("synced", () => {
-    console.log("local db synced");
-  });
-  */
-
+  
   const wsProvider = new WebsocketProvider(
     "ws://athena:8080",
     "notes/0/" + id,
@@ -57,6 +52,20 @@ function providerFactory(id: string, yjsDocMap: Map<string, Doc>): Provider {
     }
   );
   wsProvider.shouldConnect = true; //reconnect after disconnecting
+
+  /*
+  idbProvider.on("synced", () => {
+    console.log("local db synced");
+  });
+  
+  const events = ["status", "synced", "sync", "update", "error", "destroy", "reload"];
+  events.forEach((event) => {
+    wsProvider.on(event, () => {
+      console.log("wsProvider", event);
+    });
+  });
+  */
+
   // @ts-ignore
   return wsProvider;
 }

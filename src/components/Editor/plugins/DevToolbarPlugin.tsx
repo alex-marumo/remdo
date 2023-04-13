@@ -46,6 +46,11 @@ export const DevToolbarPlugin = ({ editorBottom }) => {
   const [showEditorStateInput, setShowEditorStateInput] = useState(false);
 
   useEffect(() => {
+    //the idea is to use it in browser console
+    globalThis.debugEditor = editor;
+  }, [editor]);
+
+  useEffect(() => {
     return mergeRegister(
       editor.registerCommand<boolean>(
         CONNECTED_COMMAND,
