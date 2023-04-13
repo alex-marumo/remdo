@@ -3,8 +3,9 @@ import babel from "@rollup/plugin-babel";
 import react from "@vitejs/plugin-react";
 import fs from "fs";
 import path from "path";
+import { visualizer } from "rollup-plugin-visualizer";
 import ufo from "ufo";
-import { defineConfig } from "vite";
+import { PluginOption, defineConfig } from "vite";
 import Terminal from "vite-plugin-terminal";
 
 // TODO copied from lexical playground vite config + duplicated with tsconfig
@@ -315,6 +316,7 @@ export default defineConfig({
       presets: ["@babel/preset-react"],
     }),
     react(),
+    visualizer() as unknown as PluginOption,
   ],
   resolve: {
     alias: playgroundResolveAlias,

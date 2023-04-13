@@ -19,7 +19,6 @@ import { TextNode } from "lexical";
 import { useState } from "react";
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { IndexeddbPersistence } from "y-indexeddb";
 import { WebsocketProvider } from "y-websocket";
 import { Doc } from "yjs";
 import { applyNodePatches } from "./lexical/nodes";
@@ -29,6 +28,12 @@ import IndentationPlugin from "./plugins/IndentationPlugin";
 import { NotesPlugin } from "./plugins/NotesPlugin";
 import { QuickMenuPlugin } from "./plugins/QuickMenuPlugin";
 
+let yIDB = null;
+if ("indexedDB" in window) {
+  //import conditionally, because it breaks unit tests, where indexedDB is 
+  //neither available nor used
+  yIDB = import('y-indexeddb');
+}
 
 function providerFactory(id: string, yjsDocMap: Map<string, Doc>): Provider {
   //console.log("providerFactory", id);
@@ -41,8 +46,16 @@ function providerFactory(id: string, yjsDocMap: Map<string, Doc>): Provider {
     doc.load();
   }
 
-  const idbProvider = new IndexeddbPersistence(id, doc);
-  
+  if ("indexedDB" in window) {
+    yIDB.then(({IndexeddbPersistence}) => {
+      new IndexeddbPersistence(id, doc);
+    });
+  } else {
+    console.error(
+      "IndexedDB is not supported in this browser. Disabling offline mode."
+    );
+  }
+
   const wsProvider = new WebsocketProvider(
     "ws://athena:8080",
     "notes/0/" + id,
@@ -54,10 +67,6 @@ function providerFactory(id: string, yjsDocMap: Map<string, Doc>): Provider {
   wsProvider.shouldConnect = true; //reconnect after disconnecting
 
   /*
-  idbProvider.on("synced", () => {
-    console.log("local db synced");
-  });
-  
   const events = ["status", "synced", "sync", "update", "error", "destroy", "reload"];
   events.forEach((event) => {
     wsProvider.on(event, () => {
@@ -126,7 +135,10 @@ export default function Editor() {
       <div className="editor-container editor-shell">
         <DevToolbarPlugin editorBottom={editorBottom} />
         {floatingAnchorElem && (
-          <NotesPlugin anchorElement={floatingAnchorElem} documentID={documentID} />
+          <NotesPlugin
+            anchorElement={floatingAnchorElem}
+            documentID={documentID}
+          />
         )}
         <QuickMenuPlugin />
         <RichTextPlugin

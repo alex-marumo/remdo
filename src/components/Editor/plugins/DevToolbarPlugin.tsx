@@ -128,6 +128,13 @@ export const DevToolbarPlugin = ({ editorBottom }) => {
         Vitest Preview
       </a>
       <a
+        href="/data/build/stats.html"
+        target="_blank"
+        className="btn btn-link float-end"
+      >
+        Bundle stats
+      </a>
+      <a
         href="/data/playwright-report/"
         target="_blank"
         className="btn btn-link float-end"
