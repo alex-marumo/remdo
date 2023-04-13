@@ -232,7 +232,10 @@ export function getMinimizedState(editor: LexicalEditor) {
       }
     }
 
-    if (["number", "string", "boolean"].includes(typeof node) || node === null) {
+    if (
+      ["number", "string", "boolean"].includes(typeof node) ||
+      node === null
+    ) {
       return;
     } else if (node instanceof Array) {
       for (let i = 0; i < node.length; i++) {
@@ -264,7 +267,7 @@ beforeEach(async context => {
 
   const routerEntries = ["/"];
   const serializationFile = process.env.VITEST_SERIALIZATION_FILE;
-  if(serializationFile) {
+  if (serializationFile) {
     console.log(serializationFile);
     routerEntries.push(`/?documentID=${serializationFile}`);
   }
@@ -315,18 +318,24 @@ beforeEach(async context => {
       throw err;
     }
   };
-  
+
   if (!process.env.VITE_DISABLECOLLAB) {
     //wait for yjs to connect via websocket and init the editor content
     while (editorElement.children.length == 0) {
       await new Promise(r => setTimeout(r, 10));
     }
   }
-  //clear root once collab is disabled or already initialized
-  context.lexicalUpdate(() => {
-    const root = $getRoot();
-    root.clear();
-  });
+  if (!serializationFile) {
+    //the idea is to clear the editor's content before each test
+    //except for the serialization, where potentially we may want to save the
+    //current content
+    //it's important to do it here once collab is already initialized 
+    //(if enabled at all) otherwise it would overwrite the content
+    context.lexicalUpdate(() => {
+      const root = $getRoot();
+      root.clear();
+    });
+  }
 });
 
 afterEach(async context => {

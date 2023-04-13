@@ -5,9 +5,8 @@
 import "./common";
 import { lexicalStateKeyCompare, loadEditorState } from "./common";
 import fs from "fs";
-import path from "path";
 import { getDataPath } from "tests/common";
-import { it, TestAPI } from "vitest";
+import { it } from "vitest";
 
 const SERIALIZATION_FILE = process.env.VITEST_SERIALIZATION_FILE;
 

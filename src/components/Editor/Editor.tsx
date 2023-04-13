@@ -28,11 +28,12 @@ import IndentationPlugin from "./plugins/IndentationPlugin";
 import { NotesPlugin } from "./plugins/NotesPlugin";
 import { QuickMenuPlugin } from "./plugins/QuickMenuPlugin";
 
+
 let yIDB = null;
 if ("indexedDB" in window) {
-  //import conditionally, because it breaks unit tests, where indexedDB is 
+  //import conditionally, because it breaks unit tests, where indexedDB is
   //neither available nor used
-  yIDB = import('y-indexeddb');
+  yIDB = import("y-indexeddb");
 }
 
 function providerFactory(id: string, yjsDocMap: Map<string, Doc>): Provider {
@@ -47,11 +48,11 @@ function providerFactory(id: string, yjsDocMap: Map<string, Doc>): Provider {
   }
 
   if ("indexedDB" in window) {
-    yIDB.then(({IndexeddbPersistence}) => {
+    yIDB.then(({ IndexeddbPersistence }) => {
       new IndexeddbPersistence(id, doc);
     });
-  } else {
-    console.error(
+  } else if (!("__vitest_environment__" in globalThis)) {
+    console.warn(
       "IndexedDB is not supported in this browser. Disabling offline mode."
     );
   }
