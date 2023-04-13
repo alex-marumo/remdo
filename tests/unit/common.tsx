@@ -315,18 +315,18 @@ beforeEach(async context => {
       throw err;
     }
   };
-
+  
   if (!process.env.VITE_DISABLECOLLAB) {
     //wait for yjs to connect via websocket and init the editor content
     while (editorElement.children.length == 0) {
       await new Promise(r => setTimeout(r, 10));
     }
-    //then make sure to clear the editor
-    context.lexicalUpdate(() => {
-      const root = $getRoot();
-      root.clear();
-    });  
   }
+  //clear root once collab is disabled or already initialized
+  context.lexicalUpdate(() => {
+    const root = $getRoot();
+    root.clear();
+  });
 });
 
 afterEach(async context => {

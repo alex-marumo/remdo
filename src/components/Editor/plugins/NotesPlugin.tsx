@@ -5,19 +5,16 @@ import {
 } from "../commands";
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import { Note, NotesState } from "../lexical/api";
-import { $isTargetWithinDecorator } from "../lexical/utils";
+import { $fixRoot, $isTargetWithinDecorator } from "../lexical/utils";
 import { Navigation } from "./NavigationPlugin";
 import { NoteControlsPlugin } from "./NoteControlsPlugin";
 import "./NotesPlugin.scss";
 import { SearchPlugin } from "./SearchPlugin";
 import {
-  $createListNode,
   $createListItemNode,
-  $isListNode,
   $isListItemNode,
 } from "@lexical/list";
 import { ListItemNode } from "@lexical/list";
-import { mergeLists } from "@lexical/list/formatList";
 import { mergeRegister } from "@lexical/utils";
 import {
   DELETE_CHARACTER_COMMAND,
@@ -30,7 +27,6 @@ import {
   COMMAND_PRIORITY_HIGH,
   $isRangeSelection,
   $getSelection,
-  $getRoot,
   COMMAND_PRIORITY_LOW,
   $getNodeByKey,
 } from "lexical";
@@ -136,41 +132,7 @@ export function NotesPlugin({ anchorElement, documentID }) {
         },
         COMMAND_PRIORITY_CRITICAL
       ),
-      editor.registerNodeTransform(RootNode, rootNode => {
-        //forces the right editor structure:
-        //  root
-        //    ul
-        //      ...
-        //test case "generate content"
-        const children = $getRoot().getChildren();
-        if (children.length === 1 && $isListNode(children[0])) {
-          return;
-        }
-        let listNode = children.find($isListNode);
-        if (!listNode) {
-          listNode = $createListNode("bullet");
-          rootNode.append(listNode);
-          const listItemNode = $createListItemNode();
-          listItemNode.append(...children);
-          listNode.append(listItemNode);
-          listItemNode.select();
-          return;
-        }
-        for (const child of children) {
-          if (child === listNode) {
-            continue;
-          }
-          if ($isListNode(child)) {
-            mergeLists(listNode, child);
-          } else if ($isListItemNode(child)) {
-            listNode.append(child);
-          } else {
-            const listItemNode = $createListItemNode();
-            listItemNode.append(child);
-            listNode.append(listItemNode);
-          }
-        }
-      }),
+      editor.registerNodeTransform(RootNode, $fixRoot),
       editor.registerCommand(
         NOTES_TOGGLE_FOLD_COMMAND,
         ({ noteKeys }) => {
