@@ -38,7 +38,7 @@
           },
           {
             "direction": "ltr",
-            "folded": false,
+            "folded": true,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -101,7 +101,7 @@
           },
           {
             "direction": "ltr",
-            "folded": false,
+            "folded": true,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -224,7 +224,7 @@
           },
           {
             "direction": "ltr",
-            "folded": false,
+            "folded": true,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -370,7 +370,7 @@
           },
           {
             "direction": "ltr",
-            "folded": false,
+            "folded": true,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -749,7 +749,7 @@
                                 "format": 0,
                                 "mode": "normal",
                                 "style": "",
-                                "text": "Watched lexical issues:list: https://github.com/facebook/lexical/issues/2951",
+                                "text": "Watched lexical issues:",
                                 "type": "text",
                                 "version": 1
                               }
@@ -765,253 +765,296 @@
                             "version": 1,
                             "children": [
                               {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "schema: https://github.com/facebook/lexical/issues/3833",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 3,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "https://github.com/facebook/lexical/issues/3763",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 4,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "https://github.com/facebook/lexical/issues/3670",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 5,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "https://github.com/facebook/lexical/issues/3567",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 6,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "https://github.com/facebook/lexical/issues/3433",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 7,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "https://github.com/facebook/lexical/issues/3255",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 8,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "https://github.com/facebook/lexical/issues/3085",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 9,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "https://github.com/facebook/lexical/issues/2845",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 10,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "https://github.com/facebook/lexical/issues/2791",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 11,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "https://github.com/facebook/lexical/issues/2127",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 12,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "https://github.com/facebook/lexical/issues/1707",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 13,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "https://github.com/facebook/lexical/issues/1604",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 14,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "https://github.com/facebook/lexical/issues/1311",
-                                "type": "text",
-                                "version": 1
+                                "direction": "ltr",
+                                "format": "",
+                                "indent": 0,
+                                "listType": "bullet",
+                                "start": 1,
+                                "tag": "ul",
+                                "type": "list",
+                                "version": 1,
+                                "children": [
+                                  {
+                                    "direction": "ltr",
+                                    "folded": false,
+                                    "format": "",
+                                    "indent": 3,
+                                    "type": "listitem",
+                                    "value": 1,
+                                    "version": 1,
+                                    "children": [
+                                      {
+                                        "detail": 0,
+                                        "format": 0,
+                                        "mode": "normal",
+                                        "style": "",
+                                        "text": "list: https://github.com/facebook/lexical/issues/2951",
+                                        "type": "text",
+                                        "version": 1
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "direction": "ltr",
+                                    "folded": false,
+                                    "format": "",
+                                    "indent": 3,
+                                    "type": "listitem",
+                                    "value": 2,
+                                    "version": 1,
+                                    "children": [
+                                      {
+                                        "detail": 0,
+                                        "format": 0,
+                                        "mode": "normal",
+                                        "style": "",
+                                        "text": "schema: https://github.com/facebook/lexical/issues/3833",
+                                        "type": "text",
+                                        "version": 1
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "direction": "ltr",
+                                    "folded": false,
+                                    "format": "",
+                                    "indent": 3,
+                                    "type": "listitem",
+                                    "value": 3,
+                                    "version": 1,
+                                    "children": [
+                                      {
+                                        "detail": 0,
+                                        "format": 0,
+                                        "mode": "normal",
+                                        "style": "",
+                                        "text": "https://github.com/facebook/lexical/issues/3763",
+                                        "type": "text",
+                                        "version": 1
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "direction": "ltr",
+                                    "folded": false,
+                                    "format": "",
+                                    "indent": 3,
+                                    "type": "listitem",
+                                    "value": 4,
+                                    "version": 1,
+                                    "children": [
+                                      {
+                                        "detail": 0,
+                                        "format": 0,
+                                        "mode": "normal",
+                                        "style": "",
+                                        "text": "https://github.com/facebook/lexical/issues/3670",
+                                        "type": "text",
+                                        "version": 1
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "direction": "ltr",
+                                    "folded": false,
+                                    "format": "",
+                                    "indent": 3,
+                                    "type": "listitem",
+                                    "value": 5,
+                                    "version": 1,
+                                    "children": [
+                                      {
+                                        "detail": 0,
+                                        "format": 0,
+                                        "mode": "normal",
+                                        "style": "",
+                                        "text": "https://github.com/facebook/lexical/issues/3567",
+                                        "type": "text",
+                                        "version": 1
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "direction": "ltr",
+                                    "folded": false,
+                                    "format": "",
+                                    "indent": 3,
+                                    "type": "listitem",
+                                    "value": 6,
+                                    "version": 1,
+                                    "children": [
+                                      {
+                                        "detail": 0,
+                                        "format": 0,
+                                        "mode": "normal",
+                                        "style": "",
+                                        "text": "https://github.com/facebook/lexical/issues/3433",
+                                        "type": "text",
+                                        "version": 1
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "direction": "ltr",
+                                    "folded": false,
+                                    "format": "",
+                                    "indent": 3,
+                                    "type": "listitem",
+                                    "value": 7,
+                                    "version": 1,
+                                    "children": [
+                                      {
+                                        "detail": 0,
+                                        "format": 0,
+                                        "mode": "normal",
+                                        "style": "",
+                                        "text": "https://github.com/facebook/lexical/issues/3255",
+                                        "type": "text",
+                                        "version": 1
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "direction": "ltr",
+                                    "folded": false,
+                                    "format": "",
+                                    "indent": 3,
+                                    "type": "listitem",
+                                    "value": 8,
+                                    "version": 1,
+                                    "children": [
+                                      {
+                                        "detail": 0,
+                                        "format": 0,
+                                        "mode": "normal",
+                                        "style": "",
+                                        "text": "https://github.com/facebook/lexical/issues/3085",
+                                        "type": "text",
+                                        "version": 1
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "direction": "ltr",
+                                    "folded": false,
+                                    "format": "",
+                                    "indent": 3,
+                                    "type": "listitem",
+                                    "value": 9,
+                                    "version": 1,
+                                    "children": [
+                                      {
+                                        "detail": 0,
+                                        "format": 0,
+                                        "mode": "normal",
+                                        "style": "",
+                                        "text": "https://github.com/facebook/lexical/issues/2845",
+                                        "type": "text",
+                                        "version": 1
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "direction": "ltr",
+                                    "folded": false,
+                                    "format": "",
+                                    "indent": 3,
+                                    "type": "listitem",
+                                    "value": 10,
+                                    "version": 1,
+                                    "children": [
+                                      {
+                                        "detail": 0,
+                                        "format": 0,
+                                        "mode": "normal",
+                                        "style": "",
+                                        "text": "https://github.com/facebook/lexical/issues/2791",
+                                        "type": "text",
+                                        "version": 1
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "direction": "ltr",
+                                    "folded": false,
+                                    "format": "",
+                                    "indent": 3,
+                                    "type": "listitem",
+                                    "value": 11,
+                                    "version": 1,
+                                    "children": [
+                                      {
+                                        "detail": 0,
+                                        "format": 0,
+                                        "mode": "normal",
+                                        "style": "",
+                                        "text": "https://github.com/facebook/lexical/issues/2127",
+                                        "type": "text",
+                                        "version": 1
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "direction": "ltr",
+                                    "folded": false,
+                                    "format": "",
+                                    "indent": 3,
+                                    "type": "listitem",
+                                    "value": 12,
+                                    "version": 1,
+                                    "children": [
+                                      {
+                                        "detail": 0,
+                                        "format": 0,
+                                        "mode": "normal",
+                                        "style": "",
+                                        "text": "https://github.com/facebook/lexical/issues/1707",
+                                        "type": "text",
+                                        "version": 1
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "direction": "ltr",
+                                    "folded": false,
+                                    "format": "",
+                                    "indent": 3,
+                                    "type": "listitem",
+                                    "value": 13,
+                                    "version": 1,
+                                    "children": [
+                                      {
+                                        "detail": 0,
+                                        "format": 0,
+                                        "mode": "normal",
+                                        "style": "",
+                                        "text": "https://github.com/facebook/lexical/issues/1604",
+                                        "type": "text",
+                                        "version": 1
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "direction": "ltr",
+                                    "folded": false,
+                                    "format": "",
+                                    "indent": 3,
+                                    "type": "listitem",
+                                    "value": 14,
+                                    "version": 1,
+                                    "children": [
+                                      {
+                                        "detail": 0,
+                                        "format": 0,
+                                        "mode": "normal",
+                                        "style": "",
+                                        "text": "https://github.com/facebook/lexical/issues/1311",
+                                        "type": "text",
+                                        "version": 1
+                                      }
+                                    ]
+                                  }
+                                ]
                               }
                             ]
                           }
@@ -1124,6 +1167,7 @@
                     ]
                   },
                   {
+                    "checked": true,
                     "direction": "ltr",
                     "folded": false,
                     "format": "",
@@ -1144,6 +1188,7 @@
                     ]
                   },
                   {
+                    "checked": true,
                     "direction": "ltr",
                     "folded": false,
                     "format": "",
@@ -1244,6 +1289,7 @@
                     ]
                   },
                   {
+                    "checked": true,
                     "direction": "ltr",
                     "folded": false,
                     "format": "",
@@ -1269,7 +1315,7 @@
           },
           {
             "direction": "ltr",
-            "folded": false,
+            "folded": true,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -1924,7 +1970,7 @@
           },
           {
             "direction": "ltr",
-            "folded": false,
+            "folded": true,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -2007,7 +2053,7 @@
           },
           {
             "direction": "ltr",
-            "folded": false,
+            "folded": true,
             "format": "",
             "indent": 0,
             "type": "listitem",
@@ -2292,7 +2338,7 @@
           },
           {
             "direction": "ltr",
-            "folded": false,
+            "folded": true,
             "format": "",
             "indent": 0,
             "type": "listitem",
