@@ -5,7 +5,7 @@ import { $isListItemNode, ListItemNode } from "@lexical/list";
 import { $isTextNode } from "lexical";
 import { it } from "vitest";
 
-it.only("broken schema", async ({ editor, expect, lexicalUpdate }) => {
+it("broken schema", async ({ editor, expect, lexicalUpdate }) => {
   const notes = loadEditorState(editor, "tests/data/regression/broken_schema");
   lexicalUpdate(() => {
     const listItem = Array.from(getActiveEditorState()._nodeMap.values())
