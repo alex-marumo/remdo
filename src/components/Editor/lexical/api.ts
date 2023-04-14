@@ -4,6 +4,7 @@ import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
 import {
   $createListItemNode,
   $createListNode,
+  $isListItemNode,
   $isListNode,
   ListItemNode,
 } from "@lexical/list";
@@ -100,7 +101,6 @@ export class NotesState {
 
 export class Note {
   _lexicalKey: string;
-  _lexicalNode: ElementNode;
 
   static from(keyOrNode: LexicalNode | string): Note {
     const baseNode =
@@ -238,11 +238,20 @@ export class Note {
     }
     const list = this._listNode();
     const parentList = parent._listNode();
-    parentList.getParent().insertAfter(this.lexicalNode);
+    if (!parentList) {
+      //this should never happen if the schema is correct
+      //which doesn't mean it won't
+      parent.lexicalNode
+        .getParents()
+        .find($isListItemNode)
+        ?.insertAfter(this.lexicalNode);
+    } else {
+      parentList.getParent().insertAfter(this.lexicalNode);
+    }
     if (list) {
       this.lexicalNode.insertAfter(list.getParentOrThrow());
     }
-    if (parentList.getChildrenSize() === 0) {
+    if (parentList?.getChildrenSize() === 0) {
       parentList.getParentOrThrow().remove();
     }
   }
