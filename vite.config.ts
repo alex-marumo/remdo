@@ -316,7 +316,9 @@ export default defineConfig({
       presets: ["@babel/preset-react"],
     }),
     react(),
-    visualizer() as unknown as PluginOption,
+    visualizer({
+      filename: "data/stats.html",
+    }) as unknown as PluginOption,
   ],
   resolve: {
     alias: playgroundResolveAlias,

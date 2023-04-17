@@ -268,8 +268,9 @@ beforeEach(async context => {
   const routerEntries = ["/"];
   const serializationFile = process.env.VITEST_SERIALIZATION_FILE;
   if (serializationFile) {
-    console.log(serializationFile);
-    routerEntries.push(`/?documentID=${serializationFile}`);
+    const fileName = path.basename(serializationFile);
+    console.log(fileName);
+    routerEntries.push(`/?documentID=${fileName}`);
   }
 
   //TODO test only editor, without router, layout, etc. required editor to abstract from routes
@@ -329,7 +330,7 @@ beforeEach(async context => {
     //the idea is to clear the editor's content before each test
     //except for the serialization, where potentially we may want to save the
     //current content
-    //it's important to do it here once collab is already initialized 
+    //it's important to do it here once collab is already initialized
     //(if enabled at all) otherwise it would overwrite the content
     context.lexicalUpdate(() => {
       const root = $getRoot();

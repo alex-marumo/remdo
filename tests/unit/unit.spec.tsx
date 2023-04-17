@@ -105,25 +105,6 @@ describe("API", async () => {
     checkChildren(notes, [[note0, note1, note2, note4], [], [], [note3]]);
   });
 
-  /** creates N times M children in the root */
-  it.skip(
-    "performance",
-    async context => {
-      const N = 2;
-      const M = 2;
-      for (let i = 0; i < N; ++i) {
-        //console.log("i", i);
-        context.lexicalUpdate(() => {
-          const root = Note.from($getRoot());
-          createChildren(root, M);
-        });
-        //TODO test is it still needed with discrete === true
-        await new Promise(r => setTimeout(r, 10));
-      }
-    },
-    60 * 1000
-  );
-
   it("focus", context => {
     context.lexicalUpdate(() => {
       const root = Note.from($getRoot());
