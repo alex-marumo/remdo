@@ -57,15 +57,18 @@ function providerFactory(id: string, yjsDocMap: Map<string, Doc>): Provider {
     );
   }
 
-  const wsProvider = new WebsocketProvider(
-    "ws://athena:8080",
-    "notes/0/" + id,
-    doc,
-    {
-      connect: true,
-    }
-  );
-  wsProvider.shouldConnect = true; //reconnect after disconnecting
+    const wsURL = "ws://" + window.location.hostname + ":8080";
+    const roomName = "notes/0/" + id;
+    //console.log(`WebSocket URL: ${wsURL}/${roomName}`)
+    const wsProvider = new WebsocketProvider(
+      wsURL,
+      roomName,
+      doc,
+      {
+        connect: true,
+      }
+    );
+    wsProvider.shouldConnect = true; //reconnect after disconnecting
 
   /*
   const events = ["status", "synced", "sync", "update", "error", "destroy", "reload"];
@@ -128,7 +131,7 @@ export default function Editor() {
       },
     },
     editorState: null,
-    disableCollab: !!import.meta.env.VITE_DISABLECOLLAB,
+    disableCollab: !!(import.meta as any).env.VITE_DISABLECOLLAB,
   };
 
   return (

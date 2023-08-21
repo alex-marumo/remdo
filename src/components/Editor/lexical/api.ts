@@ -39,6 +39,7 @@ export function isNestedLI(liNode: ListItemNode) {
     : liNode.getChildren().some($isListNode);
 }
 
+//TODO explain the difference between NotesEditorState and NotesState
 export class NotesState {
   _element: HTMLElement;
   _focus: null | { nodeKey: string; parentKey: string };
@@ -95,7 +96,9 @@ export class NotesState {
   }
 
   static documents(): string[] {
-    return import.meta.env.VITE_DOCUMENTS?.split(",").filter(Boolean) ?? [];
+    return (
+      (import.meta as any).env.VITE_DOCUMENTS?.split(",").filter(Boolean) ?? []
+    );
   }
 }
 

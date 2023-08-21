@@ -16,6 +16,10 @@ const moduleResolution = [
     replacement: path.resolve("../lexical/src/index.ts"),
   },
   {
+    find: "@lexical/shared/invariant",
+    replacement: path.resolve("../shared/src/invariant.ts"),
+  },
+  {
     find: "@lexical/clipboard",
     replacement: path.resolve("../lexical-clipboard/src/index.ts"),
   },
@@ -250,7 +254,7 @@ function getPort({ page, vitest_preview, playwright }) {
 export default defineConfig({
   server: {
     port: getPort({
-      page: 3000,
+      page: 3010,
       vitest_preview: 3001,
       playwright: process.env.PORT,
     }),

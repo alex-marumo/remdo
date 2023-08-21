@@ -16,6 +16,7 @@ export function useNotesLexicalComposerContext() {
     NotesLexicalEditor,
     LexicalComposerContextType
   ];
+  //TODO check if this is still needed
   editor.fullUpdate = (updateFunction, options) => {
     editor._dirtyType = FULL_RECONCILE;
     editor.update(() => {

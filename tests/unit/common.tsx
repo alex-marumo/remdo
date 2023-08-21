@@ -28,6 +28,7 @@ declare module "vitest" {
       typeof queries & { getAllNotNestedIListItems: typeof getAllByRole.bind }
     >;
     lexicalUpdate: (fn: () => void) => void;
+    log: Function;
     editor: NotesLexicalEditor;
     expect: typeof expect;
   }
@@ -261,9 +262,15 @@ export function getMinimizedState(editor: LexicalEditor) {
 }
 
 beforeEach(async context => {
+  const LOG_FILE_PATH = path.join(process.cwd(), "data", "test.log");
+  fs.writeFileSync(LOG_FILE_PATH, '', 'utf8');
+
   function testHandler(editor: NotesLexicalEditor) {
     context.editor = editor;
   }
+
+  //lexical/node_modules causes YJS to be loaded twice and leads to issues
+  expect(fs.existsSync("lexical/node_modules")).toBeFalsy();
 
   const routerEntries = ["/"];
   const serializationFile = process.env.VITEST_SERIALIZATION_FILE;
@@ -305,7 +312,7 @@ beforeEach(async context => {
   context.lexicalUpdate = updateFunction => {
     let err = null;
     context.editor.fullUpdate(
-      function () {
+      function() {
         try {
           return updateFunction();
         } catch (e) {
@@ -320,18 +327,36 @@ beforeEach(async context => {
     }
   };
 
+  context.log = function(...args: any[]) {
+    const formattedArgs = args.map(arg => {
+      if (typeof arg === 'object') {
+        return JSON.stringify(arg);
+      }
+      return String(arg);
+    }).join(' ');
+    const formattedMessage = `${new Date().toISOString()} - ${formattedArgs}\n`;
+
+    fs.appendFileSync(LOG_FILE_PATH, formattedMessage);
+    console.log(formattedMessage);
+  }
+
   if (!process.env.VITE_DISABLECOLLAB) {
     //wait for yjs to connect via websocket and init the editor content
+    let i = 0;
+    const waitingTime = 10;
     while (editorElement.children.length == 0) {
-      await new Promise(r => setTimeout(r, 10));
+      if ((i += waitingTime) % 1000 === 0) {
+        console.log(`waiting for yjs to load some data - ${i}ms`);
+        //console.log(editorElement.outerHTML)
+      }
+      await new Promise(r => setTimeout(r, waitingTime));
     }
   }
-  if (!serializationFile) {
-    //the idea is to clear the editor's content before each test
-    //except for the serialization, where potentially we may want to save the
-    //current content
+  if (!serializationFile && !process.env.VITE_PERFORMANCE_TESTS) {
+    //clear the editor's content before each test
+    //except for the serialization, where potentially we may want to save the 
+    //current content or performance where some of the tests should be stateful
     //it's important to do it here once collab is already initialized
-    //(if enabled at all) otherwise it would overwrite the content
     context.lexicalUpdate(() => {
       const root = $getRoot();
       root.clear();
