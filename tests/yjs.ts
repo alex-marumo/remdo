@@ -15,7 +15,7 @@ function log(source, event): void {
 const ydoc = new Y.Doc();
 
 // Define the websocket server URL
-const websocketServerUrl = "ws://athena:8080";
+const websocketServerUrl = "ws://" + window.location.hostname + ":8080";
 
 // Initialize the websocket provider
 const provider = new WebsocketProvider(
