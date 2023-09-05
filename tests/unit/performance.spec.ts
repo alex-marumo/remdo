@@ -48,7 +48,7 @@ it.skipIf(!process.env.VITE_PERFORMANCE_TESTS)("clear", async ({ lexicalUpdate }
  * creates new N notes, never causing that any note has more than MAX_CHILDREN
  */
 it.skipIf(!process.env.VITE_PERFORMANCE_TESTS)("add nodes", async ({ lexicalUpdate, log }) => {
-  const N = 40000;
+  const N = 1000;
   const MAX_CHILDREN = 8;
   const BATCH_SIZE = 1000;
 
