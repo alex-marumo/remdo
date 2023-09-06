@@ -1,5 +1,6 @@
 import type { PlaywrightTestConfig } from "@playwright/test";
 import { devices } from "@playwright/test";
+import * as envalid from "envalid";
 
 //require('dotenv').config();
 
@@ -7,8 +8,14 @@ import { devices } from "@playwright/test";
  * See https://playwright.dev/docs/test-configuration.
  */
 
-const port = 3023;
-const disableCollab = process.env.VITE_DISABLECOLLAB;
+const env = envalid.cleanEnv(process.env, {
+  VITE_DISABLECOLLAB: envalid.bool({default: false}),
+  CI: envalid.bool({default: false})
+});
+
+//TODO define ports as consts in a common file
+//TODO load/validate env in a common file
+const port = env.VITE_DISABLECOLLAB ? 3023 : 3010;
 
 const config: PlaywrightTestConfig = {
   testDir: "./tests/browser",
@@ -25,9 +32,9 @@ const config: PlaywrightTestConfig = {
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: !!process.env.CI,
-  retries: 1, //when running a sequence of tests it happens that the page is blank for unknown reasons
-  workers: (disableCollab && !process.env.CI) ? 30 : 1,
+  forbidOnly: !!env.CI,
+  retries: 0,
+  workers: (env.VITE_DISABLECOLLAB && !env.CI) ? 10 : 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ["html", { open: "never", outputFolder: "./data/playwright-report" }],
@@ -43,6 +50,8 @@ const config: PlaywrightTestConfig = {
     trace: "on-first-retry",
 
     screenshot: "on",
+    //video: "retain-on-failure"
+    video: "on"
   },
 
   /* Configure projects for major browsers */
@@ -74,12 +83,10 @@ const config: PlaywrightTestConfig = {
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: `PORT=${port} VITE_DISABLECOLLAB=${
-      disableCollab || ""
-    } SERVER_MODE=playwright npm run server`,
+    command: `PORT=${port} SERVER_MODE=playwright npm run server`,
     port: port,
     timeout: 5 * 1000,
-    reuseExistingServer: !process.env.CI
+    reuseExistingServer: !env.CI && !env.VITE_DISABLECOLLAB //dev server has collab enabled, so it's safe to reuse it
   },
 };
 

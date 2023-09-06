@@ -1,0 +1,56 @@
+import { test as base } from "../common";
+import { Page, Locator } from "@playwright/test";
+import fs from "fs";
+import prettier from "prettier";
+import { getDataPath } from "tests/common.js";
+
+export class Notebook {
+  constructor(private readonly page: Page) {}
+
+  locator() {
+    return this.page.locator(".editor-input");
+  }
+
+  noteLocator(title: string): Locator {
+    //TODO try using other locators
+    return this.locator().locator("li :text-is('" + title + "')");
+  }
+
+  async load(file: string) {
+    await this.page.click("text=Load State");
+    const dataPath = getDataPath(file);
+    const serializedEditorState = fs.readFileSync(dataPath).toString();
+    await this.page.locator("#editor-state").fill(serializedEditorState);
+    await this.page.click("text=Submit Editor State");
+    await this.page.click("text=Load State");
+    await this.locator().focus();
+  }
+
+  async html() {
+    return prettier
+      .format(await this.locator().innerHTML(), {
+        //@ts-ignore
+        attributeSort: "ASC",
+        parser: "html",
+      })
+      .trim();
+  }
+
+  /** places cursor on the very end of given's note title */
+  async clickEndOfNote(title: string) {
+    const noteLocator = this.noteLocator(title);
+    const { width, height } = await noteLocator.boundingBox();
+    await noteLocator.click({
+      position: { x: width - 1, y: height - 1 }, //the idea is that bottom right corner should be the end of the title's text
+    });
+  }
+}
+
+export const test = base.extend<{ notebook: Notebook }>({
+  notebook: async ({ baseURL, page }, use) => {
+    const notebook = new Notebook(page);
+    await page.goto(baseURL);
+    await notebook.locator().focus();
+    await use(notebook);
+  },
+});

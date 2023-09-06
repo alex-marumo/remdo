@@ -1,4 +1,6 @@
 //TODO try to use https://react-bootstrap.github.io/components/dropdowns/ or https://react-bootstrap.github.io/components/overlays/
+//TODO this is a react component, not a lexical plugin
+//TODO rename plugins to lexical plugins
 import {
   NOTES_OPEN_QUICK_MENU_COMMAND,
   NOTES_START_MOVING_COMMAND,

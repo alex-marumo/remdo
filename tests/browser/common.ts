@@ -1,76 +1,30 @@
-//breaks if lexical-playground dependencies are installed
-import {
-  clearEditor,
-  focusEditor,
-  assertHTML,
-  html,
-} from "../../lexical/packages/lexical-playground/__tests__/utils/index.mjs";
-import { getDataPath } from "../common.js";
-import { test } from "@playwright/test";
-import fs from "fs";
-import { Locator, Page } from "playwright";
-import prettier from "prettier";
+//TODO clear report that this breaks if lexical-playground dependencies are installed
+import { test as base } from "@playwright/test";
 
-export function getNoteLocator(page: Page, text: string): Locator {
-  return page.locator(".editor-input li :text('" + text + "')");
-}
+const SKIP_CONSOLE_MESSAGES = [
+  "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+  "Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools",
+  "[vite] connecting...",
+  "[vite] connected.",
+];
 
-export async function clickEndOfNote(page: Page, text: string) {
-  const noteLocator = getNoteLocator(page, text);
-  const { width, height } = await noteLocator.boundingBox();
-  await noteLocator.click({
-    position: { x: width - 1, y: height / 2 },
-  });
-}
+export const test = base.extend({
+  page: async ({ page }, use) => {
+    page.on("console", (message) => {
+      if (!SKIP_CONSOLE_MESSAGES.includes(message.text())) {
+        console.log("Browser:", message);
+      }
+      if (["warning", "error"].includes(message.type())) {
+        console.error(`${message.type} inside the browser: `);
+        throw Error(message.text());
+      }
+    });
 
-export { assertHTML, clearEditor, html, test };
+    page.on("pageerror", (err) => {
+      console.error("Error inside the browser: ", err.message);
+      throw err;
+    });
 
-export async function getEditorHTML(page: Page) {
-  const editorHTML = await page.innerHTML("div.editor-input");
-  const prettyHTML = prettier
-    .format(editorHTML, {
-      //@ts-ignore
-      attributeSort: "ASC",
-      parser: "html",
-    })
-    .trim();
-  return prettyHTML;
-}
-
-//TODO use it in basic.spec.ts
-export async function loadEditorState(page: Page, file: string) {
-  await page.click("text=Load State");
-  const dataPath = getDataPath(file);
-  const serializedEditorState = fs.readFileSync(dataPath).toString();
-  await page.locator("#editor-state").fill(serializedEditorState);
-  await page.click("text=Submit Editor State");
-  await page.click("text=Load State");
-  await page.click(".editor");
-}
-
-test.beforeEach(async ({ page }) => {
-  const SKIP_CONSOLE_MESSAGES = [
-    "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
-    "[vite] connecting...",
-    "[vite] connected.",
-  ];
-
-  page.on("console", message => {
-    //console.log(message.text());
-    //console.log(SKIP_CONSOLE_MESSAGES.includes(message.text()));
-    if (!SKIP_CONSOLE_MESSAGES.includes(message.text())) {
-      console.log("Browser:", message);
-    }
-    if (["warning", "error"].includes(message.type())) {
-      console.error(`${message.type} inside the browser: `);
-      throw Error(message.text());
-    }
-  });
-  page.on("pageerror", err => {
-    console.error("Error inside the browser: ", err.message);
-    throw err;
-  });
-
-  await page.goto("");
-  await focusEditor(page);
+    await use(page);
+  },
 });

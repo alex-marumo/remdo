@@ -280,6 +280,15 @@ export default defineConfig({
 
   //TODO copied from lexical playground
   plugins: [
+    {
+      name: 'log-requests',
+      configureServer(server) {
+        server.middlewares.use((req, _, next) => {
+          console.log(`Request: ${req.method} ${req.url}`);
+          next();
+        });
+      },
+    },
     false && {
       name: "terminal-patch",
       configureServer(server) {
