@@ -9,8 +9,8 @@ import * as envalid from "envalid";
  */
 
 const env = envalid.cleanEnv(process.env, {
-  VITE_DISABLECOLLAB: envalid.bool({default: false}),
-  CI: envalid.bool({default: false})
+  VITE_DISABLECOLLAB: envalid.bool({ default: false }),
+  CI: envalid.bool({ default: false }),
 });
 
 //TODO define ports as consts in a common file
@@ -19,7 +19,8 @@ const port = env.VITE_DISABLECOLLAB ? 3023 : 3010;
 
 const config: PlaywrightTestConfig = {
   testDir: "./tests/browser",
-  snapshotPathTemplate: '{testDir}/{testFileDir}/__snapshots__/{testFileName}/{testName}_{arg}{ext}',
+  snapshotPathTemplate:
+    "{testDir}/{testFileDir}/__snapshots__/{testFileName}/{testName}_{arg}{ext}",
   /* Maximum time one test can run for. */
   timeout: 20 * 1000,
   expect: {
@@ -34,7 +35,7 @@ const config: PlaywrightTestConfig = {
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!env.CI,
   retries: 0,
-  workers: (env.VITE_DISABLECOLLAB && !env.CI) ? 10 : 1,
+  workers: env.VITE_DISABLECOLLAB && !env.CI ? 10 : 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ["html", { open: "never", outputFolder: "./data/playwright-report" }],
@@ -50,8 +51,7 @@ const config: PlaywrightTestConfig = {
     trace: "on-first-retry",
 
     screenshot: "on",
-    //video: "retain-on-failure"
-    video: "on"
+    video: "retain-on-failure",
   },
 
   /* Configure projects for major browsers */
@@ -86,7 +86,7 @@ const config: PlaywrightTestConfig = {
     command: `PORT=${port} SERVER_MODE=playwright npm run server`,
     port: port,
     timeout: 5 * 1000,
-    reuseExistingServer: !env.CI && !env.VITE_DISABLECOLLAB //dev server has collab enabled, so it's safe to reuse it
+    reuseExistingServer: !env.CI && !env.VITE_DISABLECOLLAB, //dev server has collab enabled, so it's safe to reuse it
   },
 };
 
