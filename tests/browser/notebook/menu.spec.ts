@@ -15,7 +15,7 @@ class Menu {
 
   async open() {
     await this.page.keyboard.press("Shift");
-    await this.page.waitForTimeout(10);
+    await this.page.waitForTimeout(20);
     await this.page.keyboard.press("Shift");
   }
 }
