@@ -70,7 +70,7 @@ export function testUpdate(
   if (fn.constructor.name == "AsyncFunction") {
     throw Error("Async functions can't be wrapped with update");
   }
-  return runner(title, context => {
+  return runner(title, (context) => {
     context.lexicalUpdate(() => {
       const rootNode = $getRoot();
       fn({ context, root: Note.from(rootNode), rootNode });
@@ -182,9 +182,12 @@ export function lexicalStateKeyCompare(a: any, b: any) {
 /**
  * converts editor state to YAML with removed defaults for easier reading and
  * comparison, used for saving snapshots
+ * TODO use https://vitest.dev/guide/snapshot.html#custom-serializer instead
  */
 export function getMinimizedState(editor: LexicalEditor) {
   type Node = Array<Node> | object;
+  const SKIP = null; //marker in default table that means that the particular key should be skipped regardless of the value
+
   function walk(node: Node) {
     function minimize(node: object) {
       const defaults = {
@@ -203,6 +206,7 @@ export function getMinimizedState(editor: LexicalEditor) {
           indent: 0,
           version: 1,
           folded: false,
+          value: SKIP,
         },
         text: {
           detail: 0,
@@ -225,9 +229,14 @@ export function getMinimizedState(editor: LexicalEditor) {
       if (!d) {
         throw new Error("No defaults for " + node["type"]);
       }
-
+      console.log(node["type"]);
       for (const key in node) {
-        if (node[key] === null || node[key] === d[key]) {
+        console.log(
+          key,
+          d[key],
+          d[key] === SKIP
+        );
+        if (node[key] === null || node[key] === d[key] || d[key] === SKIP) {
           delete node[key];
         }
       }
@@ -261,9 +270,9 @@ export function getMinimizedState(editor: LexicalEditor) {
   });
 }
 
-beforeEach(async context => {
+beforeEach(async (context) => {
   const LOG_FILE_PATH = path.join(process.cwd(), "data", "test.log");
-  fs.writeFileSync(LOG_FILE_PATH, '', 'utf8');
+  fs.writeFileSync(LOG_FILE_PATH, "", "utf8");
 
   function testHandler(editor: NotesLexicalEditor) {
     context.editor = editor;
@@ -306,13 +315,13 @@ beforeEach(async context => {
     getAllNotNestedIListItems: () =>
       context.queries
         .getAllByRole("listitem")
-        .filter(li => !li.classList.contains("li-nested")),
+        .filter((li) => !li.classList.contains("li-nested")),
   });
 
-  context.lexicalUpdate = updateFunction => {
+  context.lexicalUpdate = (updateFunction) => {
     let err = null;
     context.editor.fullUpdate(
-      function() {
+      function () {
         try {
           return updateFunction();
         } catch (e) {
@@ -327,18 +336,20 @@ beforeEach(async context => {
     }
   };
 
-  context.log = function(...args: any[]) {
-    const formattedArgs = args.map(arg => {
-      if (typeof arg === 'object') {
-        return JSON.stringify(arg);
-      }
-      return String(arg);
-    }).join(' ');
+  context.log = function (...args: any[]) {
+    const formattedArgs = args
+      .map((arg) => {
+        if (typeof arg === "object") {
+          return JSON.stringify(arg);
+        }
+        return String(arg);
+      })
+      .join(" ");
     const formattedMessage = `${new Date().toISOString()} - ${formattedArgs}\n`;
 
     fs.appendFileSync(LOG_FILE_PATH, formattedMessage);
     console.log(formattedMessage);
-  }
+  };
 
   if (!process.env.VITE_DISABLECOLLAB) {
     //wait for yjs to connect via websocket and init the editor content
@@ -349,12 +360,12 @@ beforeEach(async context => {
         console.log(`waiting for yjs to load some data - ${i}ms`);
         //console.log(editorElement.outerHTML)
       }
-      await new Promise(r => setTimeout(r, waitingTime));
+      await new Promise((r) => setTimeout(r, waitingTime));
     }
   }
   if (!serializationFile && !process.env.VITE_PERFORMANCE_TESTS) {
     //clear the editor's content before each test
-    //except for the serialization, where potentially we may want to save the 
+    //except for the serialization, where potentially we may want to save the
     //current content or performance where some of the tests should be stateful
     //it's important to do it here once collab is already initialized
     context.lexicalUpdate(() => {
@@ -364,15 +375,15 @@ beforeEach(async context => {
   }
 });
 
-afterEach(async context => {
+afterEach(async (context) => {
   if (!process.env.VITE_DISABLECOLLAB) {
     //an ugly workaround - to give a chance for yjs to sync
-    await new Promise(r => setTimeout(r, 10));
+    await new Promise((r) => setTimeout(r, 10));
   }
   context.component.unmount();
 });
 
 afterAll(async () => {
   //an ugly workaround - otherwise we may loose some messages written to console
-  await new Promise(r => setTimeout(r, 10));
+  await new Promise((r) => setTimeout(r, 10));
 });

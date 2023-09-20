@@ -7,7 +7,6 @@ exports[`empty 1`] = `
   - type: list
     children:
     - type: listitem
-      value: 1
       children: []
 "
 `;
@@ -19,13 +18,10 @@ exports[`multiple lists 1`] = `
   - type: list
     children:
     - type: listitem
-      value: 1
       children: []
     - type: listitem
-      value: 2
       children: []
     - type: listitem
-      value: 3
       children: []
 "
 `;
@@ -37,7 +33,6 @@ exports[`single list - correct 1`] = `
   - type: list
     children:
     - type: listitem
-      value: 1
       children: []
 "
 `;

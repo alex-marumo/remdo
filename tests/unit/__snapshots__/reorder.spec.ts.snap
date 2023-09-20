@@ -7,17 +7,14 @@ exports[`reorder flat > base 1`] = `
   - type: list
     children:
     - type: listitem
-      value: 1
       children:
       - text: note0
         type: text
     - type: listitem
-      value: 2
       children:
       - text: note1
         type: text
     - type: listitem
-      value: 3
       children:
       - text: note2
         type: text
@@ -31,17 +28,14 @@ exports[`reorder flat > base 2`] = `
   - type: list
     children:
     - type: listitem
-      value: 1
       children:
       - text: note0
         type: text
     - type: listitem
-      value: 2
       children:
       - text: note1
         type: text
     - type: listitem
-      value: 3
       children:
       - text: note2
         type: text
@@ -55,17 +49,14 @@ exports[`reorder flat > base 3`] = `
   - type: list
     children:
     - type: listitem
-      value: 1
       children:
       - text: note0
         type: text
     - type: listitem
-      value: 2
       children:
       - text: note1
         type: text
     - type: listitem
-      value: 3
       children:
       - text: note2
         type: text
@@ -79,17 +70,14 @@ exports[`reorder flat > note0 down 1`] = `
   - type: list
     children:
     - type: listitem
-      value: 1
       children:
       - text: note1
         type: text
     - type: listitem
-      value: 2
       children:
       - text: note0
         type: text
     - type: listitem
-      value: 3
       children:
       - text: note2
         type: text
@@ -103,17 +91,14 @@ exports[`reorder flat > note0 down 2`] = `
   - type: list
     children:
     - type: listitem
-      value: 1
       children:
       - text: note1
         type: text
     - type: listitem
-      value: 2
       children:
       - text: note0
         type: text
     - type: listitem
-      value: 3
       children:
       - text: note2
         type: text
@@ -127,17 +112,14 @@ exports[`reorder flat > note0 down x2 1`] = `
   - type: list
     children:
     - type: listitem
-      value: 1
       children:
       - text: note1
         type: text
     - type: listitem
-      value: 2
       children:
       - text: note2
         type: text
     - type: listitem
-      value: 3
       children:
       - text: note0
         type: text
@@ -151,17 +133,14 @@ exports[`reorder flat > note0 down x2 2`] = `
   - type: list
     children:
     - type: listitem
-      value: 1
       children:
       - text: note1
         type: text
     - type: listitem
-      value: 2
       children:
       - text: note2
         type: text
     - type: listitem
-      value: 3
       children:
       - text: note0
         type: text
@@ -175,34 +154,28 @@ exports[`reorder tree > base 1`] = `
   - type: list
     children:
     - type: listitem
-      value: 1
       children:
       - text: note0
         type: text
     - type: listitem
-      value: 2
       children:
       - type: list
         children:
         - indent: 1
           type: listitem
-          value: 1
           children:
           - text: sub note 0
             type: text
     - type: listitem
-      value: 2
       children:
       - text: note1
         type: text
     - type: listitem
-      value: 3
       children:
       - type: list
         children:
         - indent: 1
           type: listitem
-          value: 1
           children:
           - text: sub note 1
             type: text
@@ -216,34 +189,28 @@ exports[`reorder tree > base 2`] = `
   - type: list
     children:
     - type: listitem
-      value: 1
       children:
       - text: note0
         type: text
     - type: listitem
-      value: 2
       children:
       - type: list
         children:
         - indent: 1
           type: listitem
-          value: 1
           children:
           - text: sub note 0
             type: text
     - type: listitem
-      value: 2
       children:
       - text: note1
         type: text
     - type: listitem
-      value: 3
       children:
       - type: list
         children:
         - indent: 1
           type: listitem
-          value: 1
           children:
           - text: sub note 1
             type: text
@@ -257,34 +224,28 @@ exports[`reorder tree > base 3`] = `
   - type: list
     children:
     - type: listitem
-      value: 1
       children:
       - text: note0
         type: text
     - type: listitem
-      value: 2
       children:
       - type: list
         children:
         - indent: 1
           type: listitem
-          value: 1
           children:
           - text: sub note 0
             type: text
     - type: listitem
-      value: 2
       children:
       - text: note1
         type: text
     - type: listitem
-      value: 3
       children:
       - type: list
         children:
         - indent: 1
           type: listitem
-          value: 1
           children:
           - text: sub note 1
             type: text
@@ -298,34 +259,28 @@ exports[`reorder tree > base 4`] = `
   - type: list
     children:
     - type: listitem
-      value: 1
       children:
       - text: note0
         type: text
     - type: listitem
-      value: 2
       children:
       - type: list
         children:
         - indent: 1
           type: listitem
-          value: 1
           children:
           - text: sub note 0
             type: text
     - type: listitem
-      value: 2
       children:
       - text: note1
         type: text
     - type: listitem
-      value: 3
       children:
       - type: list
         children:
         - indent: 1
           type: listitem
-          value: 1
           children:
           - text: sub note 1
             type: text
@@ -339,34 +294,28 @@ exports[`reorder tree > base 5`] = `
   - type: list
     children:
     - type: listitem
-      value: 1
       children:
       - text: note0
         type: text
     - type: listitem
-      value: 2
       children:
       - type: list
         children:
         - indent: 1
           type: listitem
-          value: 1
           children:
           - text: sub note 0
             type: text
     - type: listitem
-      value: 2
       children:
       - text: note1
         type: text
     - type: listitem
-      value: 3
       children:
       - type: list
         children:
         - indent: 1
           type: listitem
-          value: 1
           children:
           - text: sub note 1
             type: text
@@ -380,34 +329,28 @@ exports[`reorder tree > note0 down 1`] = `
   - type: list
     children:
     - type: listitem
-      value: 1
       children:
       - text: note1
         type: text
     - type: listitem
-      value: 2
       children:
       - type: list
         children:
         - indent: 1
           type: listitem
-          value: 1
           children:
           - text: sub note 1
             type: text
     - type: listitem
-      value: 2
       children:
       - text: note0
         type: text
     - type: listitem
-      value: 3
       children:
       - type: list
         children:
         - indent: 1
           type: listitem
-          value: 1
           children:
           - text: sub note 0
             type: text
@@ -421,34 +364,28 @@ exports[`reorder tree > note0 down 2`] = `
   - type: list
     children:
     - type: listitem
-      value: 1
       children:
       - text: note1
         type: text
     - type: listitem
-      value: 2
       children:
       - type: list
         children:
         - indent: 1
           type: listitem
-          value: 1
           children:
           - text: sub note 1
             type: text
     - type: listitem
-      value: 2
       children:
       - text: note0
         type: text
     - type: listitem
-      value: 3
       children:
       - type: list
         children:
         - indent: 1
           type: listitem
-          value: 1
           children:
           - text: sub note 0
             type: text
