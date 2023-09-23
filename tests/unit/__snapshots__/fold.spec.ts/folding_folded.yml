@@ -1,12 +1,10 @@
-// Vitest Snapshot v1
-
-exports[`create > minimize 1`] = `
-"root:
+root:
   type: root
   children:
   - type: list
     children:
-    - type: listitem
+    - folded: true
+      type: listitem
       children:
       - text: note0
         type: text
@@ -17,7 +15,5 @@ exports[`create > minimize 1`] = `
         - indent: 1
           type: listitem
           children:
-          - text: note1
+          - text: note00
             type: text
-"
-`;

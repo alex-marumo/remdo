@@ -1,3 +1,4 @@
+import { getDataPath } from "../common";
 import Editor from "@/components/Editor";
 import { NotesLexicalEditor } from "@/components/Editor/lexical/NotesComposerContext";
 import { Note } from "@/components/Editor/lexical/api";
@@ -11,6 +12,7 @@ import {
   RenderResult,
   within,
 } from "@testing-library/react";
+import { NodeSnapshotEnvironment } from "@vitest/snapshot/environment";
 import fs from "fs";
 import yaml from "js-yaml";
 import { $getRoot, CLEAR_HISTORY_COMMAND } from "lexical";
@@ -18,8 +20,39 @@ import { LexicalEditor } from "lexical";
 import path from "path";
 import React from "react";
 import { MemoryRouter, Navigate, Route, Routes } from "react-router-dom";
-import { getDataPath } from "tests/common";
-import { it, afterAll, expect, beforeEach, afterEach } from "vitest";
+import { afterAll, expect, beforeEach, afterEach } from "vitest";
+
+/* 
+ vitest saves file snapshots in the same folder as the test file
+ this monkey patch changes the behavior to save them in a __snapshots__ folder
+ which is more inline with regular snapshots, playwright file snapshots
+ plus in general makes more sense
+ the problem with regular vitest shapshots is that they reside in a single
+ file which disables syntax highlighting and on top of that naming them is
+ misleading, because two snapshots with the same name
+ can have totaly different content and reside next to each other
+ */
+NodeSnapshotEnvironment.prototype.resolveRawPath = function (
+  testPath: string,
+  rawPath: string
+): Promise<string> {
+  //currentTestName gives result like this: tests/unit/fold.spec.ts > fold all
+  //the idea is to get only the actual name (i.e. "fold all")
+  //and then replace all non-alphanumeric characters with a hyphen
+  const testNameWithFile = expect.getState().currentTestName;
+  const sub = " > ";
+  const testName = testNameWithFile
+    .slice(testNameWithFile.indexOf(sub) + sub.length)
+    .replace(/[^a-zA-Z0-9]/g, "-");
+
+  const snapshotPath = path.join(
+    path.dirname(testPath),
+    "__snapshots__",
+    path.basename(testPath),
+    `${testName}_${rawPath}`
+  );
+  return Promise.resolve(snapshotPath); //noop, just to avoid type errors
+};
 
 declare module "vitest" {
   export interface TestContext {
@@ -28,7 +61,7 @@ declare module "vitest" {
       typeof queries & { getAllNotNestedIListItems: typeof getAllByRole.bind }
     >;
     lexicalUpdate: (fn: () => void) => void;
-    log: Function;
+    log: (message: string) => void;
     editor: NotesLexicalEditor;
     expect: typeof expect;
   }
@@ -60,80 +93,7 @@ export function debug() {
   debug();
 }
 
-/** Runs test in Lexical editor update context */
-export function testUpdate(
-  title: string,
-  fn: ({ root, context, rootNode }) => void,
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  runner: Function = it
-) {
-  if (fn.constructor.name == "AsyncFunction") {
-    throw Error("Async functions can't be wrapped with update");
-  }
-  return runner(title, (context) => {
-    context.lexicalUpdate(() => {
-      const rootNode = $getRoot();
-      fn({ context, root: Note.from(rootNode), rootNode });
-    });
-    debug();
-  });
-}
-
-testUpdate.only = (title: string, fn) => {
-  testUpdate(title, fn, it.only);
-};
-
-testUpdate.skip = (title: string, fn) => {
-  testUpdate(title, fn, it.skip);
-};
-
-//TODO consider changing that function to accept structure parameter like that:
-//    const structure = checkStructure(root, {
-//  root: {
-//    note0,
-//    note1: {
-//      note2,
-//    },
-//  },
-//});
-//in such a case ids would not be available, but these can be compared to text
-//or just skipped
-export function checkChildren(
-  notes: Array<Note>,
-  expectedChildrenArrays: Array<Array<Note>>
-) {
-  let expectedCount = 0;
-  notes.forEach((note, idx) => {
-    const expectedChildren = expectedChildrenArrays[idx] || [];
-    expectedCount += expectedChildren.length;
-    //note.text and idx are added in case of an error, so it's easier to notice which node causes the issue
-    expect([note.text, idx, ...note.children]).toStrictEqual([
-      note.text,
-      idx,
-      ...expectedChildren,
-    ]);
-    expect(note.hasChildren).toEqual(expectedChildren.length > 0);
-    for (const child of note.children) {
-      expect(child).toBeInstanceOf(Note);
-    }
-  });
-  expect(notes).toHaveLength(expectedCount + 1); //+1 for root which is not listed as a child
-}
-
-export function createChildren(
-  note: Note,
-  count: number
-): [Array<Note>, ...Note[]] {
-  const start = [...note.children].length;
-  for (let i = 0; i < count; ++i) {
-    note.createChild(`note${start + i}`);
-  }
-  const n: Array<Note> = [note, ...note.children];
-  const n1: Array<Note> = [...note.children];
-
-  return [n, ...n1];
-}
-
+//TODO this should be passed in the context
 /**
  * loads editor state from a file with the given @name
  * @returns a record of all notes in the editor, with their text in
@@ -179,12 +139,22 @@ export function lexicalStateKeyCompare(a: any, b: any) {
   return a.localeCompare(b);
 }
 
+expect.addSnapshotSerializer({
+  //Custom serializer for LexicalEditor objects
+  serialize(val: any): string {
+    //skipping most of serialize arguments as they are not needed here
+    return getMinimizedState(val);
+  },
+  test(val) {
+    return val && val.getEditorState;
+  },
+});
+
 /**
  * converts editor state to YAML with removed defaults for easier reading and
  * comparison, used for saving snapshots
- * TODO use https://vitest.dev/guide/snapshot.html#custom-serializer instead
  */
-export function getMinimizedState(editor: LexicalEditor) {
+function getMinimizedState(editor: LexicalEditor) {
   type Node = Array<Node> | object;
   const SKIP = null; //marker in default table that means that the particular key should be skipped regardless of the value
 
@@ -205,6 +175,7 @@ export function getMinimizedState(editor: LexicalEditor) {
           format: "",
           indent: 0,
           version: 1,
+          checked: false,
           folded: false,
           value: SKIP,
         },
@@ -229,13 +200,7 @@ export function getMinimizedState(editor: LexicalEditor) {
       if (!d) {
         throw new Error("No defaults for " + node["type"]);
       }
-      console.log(node["type"]);
       for (const key in node) {
-        console.log(
-          key,
-          d[key],
-          d[key] === SKIP
-        );
         if (node[key] === null || node[key] === d[key] || d[key] === SKIP) {
           delete node[key];
         }
@@ -376,6 +341,7 @@ beforeEach(async (context) => {
 });
 
 afterEach(async (context) => {
+  debug();
   if (!process.env.VITE_DISABLECOLLAB) {
     //an ugly workaround - to give a chance for yjs to sync
     await new Promise((r) => setTimeout(r, 10));

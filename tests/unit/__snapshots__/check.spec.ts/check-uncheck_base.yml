@@ -1,0 +1,9 @@
+root:
+  type: root
+  children:
+  - type: list
+    children:
+    - type: listitem
+      children:
+      - text: note0
+        type: text

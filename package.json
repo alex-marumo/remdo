@@ -65,7 +65,7 @@
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",
     "@vitejs/plugin-react": "^1.0.7",
-    "@vitest/ui": "^0.28.4",
+    "@vitest/ui": "^0.30.0",
     "chokidar-cli": "^3.0.0",
     "esbuild": "^0.17.5",
     "eslint": "^8.33.0",
@@ -75,13 +75,14 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^7.0.1",
     "js-yaml": "^4.1.0",
+    "jsdom": "^22.1.0",
     "prettier-plugin-organize-attributes": "^0.0.5",
     "prettier-plugin-sort-json": "^1.0.0",
     "rollup-plugin-visualizer": "^5.9.0",
     "sass": "^1.59.2",
     "vite": "^4.1.1",
     "vite-plugin-terminal": "^1.1.0",
-    "vitest": "^0.28.4",
+    "vitest": "^0.30.0",
     "vitest-preview": "^0.0.1"
   }
 }

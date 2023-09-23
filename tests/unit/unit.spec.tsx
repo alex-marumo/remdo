@@ -1,13 +1,74 @@
 //TODO refactor using loadEditorState
-import { checkChildren, createChildren, debug, testUpdate } from "./common";
+import { debug } from "./common";
 import { Note, NotesState } from "@/components/Editor/lexical/api";
 import { $isListNode, $isListItemNode } from "@lexical/list";
 import { $createTextNode, $getRoot, $setSelection, ElementNode } from "lexical";
 import { describe, it, expect, beforeEach } from "vitest";
 
+/** Runs test in Lexical editor update context */
+export function testUpdate(
+  title: string,
+  fn: ({ root, context, rootNode }) => void,
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  runner: Function = it
+) {
+  if (fn.constructor.name == "AsyncFunction") {
+    throw Error("Async functions can't be wrapped with update");
+  }
+  return runner(title, (context: TestContext) => {
+    context.lexicalUpdate(() => {
+      const rootNode = $getRoot();
+      fn({ context, root: Note.from(rootNode), rootNode });
+    });
+  });
+}
+
+testUpdate.only = (title: string, fn) => {
+  testUpdate(title, fn, it.only);
+};
+
+testUpdate.skip = (title: string, fn) => {
+  testUpdate(title, fn, it.skip);
+};
+
+function checkChildren(
+  notes: Array<Note>,
+  expectedChildrenArrays: Array<Array<Note>>
+) {
+  let expectedCount = 0;
+  notes.forEach((note, idx) => {
+    const expectedChildren = expectedChildrenArrays[idx] || [];
+    expectedCount += expectedChildren.length;
+    //note.text and idx are added in case of an error, so it's easier to notice which node causes the issue
+    expect([note.text, idx, ...note.children]).toStrictEqual([
+      note.text,
+      idx,
+      ...expectedChildren,
+    ]);
+    expect(note.hasChildren).toEqual(expectedChildren.length > 0);
+    for (const child of note.children) {
+      expect(child).toBeInstanceOf(Note);
+    }
+  });
+  expect(notes).toHaveLength(expectedCount + 1); //+1 for root which is not listed as a child
+}
+
+export function createChildren(
+  note: Note,
+  count: number
+): [Array<Note>, ...Note[]] {
+  const start = [...note.children].length;
+  for (let i = 0; i < count; ++i) {
+    note.createChild(`note${start + i}`);
+  }
+  const n: Array<Note> = [note, ...note.children];
+  const n1: Array<Note> = [...note.children];
+
+  return [n, ...n1];
+}
 
 describe("API", async () => {
-  beforeEach(async context => {
+  beforeEach(async (context) => {
     context.lexicalUpdate(() => {
       $getRoot().clear();
     });
@@ -19,7 +80,7 @@ describe("API", async () => {
         .find($isListNode)
         .getFirstChildOrThrow()
         .append($createTextNode("note0"));
-  
+
       //otherwise we can get some errors about missing functions in the used
       //DOM implementation
       $setSelection(null);
@@ -105,7 +166,7 @@ describe("API", async () => {
     checkChildren(notes, [[note0, note1, note2, note4], [], [], [note3]]);
   });
 
-  it("focus", context => {
+  it("focus", (context) => {
     context.lexicalUpdate(() => {
       const root = Note.from($getRoot());
 
@@ -128,7 +189,7 @@ describe("API", async () => {
     expect(context.queries.getAllNotNestedIListItems()).toHaveLength(3);
   });
 
-  it("focus and add children", context => {
+  it("focus and add children", (context) => {
     context.lexicalUpdate(() => {
       const root = Note.from($getRoot());
       const note0 = [...root.children][0];
@@ -156,7 +217,7 @@ describe("API", async () => {
     expect(context.queries.getAllNotNestedIListItems()).toHaveLength(3);
   });
 
-  it("filter", context => {
+  it("filter", (context) => {
     context.lexicalUpdate(() => {
       const root = Note.from($getRoot());
       const notesState = NotesState.getActive();
@@ -186,7 +247,7 @@ describe("API", async () => {
     expect(context.queries.getAllNotNestedIListItems()).toHaveLength(1);
   });
 
-  it("fold", async context => {
+  it("fold", async (context) => {
     context.lexicalUpdate(() => {
       const root = Note.from($getRoot());
       const [notes, note0, note1, note2, note3] = createChildren(root, 3);
@@ -199,7 +260,7 @@ describe("API", async () => {
 
   it.skip("focus and filter", null);
 
-  it.skip("playground", context => {
+  it.skip("playground", (context) => {
     context.lexicalUpdate(() => {
       const root = Note.from($getRoot());
       //const note0 = [...root.children][0];

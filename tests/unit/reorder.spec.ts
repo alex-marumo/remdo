@@ -1,50 +1,48 @@
-import { getMinimizedState, loadEditorState } from "./common";
+import { loadEditorState } from "./common";
 import { it } from "vitest";
 
-//FIXME use toEqual instead of trying to name snapshots
-//alternatively try using https://vitest.dev/guide/snapshot.html#file-snapshots
 it("reorder flat", async ({ editor, expect, lexicalUpdate }) => {
   const { note0 } = loadEditorState(editor, "flat");
-  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+  await expect(editor).toMatchFileSnapshot("base.yml");
 
   lexicalUpdate(() => note0.moveDown());
-  expect(getMinimizedState(editor)).toMatchSnapshot("note0 down");
+  await expect(editor).toMatchFileSnapshot("note0-down-x1.yml");
 
   lexicalUpdate(() => note0.moveDown());
-  expect(getMinimizedState(editor)).toMatchSnapshot("note0 down x2");
+  await expect(editor).toMatchFileSnapshot("note0-down-x2.yml");
 
   lexicalUpdate(() => note0.moveDown()); //noop
-  expect(getMinimizedState(editor)).toMatchSnapshot("note0 down x2");
+  await expect(editor).toMatchFileSnapshot("note0-down-x2.yml");
 
   lexicalUpdate(() => note0.moveUp());
-  expect(getMinimizedState(editor)).toMatchSnapshot("note0 down");
+  await expect(editor).toMatchFileSnapshot("note0-down-x1.yml");
 
   lexicalUpdate(() => note0.moveUp());
-  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+  await expect(editor).toMatchFileSnapshot("base.yml");
 
   lexicalUpdate(() => note0.moveUp()); //noop
-  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+  await expect(editor).toMatchFileSnapshot("base.yml");
 });
 
 it("reorder tree", async ({ editor, expect, lexicalUpdate }) => {
   const { note0, subNote0 } = loadEditorState(editor, "tree");
-  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+  await expect(editor).toMatchFileSnapshot("base.yml");
 
   lexicalUpdate(() => note0.moveDown());
-  expect(getMinimizedState(editor)).toMatchSnapshot("note0 down");
+  await expect(editor).toMatchFileSnapshot("note0-down.yml");
 
   lexicalUpdate(() => note0.moveDown()); //noop
-  expect(getMinimizedState(editor)).toMatchSnapshot("note0 down");
+  await expect(editor).toMatchFileSnapshot("note0-down.yml");
 
   lexicalUpdate(() => note0.moveUp());
-  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+  await expect(editor).toMatchFileSnapshot("base.yml");
 
   lexicalUpdate(() => note0.moveUp()); //noop
-  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+  await expect(editor).toMatchFileSnapshot("base.yml");
 
   lexicalUpdate(() => subNote0.moveUp()); //noop
-  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+  await expect(editor).toMatchFileSnapshot("base.yml");
 
   lexicalUpdate(() => subNote0.moveDown()); //noop
-  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+  await expect(editor).toMatchFileSnapshot("base.yml");
 });

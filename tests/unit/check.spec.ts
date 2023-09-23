@@ -1,55 +1,70 @@
-import { getMinimizedState, loadEditorState } from "./common";
+import { loadEditorState } from "./common";
 import { it } from "vitest";
 
-//FIXME use toEqual instead of trying to name snapshots
 it("check/uncheck", async ({ editor, expect, lexicalUpdate }) => {
-  const notes = loadEditorState(editor, "single");
-  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+  const { note0 } = loadEditorState(editor, "single");
+  await expect(editor).toMatchFileSnapshot("base.yml");
 
-  lexicalUpdate(() => (notes.note0.checked = true));
-  expect(getMinimizedState(editor)).toMatchSnapshot("checked");
+  lexicalUpdate(() => (note0.checked = true));
+  await expect(editor).toMatchFileSnapshot("checked.yml");
 
-  lexicalUpdate(() => (notes.note0.checked = true));
-  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+  lexicalUpdate(() => (note0.checked = false));
+  await expect(editor).toMatchFileSnapshot("base.yml");
 });
 
 it("toggle check", async ({ editor, expect, lexicalUpdate }) => {
-  const notes = loadEditorState(editor, "single");
-  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+  const { note0 } = loadEditorState(editor, "single");
+  await expect(editor).toMatchFileSnapshot("base.yml");
 
-  lexicalUpdate(() => notes.note0.toggleChecked());
-  expect(getMinimizedState(editor)).toMatchSnapshot("checked");
+  lexicalUpdate(() => note0.toggleChecked());
+  await expect(editor).toMatchFileSnapshot("checked.yml");
 
-  lexicalUpdate(() => notes.note0.toggleChecked());
-  expect(getMinimizedState(editor)).toMatchSnapshot("unchecked");
+  lexicalUpdate(() => note0.toggleChecked());
+  await expect(editor).toMatchFileSnapshot("base.yml");
 });
 
-it("check/uncheck recursively", async ({
-  editor,
-  expect,
-  lexicalUpdate,
-}) => {
-  const notes = loadEditorState(editor, "basic");
-  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+it("check/uncheck recursively", async ({ editor, expect, lexicalUpdate }) => {
+  const { note0, note00 } = loadEditorState(editor, "basic");
+  await expect(editor).toMatchFileSnapshot("base.yml");
+  lexicalUpdate(() => {
+    expect(note0.checked).toBeFalsy();
+    expect(note00.checked).toBeFalsy();
+  });
 
-  lexicalUpdate(() => (notes.note0.checked = true));
-  expect(getMinimizedState(editor)).toMatchSnapshot("checked");
+  lexicalUpdate(() => {
+    note0.checked = true;
+    expect(note0.checked).toBeTruthy();
+    expect(note00.checked).toBeTruthy();
+  });
+  await expect(editor).toMatchFileSnapshot("checked.yml");
 
-  lexicalUpdate(() => (notes.note0.checked = true));
-  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+  lexicalUpdate(() => {
+    note0.checked = false;
+    expect(note0.checked).toBeFalsy();
+    expect(note00.checked).toBeFalsy();
+  });
+  await expect(editor).toMatchFileSnapshot("base.yml");
 });
 
-it("toggle check recursively", async ({
-  editor,
-  expect,
-  lexicalUpdate,
-}) => {
-  const notes = loadEditorState(editor, "basic");
-  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+it("toggle check recursively", async ({ editor, expect, lexicalUpdate }) => {
+  const { note0, note00 } = loadEditorState(editor, "basic");
+  await expect(editor).toMatchFileSnapshot("base.yml");
+  lexicalUpdate(() => {
+    expect(note0.checked).toBeFalsy();
+    expect(note00.checked).toBeFalsy();
+  });
 
-  lexicalUpdate(() => notes.note0.toggleChecked());
-  expect(getMinimizedState(editor)).toMatchSnapshot("checked");
+  lexicalUpdate(() => {
+    note0.toggleChecked();
+    expect(note0.checked).toBeTruthy();
+    expect(note00.checked).toBeTruthy();
+  });
+  await expect(editor).toMatchFileSnapshot("checked.yml");
 
-  lexicalUpdate(() => notes.note0.toggleChecked());
-  expect(getMinimizedState(editor)).toMatchSnapshot("base");
+  lexicalUpdate(() => {
+    note0.toggleChecked();
+    expect(note0.checked).toBeFalsy();
+    expect(note00.checked).toBeFalsy();
+  });
+  await expect(editor).toMatchFileSnapshot("base.yml");
 });

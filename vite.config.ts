@@ -144,8 +144,8 @@ const moduleResolution = [
   "LexicalAutoEmbedPlugin",
   "LexicalOnChangePlugin",
   "LexicalNodeEventPlugin",
-  'LexicalEditorRefPlugin',
-].forEach(module => {
+  "LexicalEditorRefPlugin",
+].forEach((module) => {
   let resolvedPath = path.resolve(`../lexical-react/src/${module}.ts`);
 
   if (fs.existsSync(resolvedPath)) {
@@ -166,7 +166,7 @@ const moduleResolution = [
 
 //playground vite configuration contains a lot of module replacements
 //the idea is to reuse them after adjusting to a different dir structure
-const playgroundResolveAlias = moduleResolution.map(module => {
+const playgroundResolveAlias = moduleResolution.map((module) => {
   //playground is nested in lexical/packages while this file exist outside
   //of lexical dir structure, let's change this
   let resolvedPath = module.replacement.replace(
@@ -281,7 +281,7 @@ export default defineConfig({
   //TODO copied from lexical playground
   plugins: [
     {
-      name: 'log-requests',
+      name: "log-requests",
       configureServer(server) {
         server.middlewares.use((req, _, next) => {
           console.log(`Request: ${req.method} ${req.url}`);
@@ -355,7 +355,7 @@ export default defineConfig({
     include: ["tests/unit/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     environment: "jsdom",
     open: false,
-    threads: !process.env.VITE_DISABLECOLLAB,
+    threads: !!process.env.VITE_DISABLECOLLAB,
     api: {
       strictPort: true,
       port: getPort({ page: null, vitest_preview: 3007, playwright: null }),
