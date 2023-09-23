@@ -1,8 +1,8 @@
-import { loadEditorState } from "./common";
+import "./common";
 import { it } from "vitest";
 
-it("folding", async ({ editor, expect, lexicalUpdate }) => {
-  const { note0 } = loadEditorState(editor, "basic");
+it("folding", async ({ load, editor, expect, lexicalUpdate }) => {
+  const { note0 } = load("basic");
   await expect(editor).toMatchFileSnapshot("base.yml");
 
   lexicalUpdate(() => (note0.folded = true));
@@ -17,15 +17,15 @@ it("folding", async ({ editor, expect, lexicalUpdate }) => {
 
 //FIXME doesn't propagate correctly to other clients in Collab mode. Probably because node patches are not applied correctly
 //TODO when fixing also add a check that will assure that patches won't be applied twice
-it("load folded", async ({ editor, expect, lexicalUpdate }) => {
-  const { note0 } = loadEditorState(editor, "folded");
+it("load folded", async ({ load, expect, lexicalUpdate }) => {
+  const { note0 } = load("folded");
   lexicalUpdate(() => {
     expect(note0.folded).toBeTruthy();
   });
 });
 
-it("modify folded", async ({ editor, expect, lexicalUpdate }) => {
-  const { note0 } = loadEditorState(editor, "folded");
+it("modify folded", async ({ load, editor, expect, lexicalUpdate }) => {
+  const { note0 } = load("folded");
   lexicalUpdate(() => {
     note0.lexicalNode.getFirstChild().setTextContent("note0 - modified");
   });
@@ -35,8 +35,8 @@ it("modify folded", async ({ editor, expect, lexicalUpdate }) => {
   await expect(editor).toMatchFileSnapshot("modified.yml");
 });
 
-it("fold to a specific level", async ({ editor, expect, lexicalUpdate }) => {
-  const { root } = loadEditorState(editor, "tree_complex");
+it("fold to a specific level", async ({ load, editor, expect, lexicalUpdate }) => {
+  const { root } = load("tree_complex");
   await expect(editor).toMatchFileSnapshot("base.yml");
 
   lexicalUpdate(() => root.setFoldLevel(1));

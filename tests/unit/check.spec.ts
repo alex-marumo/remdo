@@ -1,8 +1,8 @@
-import { loadEditorState } from "./common";
+import "./common"; //imported for side effects
 import { it } from "vitest";
 
-it("check/uncheck", async ({ editor, expect, lexicalUpdate }) => {
-  const { note0 } = loadEditorState(editor, "single");
+it("check/uncheck", async ({ load, editor, expect, lexicalUpdate }) => {
+  const { note0 } = load("single");
   await expect(editor).toMatchFileSnapshot("base.yml");
 
   lexicalUpdate(() => (note0.checked = true));
@@ -12,8 +12,8 @@ it("check/uncheck", async ({ editor, expect, lexicalUpdate }) => {
   await expect(editor).toMatchFileSnapshot("base.yml");
 });
 
-it("toggle check", async ({ editor, expect, lexicalUpdate }) => {
-  const { note0 } = loadEditorState(editor, "single");
+it("toggle check", async ({ load, editor, expect, lexicalUpdate }) => {
+  const { note0 } = load("single");
   await expect(editor).toMatchFileSnapshot("base.yml");
 
   lexicalUpdate(() => note0.toggleChecked());
@@ -23,8 +23,8 @@ it("toggle check", async ({ editor, expect, lexicalUpdate }) => {
   await expect(editor).toMatchFileSnapshot("base.yml");
 });
 
-it("check/uncheck recursively", async ({ editor, expect, lexicalUpdate }) => {
-  const { note0, note00 } = loadEditorState(editor, "basic");
+it("check/uncheck recursively", async ({ load, editor, expect, lexicalUpdate }) => {
+  const { note0, note00 } = load("basic");
   await expect(editor).toMatchFileSnapshot("base.yml");
   lexicalUpdate(() => {
     expect(note0.checked).toBeFalsy();
@@ -46,8 +46,8 @@ it("check/uncheck recursively", async ({ editor, expect, lexicalUpdate }) => {
   await expect(editor).toMatchFileSnapshot("base.yml");
 });
 
-it("toggle check recursively", async ({ editor, expect, lexicalUpdate }) => {
-  const { note0, note00 } = loadEditorState(editor, "basic");
+it("toggle check recursively", async ({ load, editor, expect, lexicalUpdate }) => {
+  const { note0, note00 } = load("basic");
   await expect(editor).toMatchFileSnapshot("base.yml");
   lexicalUpdate(() => {
     expect(note0.checked).toBeFalsy();

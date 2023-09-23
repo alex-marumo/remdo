@@ -1,8 +1,8 @@
-import { loadEditorState } from "./common";
+import "./common";
 import { it } from "vitest";
 
-it("reorder flat", async ({ editor, expect, lexicalUpdate }) => {
-  const { note0 } = loadEditorState(editor, "flat");
+it("reorder flat", async ({ load, editor, expect, lexicalUpdate }) => {
+  const { note0 } = load("flat");
   await expect(editor).toMatchFileSnapshot("base.yml");
 
   lexicalUpdate(() => note0.moveDown());
@@ -24,8 +24,8 @@ it("reorder flat", async ({ editor, expect, lexicalUpdate }) => {
   await expect(editor).toMatchFileSnapshot("base.yml");
 });
 
-it("reorder tree", async ({ editor, expect, lexicalUpdate }) => {
-  const { note0, subNote0 } = loadEditorState(editor, "tree");
+it("reorder tree", async ({ load, editor, expect, lexicalUpdate }) => {
+  const { note0, subNote0 } = load("tree");
   await expect(editor).toMatchFileSnapshot("base.yml");
 
   lexicalUpdate(() => note0.moveDown());

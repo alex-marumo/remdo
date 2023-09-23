@@ -1,12 +1,12 @@
-import { loadEditorState } from "../common";
+import "../common";
 import { Note } from "@/components/Editor/lexical/api";
 import { getActiveEditorState } from "@lexical/LexicalUpdates";
 import { $isListItemNode } from "@lexical/list";
 import { $isTextNode } from "lexical";
 import { it } from "vitest";
 
-it("broken schema", async ({ editor, expect, lexicalUpdate }) => {
-  loadEditorState(editor, "tests/data/regression/broken_schema");
+it("broken schema", async ({ load, expect, lexicalUpdate }) => {
+  load("tests/data/regression/broken_schema");
   lexicalUpdate(() => {
     const listItem = Array.from(getActiveEditorState()._nodeMap.values())
       .find((n) => $isTextNode(n) && n.getTextContent() === "outdent")

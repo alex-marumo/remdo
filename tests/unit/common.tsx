@@ -61,6 +61,7 @@ declare module "vitest" {
       typeof queries & { getAllNotNestedIListItems: typeof getAllByRole.bind }
     >;
     lexicalUpdate: (fn: () => void) => void;
+    load: (name: string) => Record<string, Note>;
     log: (message: string) => void;
     editor: NotesLexicalEditor;
     expect: typeof expect;
@@ -91,41 +92,6 @@ export function debug() {
   }
   //end of copied code
   debug();
-}
-
-//TODO this should be passed in the context
-/**
- * loads editor state from a file with the given @name
- * @returns a record of all notes in the editor, with their text in
- * camelCase as keys
- */
-export function loadEditorState(editor: LexicalEditor, name: string) {
-  type Notes = Record<string, Note>;
-
-  function toCamelCase(str: string): string {
-    return str
-      .trim()
-      .toLowerCase()
-      .replace(/(\s+)(\w)/g, (_, __, letter) => letter.toUpperCase());
-  }
-
-  function walk(note: Note, notes: Notes) {
-    notes[toCamelCase(note.text)] = note;
-    for (const child of note.children) {
-      walk(child, notes);
-    }
-  }
-
-  const dataPath = getDataPath(name);
-  const serializedEditorState = fs.readFileSync(dataPath).toString();
-  const editorState = editor.parseEditorState(serializedEditorState);
-  editor.setEditorState(editorState);
-  editor.dispatchCommand(CLEAR_HISTORY_COMMAND, null);
-  const notes: Notes = {};
-  editor.update(() => {
-    walk(Note.from($getRoot()), notes);
-  });
-  return notes;
 }
 
 /** put children at the end */
@@ -282,6 +248,40 @@ beforeEach(async (context) => {
         .getAllByRole("listitem")
         .filter((li) => !li.classList.contains("li-nested")),
   });
+
+  /**
+   * loads editor state from a file with the given @name
+   * @returns a record of all notes in the editor, with their text in
+   * camelCase as keys
+   */
+  context.load = function (name: string) {
+    type Notes = Record<string, Note>;
+
+    function toCamelCase(str: string): string {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/(\s+)(\w)/g, (_, __, letter) => letter.toUpperCase());
+    }
+
+    function walk(note: Note, notes: Notes) {
+      notes[toCamelCase(note.text)] = note;
+      for (const child of note.children) {
+        walk(child, notes);
+      }
+    }
+
+    const dataPath = getDataPath(name);
+    const serializedEditorState = fs.readFileSync(dataPath).toString();
+    const editorState = context.editor.parseEditorState(serializedEditorState);
+    context.editor.setEditorState(editorState);
+    context.editor.dispatchCommand(CLEAR_HISTORY_COMMAND, null);
+    const notes: Notes = {};
+    context.editor.update(() => {
+      walk(Note.from($getRoot()), notes);
+    });
+    return notes;
+  };
 
   context.lexicalUpdate = (updateFunction) => {
     let err = null;
