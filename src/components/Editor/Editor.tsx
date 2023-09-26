@@ -27,6 +27,9 @@ import { DevToolbarPlugin } from "./plugins/DevToolbarPlugin";
 import IndentationPlugin from "./plugins/IndentationPlugin";
 import { NotesPlugin } from "./plugins/NotesPlugin";
 import { QuickMenuPlugin } from "./plugins/QuickMenuPlugin";
+import { AutoLinkNode, LinkNode } from "@lexical/link";
+import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
+import { RemdoAutoLinkPlugin } from "./plugins/RemdoAutoLinkPlugin";
 
 
 let yIDB = null;
@@ -110,7 +113,7 @@ export default function Editor() {
       throw error;
     },
     namespace: "notes",
-    nodes: [ListItemNode, ListNode],
+    nodes: [ListItemNode, ListNode, LinkNode, AutoLinkNode],
     theme: {
       list: {
         listitemChecked: "li-checked",
@@ -158,6 +161,8 @@ export default function Editor() {
         <FloatingTextFormatToolbarPlugin />
         <ClearEditorPlugin />
         <ListPlugin />
+        <LinkPlugin />
+        <RemdoAutoLinkPlugin />
         <TabIndentationPlugin />
         <IndentationPlugin />
         {editorConfig.disableCollab ? (

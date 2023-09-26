@@ -1,6 +1,5 @@
-- Affine
-- Init: git submodule update --init --recursive
-- Before productio
+- Alternatives
+    - Affine	
 - Deps to consider
 - Before production
     - improve tiny-invariant in production
@@ -21,20 +20,20 @@
         - there is no $isLexicalNode function and there is no way to implement is on your own
     - Watched
         - Watched lexical issues:
-            - list: https://github.com/facebook/lexical/issues/2951
-            - schema: https://github.com/facebook/lexical/issues/3833
-            - https://github.com/facebook/lexical/issues/3763
-            - https://github.com/facebook/lexical/issues/3670
-            - https://github.com/facebook/lexical/issues/3567
-            - https://github.com/facebook/lexical/issues/3433
-            - https://github.com/facebook/lexical/issues/3255
-            - https://github.com/facebook/lexical/issues/3085
-            - https://github.com/facebook/lexical/issues/2845
-            - https://github.com/facebook/lexical/issues/2791
-            - https://github.com/facebook/lexical/issues/2127
-            - https://github.com/facebook/lexical/issues/1707
-            - https://github.com/facebook/lexical/issues/1604
-            - https://github.com/facebook/lexical/issues/1311
+            - list: [https://github.com/facebook/lexical/issues/2951](https://github.com/facebook/lexical/issues/2951)
+            - schema: [https://github.com/facebook/lexical/issues/3833](https://github.com/facebook/lexical/issues/3833)
+            - [https://github.com/facebook/lexical/issues/3763](https://github.com/facebook/lexical/issues/3763)
+            - [https://github.com/facebook/lexical/issues/3670](https://github.com/facebook/lexical/issues/3670)
+            - [https://github.com/facebook/lexical/issues/3567](https://github.com/facebook/lexical/issues/3567)
+            - [https://github.com/facebook/lexical/issues/3433](https://github.com/facebook/lexical/issues/3433) 
+            - [https://github.com/facebook/lexical/issues/3255](https://github.com/facebook/lexical/issues/3255)
+            - [https://github.com/facebook/lexical/issues/3085](https://github.com/facebook/lexical/issues/3085)
+            - [https://github.com/facebook/lexical/issues/2845](https://github.com/facebook/lexical/issues/2845)
+            - [https://github.com/facebook/lexical/issues/2791](https://github.com/facebook/lexical/issues/2791)
+            - [https://github.com/facebook/lexical/issues/2127](https://github.com/facebook/lexical/issues/2127)
+            - [https://github.com/facebook/lexical/issues/1707](https://github.com/facebook/lexical/issues/1707)
+            - [https://github.com/facebook/lexical/issues/1604](https://github.com/facebook/lexical/issues/1604)
+            - [https://github.com/facebook/lexical/issues/1311](https://github.com/facebook/lexical/issues/1311)
 - ToDo
     - events[0].target.toDelta()[0].insert.toDelta()[0].insert.toDelta()[1].insert
     - readonly ID
@@ -61,21 +60,21 @@
             - editor.update(() => {key = $getNearestNodeFromDOMNode(event.target).getKey();});
         - there is no $isLexicalNode function and there is no way to implement is on your own
     - Watched
-        - Watched lexical issues:list: https://github.com/facebook/lexical/issues/2951
-        - schema: https://github.com/facebook/lexical/issues/3833
-        - https://github.com/facebook/lexical/issues/3763
-        - https://github.com/facebook/lexical/issues/3670
-        - https://github.com/facebook/lexical/issues/3567
-        - https://github.com/facebook/lexical/issues/3433
-        - https://github.com/facebook/lexical/issues/3255
-        - https://github.com/facebook/lexical/issues/3085
-        - https://github.com/facebook/lexical/issues/2845
-        - https://github.com/facebook/lexical/issues/2791
-        - https://github.com/facebook/lexical/issues/2127
-        - https://github.com/facebook/lexical/issues/1707
-        - https://github.com/facebook/lexical/issues/1604
-        - https://github.com/facebook/lexical/issues/1311
-        - https://github.com/facebook/lexical/pull/4285 context menu
+        - Watched lexical issues:list: [https://github.com/facebook/lexical/issues/2951](https://github.com/facebook/lexical/issues/2951)
+        - schema: [https://github.com/facebook/lexical/issues/3833](https://github.com/facebook/lexical/issues/3833)
+        - [https://github.com/facebook/lexical/issues/3763](https://github.com/facebook/lexical/issues/3763)
+        - [https://github.com/facebook/lexical/issues/3670](https://github.com/facebook/lexical/issues/3670)
+        - [https://github.com/facebook/lexical/issues/3567](https://github.com/facebook/lexical/issues/3567)
+        - [https://github.com/facebook/lexical/issues/3433](https://github.com/facebook/lexical/issues/3433)
+        - [https://github.com/facebook/lexical/issues/3255](https://github.com/facebook/lexical/issues/3255)
+        - [https://github.com/facebook/lexical/issues/3085](https://github.com/facebook/lexical/issues/3085)
+        - [https://github.com/facebook/lexical/issues/2845](https://github.com/facebook/lexical/issues/2845)
+        - [https://github.com/facebook/lexical/issues/2791](https://github.com/facebook/lexical/issues/2791)
+        - [https://github.com/facebook/lexical/issues/2127](https://github.com/facebook/lexical/issues/2127)
+        - [https://github.com/facebook/lexical/issues/1707](https://github.com/facebook/lexical/issues/1707)
+        - [https://github.com/facebook/lexical/issues/1604](https://github.com/facebook/lexical/issues/1604)
+        - [https://github.com/facebook/lexical/issues/1311](https://github.com/facebook/lexical/issues/1311)
+        - [https://github.com/facebook/lexical/pull/4285](https://github.com/facebook/lexical/pull/4285) context menu
 - FixMe
     - very wired behaviour with url pointing to an not existing note
     - unit tests cause browser to disconnect, fix reconnecting
@@ -94,9 +93,4 @@
     - switch to the latest stable lexical version
 - Deps to consider
     - bin/deno - Why?
-    - https://www.npmjs.com/package/match-sorter
-- 
-- 
-- 
-- 
-- 
+    - [https://www.npmjs.com/package/match-sorter](https://www.npmjs.com/package/match-sorter)
