@@ -1,0 +1,102 @@
+- Affine
+- Init: git submodule update --init --recursive
+- Before productio
+- Deps to consider
+- Before production
+    - improve tiny-invariant in production
+- FixMe
+    - very wired behaviour with url pointing to an not existing note
+    - unit tests cause browser to disconnect, fix reconnecting
+- Lexical bugs
+    - Noted
+        - cloning listitem node with includeChildren skips children
+        - doubled notes with yjs open:
+            -       editor.registerMutationListener(ListItemNode, mutatedNodes => {        editor.update(() => {          return;          for (const [key, mutation] of mutatedNodes) {            console.log(key, mutation);            if (mutation !== "created") {              continue;            }            const node: ListItemNode = $getNodeByKey(key);            if ($isRemdoListItem(node)) {              continue;            }            const p = node =>              console.log(node.getType(), node.getKey(), node.getChildren()[0]);            p(node);            const newNode = node.replace(              new RemdoListItem(node.getValue(), node.getChecked()),              true            );            //const newNode = RemdoListItem.clone(node);            p(newNode);            p(node);            //console.log("transforming list item node", $getNodeByKey(key));          }        });      }),
+        - list.toggleChecked() should use getChecked
+        - getActiveEditorState() (not available publicly) returns a different state than editor.getEditorState() which can cause problems if someone modifies state in editor.update()
+        - Vite and it's HMR cause errorOnKlassMismatch when saving custom's node source file
+        - throw Error("error") in update works, but throw "error" is silently eaten
+        - Reading or just passing editor state should be enough, re-check in the newer lexical version:
+            - editor.update(() => {key = $getNearestNodeFromDOMNode(event.target).getKey();});
+        - there is no $isLexicalNode function and there is no way to implement is on your own
+    - Watched
+        - Watched lexical issues:
+            - list: https://github.com/facebook/lexical/issues/2951
+            - schema: https://github.com/facebook/lexical/issues/3833
+            - https://github.com/facebook/lexical/issues/3763
+            - https://github.com/facebook/lexical/issues/3670
+            - https://github.com/facebook/lexical/issues/3567
+            - https://github.com/facebook/lexical/issues/3433
+            - https://github.com/facebook/lexical/issues/3255
+            - https://github.com/facebook/lexical/issues/3085
+            - https://github.com/facebook/lexical/issues/2845
+            - https://github.com/facebook/lexical/issues/2791
+            - https://github.com/facebook/lexical/issues/2127
+            - https://github.com/facebook/lexical/issues/1707
+            - https://github.com/facebook/lexical/issues/1604
+            - https://github.com/facebook/lexical/issues/1311
+- ToDo
+    - events[0].target.toDelta()[0].insert.toDelta()[0].insert.toDelta()[1].insert
+    - readonly ID
+    - reloading page on data/ change
+    - run/auto-save a specific project - similar to npm run notes but more general
+    - moving note with children
+    - marking notes as checked
+    - folding all nodes up to a specific level
+    - create lint test case
+    - consider changing rootElement to ul/li instead of adjusting schema in rootTransform
+    - fail all kinds of tests if there is an exception in browser's console
+    - add a warning about jsdom/querySelectorAll, potentially using rewire
+    - switch to the latest stable lexical version
+- Lexical bugs
+    - Noted
+        - cloning listitem node with includeChildren skips children
+        - doubled notes with yjs open:
+            -       editor.registerMutationListener(ListItemNode, mutatedNodes => {        editor.update(() => {          return;          for (const [key, mutation] of mutatedNodes) {            console.log(key, mutation);            if (mutation !== "created") {              continue;            }            const node: ListItemNode = $getNodeByKey(key);            if ($isRemdoListItem(node)) {              continue;            }            const p = node =>              console.log(node.getType(), node.getKey(), node.getChildren()[0]);            p(node);            const newNode = node.replace(              new RemdoListItem(node.getValue(), node.getChecked()),              true            );            //const newNode = RemdoListItem.clone(node);            p(newNode);            p(node);            //console.log("transforming list item node", $getNodeByKey(key));          }        });      }),
+        - list.toggleChecked() should use getChecked
+        - getActiveEditorState() (not available publicly) returns a different state than editor.getEditorState() which can cause problems if someone modifies state in editor.update()
+        - Vite and it's HMR cause errorOnKlassMismatch when saving custom's node source file
+        - throw Error("error") in update works, but throw "error" is silently eaten
+        - Reading or just passing editor state should be enough, re-check in the newer lexical version:
+            - editor.update(() => {key = $getNearestNodeFromDOMNode(event.target).getKey();});
+        - there is no $isLexicalNode function and there is no way to implement is on your own
+    - Watched
+        - Watched lexical issues:list: https://github.com/facebook/lexical/issues/2951
+        - schema: https://github.com/facebook/lexical/issues/3833
+        - https://github.com/facebook/lexical/issues/3763
+        - https://github.com/facebook/lexical/issues/3670
+        - https://github.com/facebook/lexical/issues/3567
+        - https://github.com/facebook/lexical/issues/3433
+        - https://github.com/facebook/lexical/issues/3255
+        - https://github.com/facebook/lexical/issues/3085
+        - https://github.com/facebook/lexical/issues/2845
+        - https://github.com/facebook/lexical/issues/2791
+        - https://github.com/facebook/lexical/issues/2127
+        - https://github.com/facebook/lexical/issues/1707
+        - https://github.com/facebook/lexical/issues/1604
+        - https://github.com/facebook/lexical/issues/1311
+        - https://github.com/facebook/lexical/pull/4285 context menu
+- FixMe
+    - very wired behaviour with url pointing to an not existing note
+    - unit tests cause browser to disconnect, fix reconnecting
+- ToDo
+    - marking node with children as don't should toggle children
+    - Note as a component to auto update using listener
+    - reloading page on data/ change
+    - run/auto-save a specific project - similar to npm run notes but more general
+    - moving note with children
+    - marking notes as checked
+    - folding all nodes up to a specific level
+    - create lint test case
+    - consider changing rootElement to ul/li instead of adjusting schema in rootTransform
+    - fail all kinds of tests if there is an exception in browser's console
+    - add a warning about jsdom/querySelectorAll, potentially using rewire
+    - switch to the latest stable lexical version
+- Deps to consider
+    - bin/deno - Why?
+    - https://www.npmjs.com/package/match-sorter
+- 
+- 
+- 
+- 
+- 

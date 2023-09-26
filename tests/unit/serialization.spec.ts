@@ -2,20 +2,21 @@
  * These are not real tests, but rather helpers to load/save the editor state
  * to/from file using command line.
  */
-import "./common";
-import { lexicalStateKeyCompare, loadEditorState } from "./common";
-import fs from "fs";
 import { getDataPath } from "../common";
+import "./common";
+import { lexicalStateKeyCompare } from "./common";
+import { $convertToMarkdownString, TRANSFORMERS } from "@lexical/markdown";
+import fs from "fs";
 import { it } from "vitest";
 
 const SERIALIZATION_FILE = process.env.VITEST_SERIALIZATION_FILE;
 
-it.runIf(SERIALIZATION_FILE)("load", ({editor}) => {
+it.runIf(SERIALIZATION_FILE)("load", ({ load }) => {
   const dataPath = getDataPath(SERIALIZATION_FILE);
   console.log();
   console.log();
   console.log("Loading from", dataPath);
-  loadEditorState(editor, dataPath);
+  load(dataPath);
 });
 
 it.runIf(SERIALIZATION_FILE)("save", ({ editor }) => {
@@ -46,6 +47,13 @@ it.runIf(SERIALIZATION_FILE)("save", ({ editor }) => {
   const editorState = JSON.parse(JSON.stringify(editor.getEditorState()));
   const sortedJsonObj = sortObjectKeys(editorState);
   const sortedJson = JSON.stringify(sortedJsonObj, null, 2);
-
   fs.writeFileSync(dataPath, sortedJson);
+
+  const mdDataPath = dataPath.replace(/\.json$/, ".md");
+  let markdown: string;
+  editor.update(() => {
+    markdown = $convertToMarkdownString(TRANSFORMERS);
+  });
+  console.log("Saving to", mdDataPath);
+  fs.writeFileSync(mdDataPath, markdown);
 });
