@@ -334,6 +334,17 @@ export class Note {
     !this.isRoot && this._walk(note => note.lexicalNode.toggleChecked());
   }
 
+  get prevSibling() {
+    const sibling = this.lexicalNode.getPreviousSibling();
+    return sibling ? Note.from(sibling) : null;
+  }
+
+  get nextSibling() {
+    const sibling = this.lexicalNode.getNextSibling();
+    return sibling ? Note.from(sibling) : null;
+  }
+
+
   _walk(
     walker: (node: Note, currentLevel: number) => void,
     level: number = -1

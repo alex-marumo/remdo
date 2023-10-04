@@ -94,6 +94,12 @@
     content: var(--hovered-note-before-content, "\F51B"); //bi-record2-fill
   }
 
+  li.note-folded +li {
+    height: 1px;
+    border-top: 1px dotted var(--bs-secondary);
+    overflow: hidden;
+  }
+
   li.li-nested::before {
     display: none;
   }

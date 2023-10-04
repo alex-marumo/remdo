@@ -10,10 +10,7 @@ import { Navigation } from "./NavigationPlugin";
 import { NoteControlsPlugin } from "./NoteControlsPlugin";
 import "./NotesPlugin.scss";
 import { SearchPlugin } from "./SearchPlugin";
-import {
-  $createListItemNode,
-  $isListItemNode,
-} from "@lexical/list";
+import { $createListItemNode, $isListItemNode } from "@lexical/list";
 import { ListItemNode } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
 import {
@@ -141,7 +138,7 @@ export function NotesPlugin({ anchorElement, documentID }) {
           }
           editor.fullUpdate(() => {
             const folded = !Note.from(noteKeys[0]).folded;
-            noteKeys.forEach(key => {
+            noteKeys.forEach((key) => {
               Note.from(key).folded = folded;
             });
           });
@@ -171,10 +168,8 @@ export function NotesPlugin({ anchorElement, documentID }) {
         //copied from lexical/packages/lexical-rich-text/src/index.ts
         //to change the behavior when backsapce is pressed at the beginning of a
         //list item node and delete the list item instead of outdenting it
-        //the only difference in the implementation is the commented out code
-        //and the priority of the command
         KEY_BACKSPACE_COMMAND,
-        event => {
+        (event) => {
           if ($isTargetWithinDecorator(event.target as HTMLElement)) {
             return false;
           }
@@ -183,7 +178,7 @@ export function NotesPlugin({ anchorElement, documentID }) {
             return false;
           }
           event.preventDefault();
-          /*
+          /* remdo customization - commented out code below
           const { anchor } = selection;
           const anchorNode = anchor.getNode();
 
@@ -197,14 +192,19 @@ export function NotesPlugin({ anchorElement, documentID }) {
               return editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, undefined);
             }
           }
-          */
+          remdo customization extra code below */
+          const note = Note.from(selection.anchor.getNode());
+          if (note?.prevSibling?.folded) {
+            note.prevSibling.folded = false;
+          }
+          /* end of remdo customization */
           return editor.dispatchCommand(DELETE_CHARACTER_COMMAND, true);
         },
         COMMAND_PRIORITY_LOW
       ),
       editor.registerCommand<KeyboardEvent>(
         KEY_ENTER_COMMAND,
-        event => {
+        (event) => {
           //toggle check
           if (!event.metaKey) {
             return false;

@@ -1,12 +1,11 @@
 import { NotesState, Note } from "./api";
 import { patch } from "@/utils";
-import {
-  $isListNode,
-  ListItemNode,
-  ListNode,
-} from "@lexical/list";
+import { $isListNode, ListItemNode, ListNode } from "@lexical/list";
 import { updateChildrenListItemValue } from "@lexical/list/formatList";
-import { addClassNamesToElement, removeClassNamesFromElement } from "@lexical/utils";
+import {
+  addClassNamesToElement,
+  removeClassNamesFromElement,
+} from "@lexical/utils";
 import { LexicalNode, RangeSelection } from "lexical";
 import { EditorConfig } from "lexical";
 
@@ -60,12 +59,13 @@ export function applyNodePatches(NodeType: any) {
       notesState.focus.parentKey === this.getKey() ||
       notesState.focus.nodeKey === this.getKey() ||
       [note, ...note.parents].some(
-        p => p.lexicalKey === notesState.focus.nodeKey
+        (p) => p.lexicalKey === notesState.focus.nodeKey
       )
     ) {
       //
       // is folded?
       //
+      /*
       if (notesState?.focus?.nodeKey !== note.lexicalKey) {
         for (const p of parents) {
           if (p.folded) {
@@ -76,10 +76,8 @@ export function applyNodePatches(NodeType: any) {
           }
         }
       }
+      */
       const dom: HTMLElement = oldMethod(config, editor);
-      if (note.folded) {
-        addClassNamesToElement(dom, "note-folded");
-      }
       return dom;
     } else {
       return document.createElement("div");
@@ -94,7 +92,7 @@ patch(ListItemNode, "clone", function (oldClone, oldNode: ListItemNode) {
 });
 
 patch(ListItemNode, "importJSON", function (oldImportJSON, serializedNode) {
-  //lexical implements multi-level indents by adding some extra styles to the 
+  //lexical implements multi-level indents by adding some extra styles to the
   //node, we don't allow them, so there is no need for the extra styles
   serializedNode.indent = 0;
   const node = oldImportJSON(serializedNode);
@@ -166,6 +164,9 @@ patch(ListItemNode, "createDOM", function (old, config: EditorConfig, editor) {
   } else {
     removeClassNamesFromElement(dom, className);
   }
+  if (this.getFolded()) {
+    addClassNamesToElement(dom, "note-folded");
+  }
   return dom;
 });
 
@@ -183,7 +184,7 @@ patch(ListItemNode, "updateDOM", function (old, prevNode, dom, config) {
   if (this.getChecked()) {
     addClassNamesToElement(dom, className);
   } else {
-    removeClassNamesFromElement(dom, className)
+    removeClassNamesFromElement(dom, className);
   }
   return update;
 });
