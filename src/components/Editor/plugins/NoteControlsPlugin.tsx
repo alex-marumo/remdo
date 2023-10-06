@@ -1,8 +1,9 @@
+//TODO add tests
 import { NOTES_OPEN_QUICK_MENU_COMMAND } from "../commands";
 import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
 import { Note } from "../lexical/api";
+import { RemdoNodeEventPlugin } from "./RemdoNodeEventPlugin";
 import { getOffsetPosition, isBeforeEvent } from "@/utils";
-import { NodeEventPlugin } from "@lexical/react/LexicalNodeEventPlugin";
 import { mergeRegister } from "@lexical/utils";
 import {
   $getNearestNodeFromDOMNode,
@@ -16,12 +17,12 @@ import React, { useCallback, useEffect, useState } from "react";
 
 export function NoteControlsPlugin() {
   const [editor] = useNotesLexicalComposerContext();
-  const [noteFolded, setNoteFolded] = useState(false);
-  const [noteHasChildren, setNoteHasChildren] = useState(false);
   const [menuStyle, setMenuStyle] = useState(null);
   const [noteElement, setNoteElement] = useState(null);
+  const [noteFolded, setNoteFolded] = useState(false);
+  const [noteHasChildren, setNoteHasChildren] = useState(false);
 
-  const menuClick = e => {
+  const menuClick = (e) => {
     e.preventDefault();
     const { left, top, height } = getOffsetPosition(editor, e.target);
     editor.update(() => {
@@ -35,15 +36,21 @@ export function NoteControlsPlugin() {
 
   const updateNoteState = useCallback(
     (targetElement: HTMLElement, { folded = null } = {}) => {
+      if (noteElement === targetElement) {
+        return;
+      }
+
       setNoteFolded(
-        folded !== null ? folded : targetElement.classList.contains("note-folded")
+        folded !== null
+          ? folded
+          : targetElement.classList.contains("note-folded")
       );
       setNoteHasChildren(
         targetElement?.nextElementSibling?.classList.contains("li-nested")
       );
       setNoteElement(targetElement);
     },
-    []
+    [noteElement]
   );
 
   const setMenuPosition = useCallback(
@@ -60,7 +67,7 @@ export function NoteControlsPlugin() {
     [editor, updateNoteState]
   );
 
-  const toggleFold = event => {
+  const toggleFold = (event) => {
     event.preventDefault();
     editor.fullUpdate(() => {
       const note = Note.from($getNearestNodeFromDOMNode(noteElement));
@@ -71,7 +78,6 @@ export function NoteControlsPlugin() {
 
   const rootMouseMove = (event: MouseEvent) => {
     //move controls to the hovered note (li)
-    //additionally highligh note dot (li::before) if it's hovered
     //it would be easier to assign this listener to ListItemNode instead of RootNode
     //the problem is that indented ListItem element don't extend to the left side of the RootNode element
     //this is also why, it's better to find list items on the very right side of the RootNode element
@@ -86,14 +92,12 @@ export function NoteControlsPlugin() {
       event.y
     ) as HTMLElement;
     if (li && li.tagName.toLowerCase() === "li") {
+      //TODO if li doesn't change we don't have to do anything, right?
+      noteElement?.classList.remove("note-hovered");
       setMenuPosition(li);
-
-      const beforeContent = isBeforeEvent(li, event)
-        ? '"\uF519"' //bi-record-fill icon
-        : null;
-      editor
-        .getRootElement()
-        .style.setProperty("--hovered-note-before-content", beforeContent);
+      if(isBeforeEvent(li, event)){
+        li.classList.add("note-hovered");
+      }
     }
   };
 
@@ -119,7 +123,7 @@ export function NoteControlsPlugin() {
 
   return (
     <>
-      <NodeEventPlugin
+      <RemdoNodeEventPlugin
         nodeType={RootNode}
         eventType={"mousemove"}
         eventListener={rootMouseMove}

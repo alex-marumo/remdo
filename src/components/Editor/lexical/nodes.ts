@@ -1,11 +1,14 @@
 import { NotesState, Note } from "./api";
 import { patch } from "@/utils";
 import { $isListNode, ListItemNode, ListNode } from "@lexical/list";
+//import * as lexicalList from "@lexical/list";
 import { updateChildrenListItemValue } from "@lexical/list/formatList";
 import {
   addClassNamesToElement,
   removeClassNamesFromElement,
 } from "@lexical/utils";
+import { Binding } from "@lexical/yjs";
+import { CollabElementNode } from "@lexical/yjs/CollabElementNode";
 import { LexicalNode, RangeSelection } from "lexical";
 import { EditorConfig } from "lexical";
 
@@ -188,3 +191,33 @@ patch(ListItemNode, "updateDOM", function (old, prevNode, dom, config) {
   }
   return update;
 });
+
+/*
+CollabElementNode.syncPropertiesFromLexical calls a function with the same name
+when called for the first time with a given node the function fills binding.nodePropertires
+with the names taken from the node instance.
+The problem that this patch solves is that in some cases (particularly in unit 
+tests launched in collab mode) folded was not set before the mentioned first call.
+Ideally folded property should be added to ListItemNode constructor
+but monkey patching it causes errorKlassMismatch.
+On top of that I coudn't find a better place to access binding as it's 
+not exposed by useYjsCollaboration.
+*/
+patch(
+  CollabElementNode,
+  "syncPropertiesFromLexical",
+  function (old: Function, binding: Binding, ...args: any[]) {
+    if (!binding.nodeProperties.get("listitem")) {
+      binding.nodeProperties.set("listitem", [
+        "__type",
+        "__format",
+        "__indent",
+        "__dir",
+        "__value",
+        "__checked",
+        "__folded",
+      ]);
+    }
+    return old(binding, ...args);
+  }
+);

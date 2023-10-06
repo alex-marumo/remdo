@@ -236,6 +236,18 @@ playgroundResolveAlias.unshift(
     ),
   },
   {
+    find: "@lexical/yjs/Utils",
+    replacement: path.resolve(
+      "./lexical/packages/lexical-yjs/src/Utils.ts"
+    ),
+  },
+  {
+    find: "@lexical/yjs/CollabElementNode",
+    replacement: path.resolve(
+      "./lexical/packages/lexical-yjs/src/CollabElementNode.ts"
+    ),
+  },
+  {
     find: "@",
     replacement: path.resolve("./src"),
   }

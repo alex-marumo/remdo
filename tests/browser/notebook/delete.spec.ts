@@ -10,3 +10,31 @@ test("backspace at the beginning of a note", async ({ page, notebook }) => {
   await page.keyboard.press("Backspace");
   expect(await notebook.html()).toMatchSnapshot();
 });
+
+test("backspace at the beginning of a next after a folded note", async ({
+  page,
+  menu,
+  notebook,
+}) => {
+  await notebook.load("tree");
+  await menu.open("note0");
+  await menu.fold();
+  await notebook.clickBeginningOfNote("note1");
+  await page.keyboard.press("Backspace");
+  expect(await notebook.html()).toMatchSnapshot();
+});
+
+test("backspace at the beginning of a folded note that's listed after another folded one", async ({
+  page,
+  menu,
+  notebook,
+}) => {
+  await notebook.load("tree");
+  await menu.open("note0");
+  await menu.fold();
+  await menu.open("note1");
+  await menu.fold();
+  await notebook.clickBeginningOfNote("note1");
+  await page.keyboard.press("Backspace");
+  expect(await notebook.html()).toMatchSnapshot();
+});

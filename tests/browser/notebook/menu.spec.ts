@@ -1,30 +1,6 @@
 //FIXME test clicking outside of the menu
-import { test as base } from "./common";
-import { expect, Page } from "@playwright/test";
-
-class Menu {
-  constructor(private readonly page: Page) {}
-
-  locator(selector = "") {
-    return this.page.locator(`#quick-menu ${selector}`.trim());
-  }
-
-  iconLocator() {
-    return this.page.locator("#hovered-note-menu");
-  }
-
-  async open() {
-    await this.page.keyboard.press("Shift");
-    await this.page.waitForTimeout(20);
-    await this.page.keyboard.press("Shift");
-  }
-}
-
-const test = base.extend<{ menu: Menu }>({
-  menu: async ({ page }, use) => {
-    await use(new Menu(page));
-  },
-});
+import { test } from "./common";
+import { expect } from "@playwright/test";
 
 test("menu icon follows selection", async ({ menu, notebook }) => {
   await notebook.load("flat");

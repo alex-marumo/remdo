@@ -44,13 +44,57 @@ export class Notebook {
       position: { x: width - 1, y: height - 1 }, //the idea is that bottom right corner should be the end of the title's text
     });
   }
+
+  async clickBeginningOfNote(title: string) {
+    const noteLocator = this.noteLocator(title);
+    await noteLocator.click({
+      position: { x: 1, y: 1 }, 
+    });
+  }
 }
 
-export const test = base.extend<{ notebook: Notebook }>({
+class Menu {
+  constructor(
+    private readonly page: Page,
+    private readonly notebook: Notebook
+  ) {}
+
+  locator(selector = "") {
+    return this.page.locator(`#quick-menu ${selector}`.trim());
+  }
+
+  iconLocator() {
+    return this.page.locator("#hovered-note-menu");
+  }
+
+  async open(noteText?: string) {
+    if (noteText) {
+      await this.notebook.noteLocator(noteText).selectText();
+    }
+    await this.page.waitForTimeout(20);
+    await this.page.keyboard.press("Shift");
+    await this.page.waitForTimeout(20);
+    await this.page.keyboard.press("Shift");
+    await this.page.waitForTimeout(20);
+  }
+
+  async fold() {
+    await this.page.keyboard.press("f"); 
+    await this.page.waitForTimeout(20);
+  }
+}
+
+export let test = base.extend<{ notebook: Notebook}>({
   notebook: async ({ baseURL, page }, use) => {
     const notebook = new Notebook(page);
     await page.goto(baseURL);
     await notebook.locator().focus();
     await use(notebook);
+  },
+});
+
+test = test.extend<{menu: Menu }>({
+  menu: async ({ page, notebook }, use) => {
+    await use(new Menu(page, notebook));
   },
 });

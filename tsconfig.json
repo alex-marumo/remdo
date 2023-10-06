@@ -209,6 +209,7 @@
       "@lexical/text/LexicalText": ["./lexical/packages/lexical-text/src/"],
       "@lexical/utils/LexicalUtils": ["./lexical/packages/lexical-utils/src/"],
       "@lexical/yjs": ["./lexical/packages/lexical-yjs/src/"],
+      "@lexical/yjs/Utils": ["./lexical/packages/lexical-yjs/src/Utils.ts"],
 
       // custom
       "@lexical/LexicalConstants": [
@@ -225,7 +226,7 @@
         "lexical/packages/lexical/src/LexicalUpdates.ts"
       ],
       "@lexical/LexicalUtils": ["lexical/packages/lexical/src/LexicalUtils.ts"],
-      "@lexical/LexicalNode": ["lexical/packages/lexical/src/LexicalNode.ts"]
+      "@lexical/LexicalNode": ["lexical/packages/lexical/src/LexicalNode.ts"],
     }
   },
   "exclude": ["**/node_modules/**"]

@@ -62,52 +62,6 @@
   .underline {
     text-decoration: underline;
   }
-
-  /* note */
-
-  ul {
-    list-style-type: none;
-    list-style-image: none;
-    list-style-position: outside;
-    margin-bottom: 0;
-  }
-
-  li::before {
-    vertical-align: middle;
-    cursor: pointer;
-    padding: 0.5em;
-    pointer-events: all;
-    content: "\F51A"; //bi-record
-    color: var(--bs-secondary);
-    font-size: 0.6em;
-  }
-
-  li.note-folded::before {
-    content: "\F51B"; //bi-record2-fill
-  }
-
-  li:hover::before {
-    content: var(--hovered-note-before-content, "\F51A"); //bi-record
-  }
-
-  li.note-folded:hover::before {
-    content: var(--hovered-note-before-content, "\F51B"); //bi-record2-fill
-  }
-
-  li.note-folded +li {
-    height: 1px;
-    border-top: 1px dotted var(--bs-secondary);
-    overflow: hidden;
-  }
-
-  li.li-nested::before {
-    display: none;
-  }
-
-  li.li-checked {
-    text-decoration: line-through;
-    color: var(--bs-tertiary-color);
-  }
 }
 
 .debug-timetravel-button {
