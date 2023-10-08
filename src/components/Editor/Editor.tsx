@@ -4,6 +4,7 @@ import FloatingTextFormatToolbarPlugin from "@lexical/playground/plugins/Floatin
 import "@lexical/playground/plugins/FloatingTextFormatToolbarPlugin/index.css";
 import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
 import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
+import LexicalClickableLinkPlugin from '@lexical/react/LexicalClickableLinkPlugin';
 import {
   InitialConfigType,
   LexicalComposer,
@@ -163,6 +164,7 @@ export default function Editor() {
         <ListPlugin />
         <LinkPlugin />
         <RemdoAutoLinkPlugin />
+        <LexicalClickableLinkPlugin />
         <TabIndentationPlugin />
         <IndentationPlugin />
         {editorConfig.disableCollab ? (

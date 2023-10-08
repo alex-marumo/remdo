@@ -62,6 +62,11 @@
   .underline {
     text-decoration: underline;
   }
+
+  a:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
 }
 
 .debug-timetravel-button {
