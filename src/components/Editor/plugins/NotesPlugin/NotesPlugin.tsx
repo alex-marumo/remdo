@@ -1,15 +1,15 @@
+import { useNotesLexicalComposerContext } from "@/components/Editor/NotesComposerContext";
+import { Note, NotesState } from "@/components/Editor/api";
 import {
   NOTES_MOVE_COMMAND,
   NOTES_SET_FOLD_LEVEL_COMMAND,
   NOTES_TOGGLE_FOLD_COMMAND,
-} from "../commands";
-import { useNotesLexicalComposerContext } from "../NotesComposerContext";
-import { Note, NotesState } from "../api";
-import { $fixRoot, $isTargetWithinDecorator } from "../utils";
-import { Navigation } from "./NavigationPlugin";
-import { NoteControlsPlugin } from "./NoteControlsPlugin";
+} from "../../commands";
+import { $fixRoot, $isTargetWithinDecorator } from "./utils";
+import { Navigation } from "../NavigationPlugin";
+import { SearchPlugin } from "../SearchPlugin";
+import { NoteControlsPlugin } from "../NoteControlsPlugin";
 import "./NotesPlugin.scss";
-import { SearchPlugin } from "./SearchPlugin";
 import { $createListItemNode, $isListItemNode } from "@lexical/list";
 import { ListItemNode } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
@@ -32,6 +32,13 @@ import PropTypes from "prop-types";
 import { useEffect, useCallback } from "react";
 import React from "react";
 import { createPortal } from "react-dom";
+import { ListNode } from "@lexical/list";
+import { TextNode } from "lexical";
+import { applyNodePatches } from "./lexicalPatches";
+
+applyNodePatches(TextNode);
+applyNodePatches(ListNode);
+applyNodePatches(ListItemNode);
 
 export function NotesPlugin({ anchorElement, documentID }) {
   const [editor] = useNotesLexicalComposerContext();

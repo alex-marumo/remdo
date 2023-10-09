@@ -10,7 +10,7 @@ import { mergeRegister } from "@lexical/utils";
 import { useEffect } from "react";
 import { Note } from "../api";
 
-export function indentOutdent(direction: "indent" | "outdent") {
+function indentOutdent(direction: "indent" | "outdent") {
   const selection = $getSelection();
 
   if (!$isRangeSelection(selection)) {
@@ -29,7 +29,7 @@ export function indentOutdent(direction: "indent" | "outdent") {
   return true;
 }
 
-export default function IndentationPlugin() {
+export function IndentationPlugin() {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {

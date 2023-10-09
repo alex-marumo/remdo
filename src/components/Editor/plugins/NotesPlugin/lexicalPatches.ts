@@ -1,4 +1,4 @@
-import { NotesState, Note } from "./api";
+import { NotesState, Note } from "@/components/Editor/api";
 import { patch } from "@/utils";
 import { $isListNode, ListItemNode, ListNode } from "@lexical/list";
 //import * as lexicalList from "@lexical/list";
