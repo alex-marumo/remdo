@@ -1,7 +1,7 @@
 import { getDataPath } from "../common";
-import Editor from "@/components/Editor";
-import { NotesLexicalEditor } from "@/components/Editor/lexical/NotesComposerContext";
-import { Note } from "@/components/Editor/lexical/api";
+import Editor from "@/components/Editor/Editor";
+import { NotesLexicalEditor } from "@/components/Editor/NotesComposerContext";
+import { Note } from "@/components/Editor/api";
 import { TestContext as ComponentTestContext } from "@/components/Editor/plugins/DevComponentTestPlugin";
 import { Layout } from "@/components/Layout";
 import {

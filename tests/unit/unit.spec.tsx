@@ -1,6 +1,6 @@
 //TODO refactor using loadEditorState
 import { debug } from "./common";
-import { Note, NotesState } from "@/components/Editor/lexical/api";
+import { Note, NotesState } from "@/components/Editor/api";
 import { $isListNode, $isListItemNode } from "@lexical/list";
 import { $createTextNode, $getRoot, $setSelection, ElementNode } from "lexical";
 import { describe, it, expect, beforeEach } from "vitest";

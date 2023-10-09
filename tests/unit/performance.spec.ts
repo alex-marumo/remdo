@@ -1,5 +1,5 @@
 import { createChildren } from "./common";
-import { Note } from "@/components/Editor/lexical/api";
+import { Note } from "@/components/Editor/api";
 import { $getRoot, $createTextNode } from "lexical";
 import { it } from "vitest";
 

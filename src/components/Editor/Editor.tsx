@@ -22,7 +22,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import { WebsocketProvider } from "y-websocket";
 import { Doc } from "yjs";
-import { applyNodePatches } from "./lexical/nodes";
+import { applyNodePatches } from "./nodes";
 import { DevComponentTestPlugin } from "./plugins/DevComponentTestPlugin";
 import { DevToolbarPlugin } from "./plugins/DevToolbarPlugin";
 import IndentationPlugin from "./plugins/IndentationPlugin";

@@ -9,8 +9,8 @@ import {
   NOTES_FOCUS_COMMAND,
   NOTES_SET_FOLD_LEVEL_COMMAND,
 } from "../commands";
-import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
-import { getNotesFromSelection, Note } from "../lexical/api";
+import { useNotesLexicalComposerContext } from "../NotesComposerContext";
+import { getNotesFromSelection } from "../api";
 import { getOffsetPosition } from "@/utils";
 import { INSERT_ORDERED_LIST_COMMAND } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
@@ -25,7 +25,6 @@ import {
   KEY_ESCAPE_COMMAND,
 } from "lexical";
 import React, {
-  useCallback,
   useEffect,
   useMemo,
   useRef,

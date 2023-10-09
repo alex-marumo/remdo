@@ -1,4 +1,4 @@
-import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
+import { useNotesLexicalComposerContext } from "../NotesComposerContext";
 import TreeViewPlugin from "@lexical/playground/plugins/TreeViewPlugin";
 import { mergeRegister } from "@lexical/utils";
 import { CONNECTED_COMMAND, TOGGLE_CONNECT_COMMAND } from "@lexical/yjs";

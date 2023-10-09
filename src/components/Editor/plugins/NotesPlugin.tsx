@@ -3,9 +3,9 @@ import {
   NOTES_SET_FOLD_LEVEL_COMMAND,
   NOTES_TOGGLE_FOLD_COMMAND,
 } from "../commands";
-import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
-import { Note, NotesState } from "../lexical/api";
-import { $fixRoot, $isTargetWithinDecorator } from "../lexical/utils";
+import { useNotesLexicalComposerContext } from "../NotesComposerContext";
+import { Note, NotesState } from "../api";
+import { $fixRoot, $isTargetWithinDecorator } from "../utils";
 import { Navigation } from "./NavigationPlugin";
 import { NoteControlsPlugin } from "./NoteControlsPlugin";
 import "./NotesPlugin.scss";

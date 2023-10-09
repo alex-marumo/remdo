@@ -1,7 +1,7 @@
 import "./App.scss";
 import { Demo } from "./components/Demo";
 import { Layout } from "./components/Layout";
-import Editor from "@/components/Editor";
+import Editor from "@/components/Editor/Editor";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";

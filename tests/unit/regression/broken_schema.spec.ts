@@ -1,5 +1,5 @@
 import "../common";
-import { Note } from "@/components/Editor/lexical/api";
+import { Note } from "@/components/Editor/api";
 import { getActiveEditorState } from "@lexical/LexicalUpdates";
 import { $isListItemNode } from "@lexical/list";
 import { $isTextNode } from "lexical";

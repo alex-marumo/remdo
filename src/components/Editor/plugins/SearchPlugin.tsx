@@ -4,8 +4,8 @@ import {
   NOTES_SEARCH_COMMAND,
   NOTES_MOVE_COMMAND,
 } from "../commands";
-import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
-import { Note, NotesState } from "../lexical/api";
+import { useNotesLexicalComposerContext } from "../NotesComposerContext";
+import { Note, NotesState } from "../api";
 import { getOffsetPosition } from "@/utils";
 import { mergeRegister } from "@lexical/utils";
 import {

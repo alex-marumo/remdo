@@ -1,7 +1,7 @@
 //TODO add tests
 import { NOTES_OPEN_QUICK_MENU_COMMAND } from "../commands";
-import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
-import { Note } from "../lexical/api";
+import { useNotesLexicalComposerContext } from "../NotesComposerContext";
+import { Note } from "../api";
 import { RemdoNodeEventPlugin } from "./RemdoNodeEventPlugin";
 import { getOffsetPosition, isBeforeEvent } from "@/utils";
 import { mergeRegister } from "@lexical/utils";

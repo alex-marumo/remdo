@@ -1,7 +1,7 @@
-import { COMMAND_PRIORITY_LOW } from "../../../../lexical/packages/lexical/src/LexicalEditor";
+import { COMMAND_PRIORITY_LOW } from "lexical";
 import { NOTES_FOCUS_COMMAND } from "../commands";
-import { useNotesLexicalComposerContext } from "../lexical/NotesComposerContext";
-import { Note, NotesState } from "../lexical/api";
+import { useNotesLexicalComposerContext } from "../NotesComposerContext";
+import { Note, NotesState } from "../api";
 import { isBeforeEvent } from "@/utils";
 import { ListItemNode } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
@@ -9,11 +9,7 @@ import { $getNearestNodeFromDOMNode } from "lexical";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Breadcrumb from "react-bootstrap/Breadcrumb";
 import Dropdown from "react-bootstrap/Dropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
-import Nav from "react-bootstrap/Nav";
-import NavDropdown from "react-bootstrap/NavDropdown";
-import Navbar from "react-bootstrap/Navbar";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export function Navigation({ anchorElement, documentID }) {
   const [editor] = useNotesLexicalComposerContext();
