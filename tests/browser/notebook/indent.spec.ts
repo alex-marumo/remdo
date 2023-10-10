@@ -49,3 +49,15 @@ test("indent outdent with children", async ({ page, notebook }) => {
   await page.keyboard.press("Shift+Tab");
   expect(await notebook.html()).toMatchSnapshot("base");
 });
+
+test("tab not at the beginning", async ({ page, notebook }) => {
+  await notebook.load("flat");
+  await notebook.clickEndOfNote("note1");
+  expect(await notebook.html()).toMatchSnapshot("note1 indented");
+  await page.keyboard.press("Tab");
+  await notebook.clickEndOfNote("note2");
+  await page.keyboard.press("ArrowLeft");
+  await page.keyboard.press("Tab");
+  expect(await notebook.html()).toMatchSnapshot("note2 indented");
+});
+

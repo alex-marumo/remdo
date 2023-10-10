@@ -1,50 +1,39 @@
+import { Note } from "../api";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
   $getSelection,
   $isRangeSelection,
-  COMMAND_PRIORITY_CRITICAL,
-  INDENT_CONTENT_COMMAND,
-  OUTDENT_CONTENT_COMMAND,
+  COMMAND_PRIORITY_LOW,
+  KEY_TAB_COMMAND,
 } from "lexical";
-import { mergeRegister } from "@lexical/utils";
 import { useEffect } from "react";
-import { Note } from "../api";
 
-function indentOutdent(direction: "indent" | "outdent") {
+function handleTab(event: KeyboardEvent) {
   const selection = $getSelection();
 
   if (!$isRangeSelection(selection)) {
     return false;
   }
+  event.preventDefault();
 
   const nodesInSelection = selection.getNodes();
   const note = Note.from(nodesInSelection[0]);
-  if(direction === "indent") {
+  if (event.shiftKey) {
+    note.outdent();
+  } else {
     note.indent();
   }
-  else {
-    note.outdent();
-  }
-  
+
   return true;
 }
 
 export function IndentationPlugin() {
   const [editor] = useLexicalComposerContext();
 
-  useEffect(() => {
-    return mergeRegister(
-      editor.registerCommand(
-        INDENT_CONTENT_COMMAND,
-        () => indentOutdent("indent"),
-        COMMAND_PRIORITY_CRITICAL
-      ),
-      editor.registerCommand(
-        OUTDENT_CONTENT_COMMAND,
-        () => indentOutdent("outdent"),
-        COMMAND_PRIORITY_CRITICAL
-      )
-    );
-  }, [editor]);
+  useEffect(
+    () =>
+      editor.registerCommand(KEY_TAB_COMMAND, handleTab, COMMAND_PRIORITY_LOW),
+    [editor]
+  );
   return null;
 }
