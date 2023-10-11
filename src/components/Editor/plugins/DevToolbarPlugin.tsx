@@ -38,12 +38,13 @@ function EditorStateInput() {
   );
 }
 
-export const DevToolbarPlugin = ({ editorBottom }) => {
+export const DevToolbarPlugin = ({ editorBottomRef }) => {
   const [connected, setConnected] = useState(false);
   const [editor] = useNotesLexicalComposerContext();
   const [showDebug, setShowDebugState] = useState(true);
   const [darkMode, setDarkMode] = useState(getDarkMode());
   const [showEditorStateInput, setShowEditorStateInput] = useState(false);
+  const editorBottom = editorBottomRef.current;
 
   useEffect(() => {
     //the idea is to use it in browser console

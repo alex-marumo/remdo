@@ -28,10 +28,8 @@ import {
   $getNodeByKey,
 } from "lexical";
 import { COMMAND_PRIORITY_CRITICAL } from "lexical";
-import PropTypes from "prop-types";
 import { useEffect, useCallback } from "react";
 import React from "react";
-import { createPortal } from "react-dom";
 import { ListNode } from "@lexical/list";
 import { TextNode } from "lexical";
 import { applyNodePatches } from "./lexicalPatches";
@@ -40,7 +38,7 @@ applyNodePatches(TextNode);
 applyNodePatches(ListNode);
 applyNodePatches(ListItemNode);
 
-export function NotesPlugin({ anchorElement, documentID }) {
+export function NotesPlugin({ anchorRef, documentID }) {
   const [editor] = useNotesLexicalComposerContext();
 
   const handleReorder = useCallback(
@@ -234,13 +232,8 @@ export function NotesPlugin({ anchorElement, documentID }) {
 
   return (
     <>
-      <Navigation anchorElement={anchorElement} documentID={documentID} />
+      <Navigation anchorRef={anchorRef} documentID={documentID} />
       <SearchPlugin />
-      {createPortal(<NoteControlsPlugin />, anchorElement)}
     </>
   );
 }
-
-NotesPlugin.propTypes = {
-  anchorElement: PropTypes.object.isRequired,
-};

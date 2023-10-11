@@ -11,7 +11,7 @@ import Breadcrumb from "react-bootstrap/Breadcrumb";
 import Dropdown from "react-bootstrap/Dropdown";
 import { useNavigate, useParams } from "react-router-dom";
 
-export function Navigation({ anchorElement, documentID }) {
+export function Navigation({ anchorRef, documentID }) {
   const [editor] = useNotesLexicalComposerContext();
   const navigate = useNavigate();
   const locationParams = useParams();
@@ -67,12 +67,12 @@ export function Navigation({ anchorElement, documentID }) {
       navigate(`/note/${key}`);
     }
 
-    anchorElement?.addEventListener("click", onClick);
+    anchorRef?.current?.addEventListener("click", onClick);
 
     return () => {
-      anchorElement?.removeEventListener("click", onClick);
+      anchorRef?.current?.removeEventListener("click", onClick);
     };
-  }, [anchorElement, editor, navigate]);
+  }, [anchorRef, editor, navigate]);
 
   useEffect(() => {
     return mergeRegister(

@@ -3,6 +3,7 @@ import { editorConfig } from "./config";
 import { DevComponentTestPlugin } from "./plugins/DevComponentTestPlugin";
 import { DevToolbarPlugin } from "./plugins/DevToolbarPlugin";
 import { IndentationPlugin } from "./plugins/IndentationPlugin";
+import { NoteControlsPlugin } from "./plugins/NoteControlsPlugin";
 import NotesPlugin from "./plugins/NotesPlugin";
 import { QuickMenuPlugin } from "./plugins/QuickMenuPlugin";
 import { RemdoAutoLinkPlugin } from "./plugins/RemdoAutoLinkPlugin";
@@ -20,43 +21,32 @@ import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
-import { useState } from "react";
-import React from "react";
+import React, { useRef } from "react";
 import { useLocation } from "react-router-dom";
 
 export default function Editor() {
-  const [floatingAnchorElem, setFloatingAnchorElem] = useState(null);
-  const [editorBottom, setEditorBottom] = useState(null);
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const documentID = params.get("documentID") || "main";
-
-  const onRef = (_floatingAnchorElem: HTMLElement) => {
-    if (_floatingAnchorElem !== null) {
-      setFloatingAnchorElem(_floatingAnchorElem);
-    }
-  };
+  const editorContainerRef = useRef();
+  const editorBottomRef = useRef();
 
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div className="editor-container editor-shell">
-        <DevToolbarPlugin editorBottom={editorBottom} />
-        {floatingAnchorElem && (
-          <NotesPlugin
-            anchorElement={floatingAnchorElem}
-            documentID={documentID}
-          />
-        )}
+        <DevToolbarPlugin editorBottomRef={editorBottomRef} />
         <QuickMenuPlugin />
+        <NotesPlugin anchorRef={editorContainerRef} documentID={documentID} />
         <RichTextPlugin
           contentEditable={
-            <div className="editor" ref={onRef}>
+            <div className="editor" ref={editorContainerRef}>
               <ContentEditable className="editor-input form-control" />
             </div>
           }
           placeholder={<div />}
           ErrorBoundary={LexicalErrorBoundary}
         />
+        <NoteControlsPlugin anchorRef={editorContainerRef} />
         <DevComponentTestPlugin />
         <FloatingTextFormatToolbarPlugin />
         <ClearEditorPlugin />
@@ -75,7 +65,7 @@ export default function Editor() {
             shouldBootstrap={true}
           />
         )}
-        <div id="editor-bottom" ref={setEditorBottom} />
+        <div id="editor-bottom" ref={editorBottomRef} />
       </div>
     </LexicalComposer>
   );

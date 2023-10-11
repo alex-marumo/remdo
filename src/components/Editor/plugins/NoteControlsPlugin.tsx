@@ -1,7 +1,7 @@
 //TODO add tests
-import { NOTES_OPEN_QUICK_MENU_COMMAND } from "../commands";
 import { useNotesLexicalComposerContext } from "../NotesComposerContext";
 import { Note } from "../api";
+import { NOTES_OPEN_QUICK_MENU_COMMAND } from "../commands";
 import { RemdoNodeEventPlugin } from "./RemdoNodeEventPlugin";
 import { getOffsetPosition, isBeforeEvent } from "@/utils";
 import { mergeRegister } from "@lexical/utils";
@@ -13,18 +13,22 @@ import {
   RootNode,
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { MouseEvent, useCallback, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
-export function NoteControlsPlugin() {
+export function NoteControlsPlugin({ anchorRef }) {
   const [editor] = useNotesLexicalComposerContext();
   const [menuStyle, setMenuStyle] = useState(null);
   const [noteElement, setNoteElement] = useState(null);
   const [noteFolded, setNoteFolded] = useState(false);
   const [noteHasChildren, setNoteHasChildren] = useState(false);
 
-  const menuClick = (e) => {
+  const menuClick = (e: MouseEvent) => {
     e.preventDefault();
-    const { left, top, height } = getOffsetPosition(editor, e.target);
+    const { left, top, height } = getOffsetPosition(
+      editor,
+      e.target as HTMLElement
+    );
     editor.update(() => {
       editor.dispatchCommand(NOTES_OPEN_QUICK_MENU_COMMAND, {
         left,
@@ -67,7 +71,7 @@ export function NoteControlsPlugin() {
     [editor, updateNoteState]
   );
 
-  const toggleFold = (event) => {
+  const toggleFold = (event: MouseEvent) => {
     event.preventDefault();
     editor.fullUpdate(() => {
       const note = Note.from($getNearestNodeFromDOMNode(noteElement));
@@ -89,13 +93,13 @@ export function NoteControlsPlugin() {
         parseFloat(editorComputedStyle.paddingRight) -
         parseFloat(editorComputedStyle.borderRightWidth) -
         1,
-      event.y
+      event.clientY
     ) as HTMLElement;
     if (li && li.tagName.toLowerCase() === "li") {
       //TODO if li doesn't change we don't have to do anything, right?
       noteElement?.classList.remove("note-hovered");
       setMenuPosition(li);
-      if(isBeforeEvent(li, event)){
+      if (isBeforeEvent(li, event)) {
         li.classList.add("note-hovered");
       }
     }
@@ -121,33 +125,46 @@ export function NoteControlsPlugin() {
     );
   }, [editor, setMenuPosition]);
 
+  useEffect(() => {
+    //can't be handled via RemdoNodeEventPlugin as anchor is out of the editor
+    const handleMouseLeave = () => setMenuStyle(null);
+    const anchor = anchorRef?.current;
+
+    anchor?.addEventListener("mouseleave", handleMouseLeave);
+    return () => anchor?.removeEventListener("mouseleave", handleMouseLeave);
+  }, [anchorRef]);
+
   return (
-    <>
-      <RemdoNodeEventPlugin
-        nodeType={RootNode}
-        eventType={"mousemove"}
-        eventListener={rootMouseMove}
-      />
-      {menuStyle && (
-        <div id="hovered-note-menu" style={menuStyle}>
-          {noteHasChildren && (
+    anchorRef?.current &&
+    createPortal(
+      <>
+        <RemdoNodeEventPlugin
+          nodeType={RootNode}
+          eventType={"mousemove"}
+          eventListener={rootMouseMove}
+        />
+        {menuStyle && (
+          <div id="hovered-note-menu" style={menuStyle}>
+            {noteHasChildren && (
+              <a
+                href="/"
+                onClick={toggleFold}
+                className="text-decoration-none link-secondary"
+              >
+                <i className={"bi bi-" + (noteFolded ? "plus" : "dash")}></i>
+              </a>
+            )}
             <a
               href="/"
-              onClick={toggleFold}
+              onClick={menuClick}
               className="text-decoration-none link-secondary"
             >
-              <i className={"bi bi-" + (noteFolded ? "plus" : "dash")}></i>
+              <i className="bi bi-list"></i>
             </a>
-          )}
-          <a
-            href="/"
-            onClick={menuClick}
-            className="text-decoration-none link-secondary"
-          >
-            <i className="bi bi-list"></i>
-          </a>
-        </div>
-      )}
-    </>
+          </div>
+        )}
+      </>,
+      anchorRef.current
+    )
   );
 }
