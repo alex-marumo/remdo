@@ -281,6 +281,9 @@ export default defineConfig({
     hmr: {
       port: getPort({ page: 3003, vitest_preview: 3004, playwright: null }),
     },
+    watch: {
+      ignored: ["data/**"],
+    }
   },
 
   define: {

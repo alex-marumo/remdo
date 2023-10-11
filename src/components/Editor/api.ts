@@ -11,7 +11,6 @@ import {
 import { ListNode, ListItemNode as LexicalListItemNode } from "@lexical/list";
 import { findNearestListItemNode } from "@lexical/list/utils";
 import {
-  ElementNode,
   $getNodeByKey,
   $isTextNode,
   $createTextNode,
@@ -212,8 +211,8 @@ export class Note {
     return [
       ...this.lexicalNode
         .getChildren()
-        .filter(child => $isTextNode(child))
-        .map(child => child.getTextContent()),
+        .filter((child) => $isTextNode(child))
+        .map((child) => child.getTextContent()),
     ].join("");
   }
 
@@ -327,11 +326,15 @@ export class Note {
   }
 
   set checked(value) {
-    !this.isRoot && this._walk(note => note.lexicalNode.setChecked(value));
+    !this.isRoot && this._walk((note) => note.lexicalNode.setChecked(value));
   }
 
   toggleChecked() {
-    !this.isRoot && this._walk(note => note.lexicalNode.toggleChecked());
+    if(this.isRoot) {
+      return;
+    } 
+    const checked = !this.checked;
+    this._walk((note) => note.lexicalNode.setChecked(checked));
   }
 
   get prevSibling() {
@@ -343,7 +346,6 @@ export class Note {
     const sibling = this.lexicalNode.getNextSibling();
     return sibling ? Note.from(sibling) : null;
   }
-
 
   _walk(
     walker: (node: Note, currentLevel: number) => void,

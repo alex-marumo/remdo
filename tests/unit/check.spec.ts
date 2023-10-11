@@ -1,4 +1,5 @@
-import "./common"; //imported for side effects
+import "./common";
+//imported for side effects
 import { it } from "vitest";
 
 it("check/uncheck", async ({ load, editor, expect, lexicalUpdate }) => {
@@ -23,7 +24,12 @@ it("toggle check", async ({ load, editor, expect, lexicalUpdate }) => {
   await expect(editor).toMatchFileSnapshot("base.yml");
 });
 
-it("check/uncheck recursively", async ({ load, editor, expect, lexicalUpdate }) => {
+it("check/uncheck recursively", async ({
+  load,
+  editor,
+  expect,
+  lexicalUpdate,
+}) => {
   const { note0, note00 } = load("basic");
   await expect(editor).toMatchFileSnapshot("base.yml");
   lexicalUpdate(() => {
@@ -46,7 +52,12 @@ it("check/uncheck recursively", async ({ load, editor, expect, lexicalUpdate }) 
   await expect(editor).toMatchFileSnapshot("base.yml");
 });
 
-it("toggle check recursively", async ({ load, editor, expect, lexicalUpdate }) => {
+it("toggle check recursively", async ({
+  load,
+  editor,
+  expect,
+  lexicalUpdate,
+}) => {
   const { note0, note00 } = load("basic");
   await expect(editor).toMatchFileSnapshot("base.yml");
   lexicalUpdate(() => {
@@ -67,4 +78,25 @@ it("toggle check recursively", async ({ load, editor, expect, lexicalUpdate }) =
     expect(note00.checked).toBeFalsy();
   });
   await expect(editor).toMatchFileSnapshot("base.yml");
+});
+
+it("check/uncheck recursively mixed", async ({
+  load,
+  expect,
+  lexicalUpdate,
+}) => {
+  const { note0, note00 } = load("basic");
+  lexicalUpdate(() => {
+    note00.checked = true;
+    expect(note0.checked).toBeFalsy();
+    expect(note00.checked).toBeTruthy();
+
+    note0.toggleChecked();
+    expect(note0.checked).toBeTruthy();
+    expect(note00.checked).toBeTruthy();
+
+    note0.toggleChecked();
+    expect(note0.checked).toBeFalsy();
+    expect(note00.checked).toBeFalsy();
+  });
 });
