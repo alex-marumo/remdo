@@ -297,6 +297,7 @@
                         "version": 1,
                         "children": [
                           {
+                            "checked": true,
                             "direction": "ltr",
                             "folded": false,
                             "format": "",
@@ -317,6 +318,7 @@
                             ]
                           },
                           {
+                            "checked": true,
                             "direction": "ltr",
                             "folded": false,
                             "format": "",
@@ -337,6 +339,7 @@
                             ]
                           },
                           {
+                            "checked": true,
                             "direction": "ltr",
                             "folded": false,
                             "format": "",
@@ -357,6 +360,7 @@
                             ]
                           },
                           {
+                            "checked": true,
                             "direction": "ltr",
                             "folded": false,
                             "format": "",
@@ -396,6 +400,7 @@
                                 "version": 1,
                                 "children": [
                                   {
+                                    "checked": true,
                                     "direction": "ltr",
                                     "folded": false,
                                     "format": "",
@@ -440,6 +445,7 @@
                             ]
                           },
                           {
+                            "checked": true,
                             "direction": "ltr",
                             "folded": false,
                             "format": "",
@@ -460,6 +466,7 @@
                             ]
                           },
                           {
+                            "checked": true,
                             "direction": "ltr",
                             "folded": false,
                             "format": "",
@@ -480,6 +487,7 @@
                             ]
                           },
                           {
+                            "checked": true,
                             "direction": "ltr",
                             "folded": false,
                             "format": "",
@@ -500,6 +508,7 @@
                             ]
                           },
                           {
+                            "checked": true,
                             "direction": "ltr",
                             "folded": false,
                             "format": "",
@@ -520,6 +529,7 @@
                             ]
                           },
                           {
+                            "checked": true,
                             "direction": "ltr",
                             "folded": false,
                             "format": "",
@@ -533,7 +543,7 @@
                                 "format": 0,
                                 "mode": "normal",
                                 "style": "",
-                                "text": "Note as a component to auto update using listener",
+                                "text": "moving note with children",
                                 "type": "text",
                                 "version": 1
                               }
@@ -554,26 +564,6 @@
                                 "format": 0,
                                 "mode": "normal",
                                 "style": "",
-                                "text": "moving note with children",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 12,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
                                 "text": "reloading page on data/ change",
                                 "type": "text",
                                 "version": 1
@@ -581,12 +571,13 @@
                             ]
                           },
                           {
+                            "checked": true,
                             "direction": "ltr",
                             "folded": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
-                            "value": 13,
+                            "value": 12,
                             "version": 1,
                             "children": [
                               {
@@ -601,12 +592,13 @@
                             ]
                           },
                           {
+                            "checked": true,
                             "direction": "ltr",
                             "folded": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
-                            "value": 14,
+                            "value": 13,
                             "version": 1,
                             "children": [
                               {
@@ -621,92 +613,13 @@
                             ]
                           },
                           {
+                            "checked": true,
                             "direction": "ltr",
                             "folded": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
-                            "value": 15,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "create lint test case",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 16,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "consider changing rootElement to ul/li instead of adjusting schema in rootTransform",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 17,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "fail all kinds of tests if there is an exception in browser's console",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 18,
-                            "version": 1,
-                            "children": [
-                              {
-                                "detail": 0,
-                                "format": 0,
-                                "mode": "normal",
-                                "style": "",
-                                "text": "add a warning about jsdom/querySelectorAll, potentially using rewire",
-                                "type": "text",
-                                "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 19,
+                            "value": 14,
                             "version": 1,
                             "children": [
                               {
@@ -777,7 +690,7 @@
                                 "format": 0,
                                 "mode": "normal",
                                 "style": "",
-                                "text": "Change document without reloading the whole page  ",
+                                "text": "fail all kinds of tests if there is an exception in browser's console",
                                 "type": "text",
                                 "version": 1
                               }
@@ -797,7 +710,7 @@
                                 "format": 0,
                                 "mode": "normal",
                                 "style": "",
-                                "text": "Auto save all document whenever server is running",
+                                "text": "Note as a component to auto update using listener",
                                 "type": "text",
                                 "version": 1
                               }
@@ -817,7 +730,7 @@
                                 "format": 0,
                                 "mode": "normal",
                                 "style": "",
-                                "text": "create lint test case",
+                                "text": "Change document without reloading the whole page  ",
                                 "type": "text",
                                 "version": 1
                               }
@@ -837,7 +750,7 @@
                                 "format": 0,
                                 "mode": "normal",
                                 "style": "",
-                                "text": "consider changing rootElement to ul/li instead of adjusting schema in rootTransform",
+                                "text": "Auto save all document whenever server is running",
                                 "type": "text",
                                 "version": 1
                               }
@@ -857,7 +770,7 @@
                                 "format": 0,
                                 "mode": "normal",
                                 "style": "",
-                                "text": "fail all kinds of tests if there is an exception in browser's console",
+                                "text": "create lint test case",
                                 "type": "text",
                                 "version": 1
                               }
@@ -877,7 +790,7 @@
                                 "format": 0,
                                 "mode": "normal",
                                 "style": "",
-                                "text": "add a warning about jsdom/querySelectorAll, potentially using rewire",
+                                "text": "consider changing rootElement to ul/li instead of adjusting schema in rootTransform",
                                 "type": "text",
                                 "version": 1
                               }
@@ -897,7 +810,7 @@
                                 "format": 0,
                                 "mode": "normal",
                                 "style": "",
-                                "text": "checked items are not exported correctly to Markdown",
+                                "text": "fail all kinds of tests if there is an exception in browser's console",
                                 "type": "text",
                                 "version": 1
                               }
@@ -910,6 +823,46 @@
                             "indent": 2,
                             "type": "listitem",
                             "value": 8,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "add a warning about jsdom/querySelectorAll, potentially using rewire",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "folded": false,
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 9,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "checked items are not exported correctly to Markdown",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
+                            "direction": "ltr",
+                            "folded": false,
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 10,
                             "version": 1,
                             "children": [
                               {
@@ -947,13 +900,33 @@
                             ]
                           },
                           {
+                            "direction": "ltr",
+                            "folded": false,
+                            "format": "",
+                            "indent": 2,
+                            "type": "listitem",
+                            "value": 10,
+                            "version": 1,
+                            "children": [
+                              {
+                                "detail": 0,
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "text": "add a warning about jsdom/querySelectorAll, potentially using rewire",
+                                "type": "text",
+                                "version": 1
+                              }
+                            ]
+                          },
+                          {
                             "checked": true,
                             "direction": "ltr",
                             "folded": false,
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
-                            "value": 8,
+                            "value": 11,
                             "version": 1,
                             "children": [
                               {
@@ -974,7 +947,7 @@
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
-                            "value": 9,
+                            "value": 12,
                             "version": 1,
                             "children": [
                               {
@@ -995,7 +968,7 @@
                             "format": "",
                             "indent": 2,
                             "type": "listitem",
-                            "value": 10,
+                            "value": 13,
                             "version": 1,
                             "children": [
                               {

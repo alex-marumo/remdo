@@ -16,17 +16,14 @@
         - tab/shift tab works correctly only at the very beginning of a note
         - unit tests cause browser to disconnect, fix reconnecting
         - marking node with children as don't should toggle children
-        - Note as a component to auto update using listener
         - moving note with children
         - reloading page on data/ change
         - marking notes as checked
         - folding all nodes up to a specific level
-        - create lint test case
-        - consider changing rootElement to ul/li instead of adjusting schema in rootTransform
-        - fail all kinds of tests if there is an exception in browser's console
-        - add a warning about jsdom/querySelectorAll, potentially using rewire
         - switch to the latest stable lexical version
     - Features
+        - fail all kinds of tests if there is an exception in browser's console
+        - Note as a component to auto update using listener
         - Change document without reloading the whole page  
         - Auto save all document whenever server is running
         - create lint test case
@@ -35,6 +32,7 @@
         - add a warning about jsdom/querySelectorAll, potentially using rewire
         - checked items are not exported correctly to Markdown
             - same about folded items
+        - add a warning about jsdom/querySelectorAll, potentially using rewire
         - marking notes as checked
         - folding all nodes up to a specific level
         - switch to the latest stable lexical version
