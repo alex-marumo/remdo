@@ -25,8 +25,8 @@ it("reorder flat", async ({ load, editor, expect, lexicalUpdate }) => {
   await expect(editor).toMatchFileSnapshot("base.yml");
 });
 
-it.only("reorder tree", async ({ load, editor, expect, lexicalUpdate }) => {
-  const { note0, subNote0 } = load("tree");
+it("reorder tree", async ({ load, editor, expect, lexicalUpdate }) => {
+  const { note0 } = load("tree");
   await expect(editor).toMatchFileSnapshot("base.yml");
 
   lexicalUpdate(() => note0.moveDown());
