@@ -144,7 +144,7 @@ export class Note {
     return this._lexicalKey;
   }
 
-  get parent() {
+  get parent(): Note {
     if (this.isRoot) {
       return null;
     }
@@ -260,44 +260,54 @@ export class Note {
 
   moveDown() {
     const lexicalNode = this.lexicalNode;
-    let nodeWithChildren = null;
-    let targetNode: ListItemNode = lexicalNode.getNextSibling();
-    if (!targetNode) {
-      return;
-    }
-    if (isNestedLI(targetNode)) {
-      nodeWithChildren = targetNode;
-      targetNode = targetNode.getNextSibling();
-      if (!targetNode) {
-        return;
-      }
-    }
+    const childrenNode = this.hasChildren ? lexicalNode.getNextSibling() : null;
+    let targetNode = (childrenNode || lexicalNode).getNextSibling();
     {
-      const targetNext: ListItemNode = targetNode.getNextSibling();
+      //if targetNode has children, then instert after their node
+      const targetNext = targetNode?.getNextSibling() as ListItemNode;
       targetNode =
         targetNext && isNestedLI(targetNext) ? targetNext : targetNode;
     }
-    targetNode.insertAfter(lexicalNode);
-    nodeWithChildren && lexicalNode.insertAfter(nodeWithChildren);
+    if (targetNode) {
+      //moved node has next sibling node, let's swap them
+      targetNode.insertAfter(lexicalNode);
+    } else {
+      //moved node is the last chilld of it's parent, so let's try to move it to parent's next sibling
+      const newParent = this.parent.nextSibling;
+      if (!newParent) return;
+      const oldParentListNode = this.parent._listNode();
+      newParent._listNode(true).splice(0, 0, [lexicalNode]);
+      if (oldParentListNode.getChildrenSize() === 0) {
+        //remove empty list node and it's parent (empty li)
+        oldParentListNode.getParentOrThrow().remove();
+      }
+    }
+    childrenNode && lexicalNode.insertAfter(childrenNode);
   }
 
   moveUp() {
     const lexicalNode = this.lexicalNode;
-    let targetNode: ListItemNode = lexicalNode.getPreviousSibling();
-    if (!targetNode) {
-      return;
-    }
-    if (isNestedLI(targetNode)) {
-      targetNode = targetNode.getPreviousSibling();
-      if (!targetNode) {
-        return;
+    const childrenNode = this.hasChildren ? lexicalNode.getNextSibling() : null;
+    let targetNode = lexicalNode.getPreviousSibling() as ListItemNode;
+
+    if (targetNode) {
+      //previous node exists, let's insert before it
+      targetNode = isNestedLI(targetNode)
+        ? targetNode.getPreviousSibling()
+        : targetNode;
+      targetNode.insertBefore(lexicalNode);
+    } else {
+      //previous node doesn't exist, let's try to move it to parent's prev sibling
+      const newParent = this.parent.prevSibling;
+      if (!newParent) return;
+      const oldParentListNode = this.parent._listNode();
+      newParent._listNode(true).append(lexicalNode);
+      if (oldParentListNode.getChildrenSize() === 0) {
+        //remove empty list node and it's parent (empty li)
+        oldParentListNode.getParentOrThrow().remove();
       }
     }
-    const listNode = this._listNode();
-    targetNode.insertBefore(lexicalNode);
-    if (listNode) {
-      lexicalNode.insertAfter(listNode.getParentOrThrow());
-    }
+    childrenNode && lexicalNode.insertAfter(childrenNode);
   }
 
   focus() {
@@ -330,20 +340,24 @@ export class Note {
   }
 
   toggleChecked() {
-    if(this.isRoot) {
+    if (this.isRoot) {
       return;
-    } 
+    }
     const checked = !this.checked;
     this._walk((note) => note.lexicalNode.setChecked(checked));
   }
 
   get prevSibling() {
+    //this methos is not symetric with nextSibling, but that's fine
+    //the reason is that Note.from(nestedLI) will return note from parent node
     const sibling = this.lexicalNode.getPreviousSibling();
     return sibling ? Note.from(sibling) : null;
   }
 
   get nextSibling() {
-    const sibling = this.lexicalNode.getNextSibling();
+    const sibling = this.hasChildren
+      ? this.lexicalNode.getNextSibling()?.getNextSibling()
+      : this.lexicalNode.getNextSibling();
     return sibling ? Note.from(sibling) : null;
   }
 

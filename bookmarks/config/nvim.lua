@@ -1,1 +1,0 @@
-/home/piotr/.config/nvim/init.lua

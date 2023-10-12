@@ -1,4 +1,5 @@
 import "./common";
+import { Note } from "@/components/Editor/api";
 import { it } from "vitest";
 
 it("reorder flat", async ({ load, editor, expect, lexicalUpdate }) => {
@@ -24,7 +25,7 @@ it("reorder flat", async ({ load, editor, expect, lexicalUpdate }) => {
   await expect(editor).toMatchFileSnapshot("base.yml");
 });
 
-it("reorder tree", async ({ load, editor, expect, lexicalUpdate }) => {
+it.only("reorder tree", async ({ load, editor, expect, lexicalUpdate }) => {
   const { note0, subNote0 } = load("tree");
   await expect(editor).toMatchFileSnapshot("base.yml");
 
@@ -39,10 +40,50 @@ it("reorder tree", async ({ load, editor, expect, lexicalUpdate }) => {
 
   lexicalUpdate(() => note0.moveUp()); //noop
   await expect(editor).toMatchFileSnapshot("base.yml");
+});
+
+it("change parent by moving up/down", async ({
+  load,
+  editor,
+  expect,
+  lexicalUpdate,
+}) => {
+  const { note0, subNote0, note1, subNote1 } = load("tree");
+  const children = (n: Note) => [...n.children].map((n) => n.lexicalKey);
+
+  await expect(editor).toMatchFileSnapshot("base.yml");
+
+  lexicalUpdate(() => {
+    expect(children(note0)).toEqual([subNote0.lexicalKey]);
+    expect(children(note1)).toEqual([subNote1.lexicalKey]);
+
+    subNote0.moveDown();
+    expect(children(note0)).toEqual([]);
+    expect(children(note1)).toEqual([subNote0.lexicalKey, subNote1.lexicalKey]);
+  });
+  await expect(editor).toMatchFileSnapshot("subNote0-down.yml");
+
+  lexicalUpdate(() => {
+    subNote0.moveUp();
+    expect(children(note0)).toEqual([subNote0.lexicalKey]);
+    expect(children(note1)).toEqual([subNote1.lexicalKey]);
+  });
+  await expect(editor).toMatchFileSnapshot("base.yml");
 
   lexicalUpdate(() => subNote0.moveUp()); //noop
   await expect(editor).toMatchFileSnapshot("base.yml");
 
-  lexicalUpdate(() => subNote0.moveDown()); //noop
+  lexicalUpdate(() => {
+    subNote1.moveUp();
+    expect(children(note0)).toEqual([subNote0.lexicalKey, subNote1.lexicalKey]);
+    expect(children(note1)).toEqual([]);
+  });
+  await expect(editor).toMatchFileSnapshot("subNote1-up.yml");
+
+  lexicalUpdate(() => {
+    subNote1.moveDown();
+    expect(children(note0)).toEqual([subNote0.lexicalKey]);
+    expect(children(note1)).toEqual([subNote1.lexicalKey]);
+  });
   await expect(editor).toMatchFileSnapshot("base.yml");
 });
