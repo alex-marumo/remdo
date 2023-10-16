@@ -15,19 +15,19 @@ import LexicalClickableLinkPlugin from "@lexical/react/LexicalClickableLinkPlugi
 import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
+import { NotesState } from "./api";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
-import React, { useRef } from "react";
+import { Binding } from "@lexical/yjs";
+import React, { useRef, useState } from "react";
+import Dropdown from "react-bootstrap/Dropdown";
 import { useLocation } from "react-router-dom";
 
-export default function Editor() {
-  const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const documentID = params.get("documentID") || "main";
+function LexicalEditor({ documentID }) {
   const editorContainerRef = useRef();
   const editorBottomRef = useRef();
 
@@ -68,5 +68,49 @@ export default function Editor() {
         <div id="editor-bottom" ref={editorBottomRef} />
       </div>
     </LexicalComposer>
+  );
+}
+
+export default function Editor() {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const [documentID, setDocumentID] = useState(params.get("documentID") || "main");
+
+  function onDocumentChange(e: React.MouseEvent, documentID: string) {
+    console.log(documentID, e);
+    e.preventDefault();
+
+    setDocumentID(documentID);
+
+    //const binding = globalThis.binding as Binding;
+    //binding.provider.emit("reload", documentID);
+    //Y.applyUpdate(binding, [
+    //console.log(binding);
+  }
+
+  const documents = NotesState.documents().map((document) => (
+    <Dropdown.Item
+      href={`?documentID=${document}`}
+      key={document}
+      onClick={(e) => {
+        onDocumentChange(e, document);
+      }}
+    >
+      {document}
+    </Dropdown.Item>
+  ));
+
+  return (
+    <div>
+      <Dropdown>
+        <Dropdown.Toggle variant="dark" size="sm" id="dropdown-basic">
+          {documentID}
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu variant="dark">{documents}</Dropdown.Menu>
+      </Dropdown>
+      {documentID}
+      <LexicalEditor documentID={documentID} key={documentID}/>
+    </div>
   );
 }

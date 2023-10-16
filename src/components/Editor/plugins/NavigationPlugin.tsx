@@ -1,14 +1,13 @@
-import { COMMAND_PRIORITY_LOW } from "lexical";
-import { NOTES_FOCUS_COMMAND } from "../commands";
 import { useNotesLexicalComposerContext } from "../NotesComposerContext";
-import { Note, NotesState } from "../api";
+import { Note } from "../api";
+import { NOTES_FOCUS_COMMAND } from "../commands";
 import { isBeforeEvent } from "@/utils";
 import { ListItemNode } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
+import { COMMAND_PRIORITY_LOW } from "lexical";
 import { $getNearestNodeFromDOMNode } from "lexical";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Breadcrumb from "react-bootstrap/Breadcrumb";
-import Dropdown from "react-bootstrap/Dropdown";
 import { useNavigate, useParams } from "react-router-dom";
 
 export function Navigation({ anchorRef, documentID }) {
@@ -34,7 +33,7 @@ export function Navigation({ anchorRef, documentID }) {
             [note, ...note.parents]
               .slice(0, -1) //skip root
               .reverse()
-              .map(p => ({
+              .map((p) => ({
                 key: p.lexicalNode.getKey(),
                 text: p.text,
               }))
@@ -76,7 +75,7 @@ export function Navigation({ anchorRef, documentID }) {
 
   useEffect(() => {
     return mergeRegister(
-      editor.registerMutationListener(ListItemNode, mutatedNodes => {
+      editor.registerMutationListener(ListItemNode, (mutatedNodes) => {
         const { noteID } = locationParams;
         if (
           //TODO re-check
@@ -109,25 +108,11 @@ export function Navigation({ anchorRef, documentID }) {
     )
   );
 
-  const documents = NotesState.documents().map(document => (
-    <Dropdown.Item href={`?documentID=${document}`} key={document}>
-      {document}
-    </Dropdown.Item>
-  ));
-
   //TODO https://react-bootstrap.github.io/components/dropdowns/#custom-dropdown-components
   return (
     <div>
       <Breadcrumb>
-        <Breadcrumb.Item linkAs="div">
-          <Dropdown>
-            <Dropdown.Toggle variant="dark" size="sm" id="dropdown-basic">
-              {documentID}
-            </Dropdown.Toggle>
-
-            <Dropdown.Menu variant="dark">{documents}</Dropdown.Menu>
-          </Dropdown>
-        </Breadcrumb.Item>
+        <Breadcrumb.Item linkAs="div">{documentID}</Breadcrumb.Item>
         {breadcrumbItems}
       </Breadcrumb>
     </div>
