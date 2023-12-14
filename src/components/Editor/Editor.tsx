@@ -1,3 +1,7 @@
+import {
+  DocumentSelectorProvider,
+  useDocumentSelector,
+} from "../DocumentSelector";
 import "./Editor.scss";
 import { editorConfig } from "./config";
 import { DevComponentTestPlugin } from "./plugins/DevComponentTestPlugin";
@@ -15,24 +19,21 @@ import LexicalClickableLinkPlugin from "@lexical/react/LexicalClickableLinkPlugi
 import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { NotesState } from "./api";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
-import { Binding } from "@lexical/yjs";
-import React, { useRef, useState } from "react";
-import Dropdown from "react-bootstrap/Dropdown";
-import { useLocation } from "react-router-dom";
+import React, { useRef } from "react";
 
-function LexicalEditor({ documentID }) {
+function LexicalEditor() {
   const editorContainerRef = useRef();
   const editorBottomRef = useRef();
+  const { documentID } = useDocumentSelector();
 
   return (
-    <LexicalComposer initialConfig={editorConfig}>
+    <LexicalComposer initialConfig={editorConfig} key={documentID}>
       <div className="editor-container editor-shell">
         <DevToolbarPlugin editorBottomRef={editorBottomRef} />
         <QuickMenuPlugin />
@@ -72,45 +73,9 @@ function LexicalEditor({ documentID }) {
 }
 
 export default function Editor() {
-  const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const [documentID, setDocumentID] = useState(params.get("documentID") || "main");
-
-  function onDocumentChange(e: React.MouseEvent, documentID: string) {
-    console.log(documentID, e);
-    e.preventDefault();
-
-    setDocumentID(documentID);
-
-    //const binding = globalThis.binding as Binding;
-    //binding.provider.emit("reload", documentID);
-    //Y.applyUpdate(binding, [
-    //console.log(binding);
-  }
-
-  const documents = NotesState.documents().map((document) => (
-    <Dropdown.Item
-      href={`?documentID=${document}`}
-      key={document}
-      onClick={(e) => {
-        onDocumentChange(e, document);
-      }}
-    >
-      {document}
-    </Dropdown.Item>
-  ));
-
   return (
-    <div>
-      <Dropdown>
-        <Dropdown.Toggle variant="dark" size="sm" id="dropdown-basic">
-          {documentID}
-        </Dropdown.Toggle>
-
-        <Dropdown.Menu variant="dark">{documents}</Dropdown.Menu>
-      </Dropdown>
-      {documentID}
-      <LexicalEditor documentID={documentID} key={documentID}/>
-    </div>
+    <DocumentSelectorProvider>
+      <LexicalEditor />
+    </DocumentSelectorProvider>
   );
 }

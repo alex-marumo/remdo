@@ -1,4 +1,5 @@
 import { useNotesLexicalComposerContext } from "../NotesComposerContext";
+import { useDebug } from "@/DebugContext";
 import TreeViewPlugin from "@lexical/playground/plugins/TreeViewPlugin";
 import { mergeRegister } from "@lexical/utils";
 import { CONNECTED_COMMAND, TOGGLE_CONNECT_COMMAND } from "@lexical/yjs";
@@ -41,9 +42,9 @@ function EditorStateInput() {
 export const DevToolbarPlugin = ({ editorBottomRef }) => {
   const [connected, setConnected] = useState(false);
   const [editor] = useNotesLexicalComposerContext();
-  const [showDebug, setShowDebugState] = useState(true);
   const [darkMode, setDarkMode] = useState(getDarkMode());
   const [showEditorStateInput, setShowEditorStateInput] = useState(false);
+  const { isDebugMode } = useDebug();
   const editorBottom = editorBottomRef.current;
 
   useEffect(() => {
@@ -55,7 +56,7 @@ export const DevToolbarPlugin = ({ editorBottomRef }) => {
     return mergeRegister(
       editor.registerCommand<boolean>(
         CONNECTED_COMMAND,
-        payload => {
+        (payload) => {
           const isConnected = payload;
           setConnected(isConnected);
           return false;
@@ -75,17 +76,10 @@ export const DevToolbarPlugin = ({ editorBottomRef }) => {
     });
   };
 
-  const toggleEditorStateInput = event => {
+  const toggleEditorStateInput = (event) => {
     event.preventDefault();
     setShowEditorStateInput(!showEditorStateInput);
   };
-
-  const toggleShowDebug = useCallback(() => {
-    setShowDebugState(!showDebug);
-    editor.update(() => {
-      editor.focus();
-    });
-  }, [editor, showDebug]);
 
   const toggleColorMode = useCallback(() => {
     document.documentElement.dataset.bsTheme = darkMode ? "light" : "dark";
@@ -93,7 +87,9 @@ export const DevToolbarPlugin = ({ editorBottomRef }) => {
   }, [darkMode]);
 
   return (
-    <div className="d-none d-lg-block">
+    isDebugMode && <div
+      className="d-none d-lg-block"
+    >
       <button
         type="button"
         className="btn btn-link float-end"
@@ -121,7 +117,13 @@ export const DevToolbarPlugin = ({ editorBottomRef }) => {
         Load State
       </button>
       <a
-        href={"http://"+location.hostname+":3000/?isCollab=true&collabEndpoint=ws://"+location.hostname+":1234"}
+        href={
+          "http://" +
+          location.hostname +
+          ":3000/?isCollab=true&collabEndpoint=ws://" +
+          location.hostname +
+          ":1234"
+        }
         target="_blank"
         rel="noreferrer"
         className="btn btn-link float-end"
@@ -143,11 +145,7 @@ export const DevToolbarPlugin = ({ editorBottomRef }) => {
       >
         Bundle stats
       </a>
-      <a
-        href="/yjs.html"
-        target="_blank"
-        className="btn btn-link float-end"
-      >
+      <a href="/yjs.html" target="_blank" className="btn btn-link float-end">
         Yjs
       </a>
       <a
@@ -158,19 +156,11 @@ export const DevToolbarPlugin = ({ editorBottomRef }) => {
         <IconPlaywright />
         Playwright Report
       </a>
-      <button
-        type="button"
-        className="btn btn-link float-end"
-        onClick={toggleShowDebug}
-      >
-        <i className="bi bi-bug-fill text-secondary"></i>
-        {showDebug ? "Hide Debug" : "Show Debug"}
-      </button>
       {editorBottom &&
         showEditorStateInput &&
         createPortal(<EditorStateInput />, editorBottom)}
       {editorBottom &&
-        showDebug &&
+        isDebugMode &&
         createPortal(<TreeViewPlugin />, editorBottom)}
       <button
         type="button"

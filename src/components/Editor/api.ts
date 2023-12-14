@@ -1,3 +1,4 @@
+import "lexical";
 import { LexicalNode } from "@lexical/LexicalNode";
 import { getActiveEditor, getActiveEditorState } from "@lexical/LexicalUpdates";
 import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
@@ -95,7 +96,7 @@ export class NotesState {
   }
 
   static documents(): string[] {
-    return (
+    return ["main"].concat(
       (import.meta as any).env.VITE_DOCUMENTS?.split(",").filter(Boolean) ?? []
     );
   }

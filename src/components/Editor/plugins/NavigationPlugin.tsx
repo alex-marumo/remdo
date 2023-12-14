@@ -1,6 +1,7 @@
 import { useNotesLexicalComposerContext } from "../NotesComposerContext";
 import { Note } from "../api";
 import { NOTES_FOCUS_COMMAND } from "../commands";
+import { DocumentSelector } from "@/components/DocumentSelector";
 import { isBeforeEvent } from "@/utils";
 import { ListItemNode } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
@@ -16,9 +17,7 @@ export function Navigation({ anchorRef, documentID }) {
   const locationParams = useParams();
   const rootRef = useRef("");
 
-  const [breadcrumbs, setBreadcrumbs] = useState([
-    { key: "root", text: "ToDo" },
-  ]);
+  const [breadcrumbs, setBreadcrumbs] = useState([]);
 
   const setFocus = useCallback(
     (key: string) => {
@@ -33,9 +32,11 @@ export function Navigation({ anchorRef, documentID }) {
             [note, ...note.parents]
               .slice(0, -1) //skip root
               .reverse()
-              .map((p) => ({
-                key: p.lexicalNode.getKey(),
-                text: p.text,
+              .map((note) => ({
+                text: note.text,
+                key: note.lexicalKey,
+                focus: () =>
+                  editor.fullUpdate(() => note.focus(), { discrete: true }),
               }))
           );
         },
@@ -97,22 +98,32 @@ export function Navigation({ anchorRef, documentID }) {
   });
 
   const breadcrumbItems = breadcrumbs.map(
-    ({ key, text }, index, { length }) => (
+    ({ text, key, focus }, index, { length }) => (
       <Breadcrumb.Item
         key={key}
-        href={`/note/${key}`}
+        onClick={() => focus()}
         active={index === length - 1}
       >
-        {key === "root" ? "Document" : text}
+        {text}
       </Breadcrumb.Item>
     )
   );
 
-  //TODO https://react-bootstrap.github.io/components/dropdowns/#custom-dropdown-components
   return (
     <div>
-      <Breadcrumb>
-        <Breadcrumb.Item linkAs="div">{documentID}</Breadcrumb.Item>
+      <Breadcrumb id="notes-path">
+        <Breadcrumb.Item linkAs="div">
+          <DocumentSelector />
+        </Breadcrumb.Item>
+        <Breadcrumb.Item
+          onClick={() =>
+            editor.fullUpdate(() => Note.from("root").focus(), {
+              discrete: true,
+            })
+          }
+        >
+          {documentID}
+        </Breadcrumb.Item>
         {breadcrumbItems}
       </Breadcrumb>
     </div>

@@ -4,8 +4,8 @@ import { expect } from "@playwright/test";
 test("focus on a particular note", async ({ page, notebook }) => {
   await notebook.load("tree_complex");
   //check breadcrumbs
-  await expect(page.locator("li.breadcrumb-item")).toHaveCount(1);
-  await expect(page.locator("li.breadcrumb-item")).toContainText("main");
+  await expect(page.locator("li.breadcrumb-item")).toHaveCount(2);
+  await expect(page.locator("li.breadcrumb-item").nth(1)).toContainText("main");
 
   expect(await notebook.html()).toMatchSnapshot("unfocused");
 
@@ -16,7 +16,7 @@ test("focus on a particular note", async ({ page, notebook }) => {
 
   expect(await notebook.html()).toMatchSnapshot("focused");
   //check breadcrumbs after changing root
-  await expect(page.locator("li.breadcrumb-item")).toHaveCount(3);
+  await expect(page.locator("li.breadcrumb-item")).toHaveCount(4);
   await expect(page.locator("li.breadcrumb-item.active")).toContainText(
     "note12"
   );

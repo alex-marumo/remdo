@@ -1,0 +1,17 @@
+@use "/node_modules/bootstrap/scss/bootstrap.scss";
+
+.navbar-brand {
+  color: var(--bs-gray-400);
+
+  svg {
+    fill: var(--bs-gray-400);
+    margin-right: 3px;
+    margin-top: -2px;
+  }
+}
+
+.navbar-brand:hover {
+  svg {
+    fill: var(--bs-gray-100);
+  }
+}
