@@ -2,6 +2,7 @@
  * These are not real tests, but rather helpers to load/save the editor state
  * to/from file using command line.
  */
+import { fireEvent, within } from "@testing-library/react";
 import { getDataPath } from "../common";
 import "./common";
 import { lexicalStateKeyCompare } from "./common";
@@ -11,7 +12,17 @@ import { it } from "vitest";
 
 const SERIALIZATION_FILE = process.env.VITEST_SERIALIZATION_FILE;
 
-it.runIf(SERIALIZATION_FILE)("load", ({ load }) => {
+it.runIf(SERIALIZATION_FILE)("load", async ({ load, component }) => {
+  //console.log(component.container.querySelector("#notes-path a").map(e => e.textContent));
+  //const documentSelector = component.getByTestId("document-selector");
+  //console.log(documentSelector.innerHTML);
+  //fireEvent.click(within(documentSelector).getByRole("button"));
+  //console.log(documentSelector.innerHTML);
+  //const option = await within(documentSelector).findByRole("link");
+  //console.log(option.innerHTML);
+  //return;
+  //console.log(documentSelector.innerHTML);
+  ////console.log(component.container.querySelector("#notes-path a").click());
   const dataPath = getDataPath(SERIALIZATION_FILE);
   console.log();
   console.log();

@@ -33,7 +33,7 @@ export function DocumentSelector() {
   const { setDocumentID } = useDocumentSelector();
 
   return (
-    <div>
+    <div data-testid="document-selector">
       <NavDropdown title="Documents">
         {NotesState.documents().map((document) => (
           <Dropdown.Item
