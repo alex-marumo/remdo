@@ -15,8 +15,7 @@ it("folding", async ({ load, editor, expect, lexicalUpdate }) => {
   await expect(editor).toMatchFileSnapshot("base.yml");
 });
 
-//FIXME doesn't propagate correctly to other clients in Collab mode. Probably because node patches are not applied correctly
-//TODO when fixing also add a check that will assure that patches won't be applied twice
+//TODO add a check that will assure that patches won't be applied twice
 it("load folded", async ({ load, expect, lexicalUpdate }) => {
   const { note0 } = load("folded");
   lexicalUpdate(() => {

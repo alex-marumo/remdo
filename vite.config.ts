@@ -6,7 +6,6 @@ import path from "path";
 import { visualizer } from "rollup-plugin-visualizer";
 import ufo from "ufo";
 import { PluginOption, defineConfig } from "vite";
-import Terminal from "vite-plugin-terminal";
 
 // TODO copied from lexical playground vite config + duplicated with tsconfig
 
@@ -305,34 +304,6 @@ export default defineConfig({
         });
       },
     },
-    false && {
-      name: "terminal-patch",
-      configureServer(server) {
-        server.middlewares.use("/__terminal", (req, res, next) => {
-          //replace host with a dot in logs from the browser
-          //the idea is to change file paths clickable in the terminal
-          const regexp = new RegExp(
-            `(http|https)://${req.headers.host}/(.*?)(\\?.*?)?(:[0-9]*:[0-9]*)`,
-            "g"
-          );
-          req.url = req.url.replaceAll(regexp, "./$2$4");
-
-          try {
-            const { pathname, search } = ufo.parseURL(req.url);
-            const searchParams = new URLSearchParams(search.slice(1));
-            const message = decodeURI(searchParams.get("m") ?? "")
-              .split("\n")
-              .join("\n  ");
-
-            next();
-          } catch (e) {
-            console.log(e);
-            res.end();
-          }
-        });
-      },
-    },
-    Terminal(/*{ console: "terminal" }*/),
     //@ts-ignore
     babel({
       babelHelpers: "bundled",
