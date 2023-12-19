@@ -345,6 +345,7 @@ export default defineConfig({
     threads: !!process.env.VITE_DISABLECOLLAB,
     coverage: {
       provider: "v8",
+      reportsDirectory: "data/coverage",
     },
     api: {
       strictPort: true,
