@@ -343,6 +343,9 @@ export default defineConfig({
     environment: "jsdom",
     open: false,
     threads: !!process.env.VITE_DISABLECOLLAB,
+    coverage: {
+      provider: "v8",
+    },
     api: {
       strictPort: true,
       port: getPort({ page: null, vitest_preview: 3007, playwright: null }),

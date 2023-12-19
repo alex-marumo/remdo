@@ -30,19 +30,26 @@ export function Layout() {
           <Logo />
           RemDo
         </a>
-          <NavLink className="nav-link" to="/demo">
-            Demo
-          </NavLink>
-          <NavLink className="nav-link" to="/about">
-            About
-          </NavLink>
-          <Nav.Link
-            className="nav-link ms-auto"
-            onClick={toggleDebugMode}
-            id="debug-toggle"
-          >
-            Debug: {isDebugMode ? "On" : "Off"}
-          </Nav.Link>
+        {isDebugMode && (
+          <>
+            <NavLink className="nav-link" to="/demo">
+              Demo
+            </NavLink>
+            <NavLink className="nav-link" to="/dev">
+              Dev Links
+            </NavLink>
+          </>
+        )}
+        <NavLink className="nav-link" to="/about">
+          About
+        </NavLink>
+        <Nav.Link
+          className="nav-link ms-auto"
+          onClick={toggleDebugMode}
+          id="debug-toggle"
+        >
+          Debug: {isDebugMode ? "On" : "Off"}
+        </Nav.Link>
       </nav>
       <Outlet />
     </div>

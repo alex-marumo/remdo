@@ -51,7 +51,8 @@ function run_serialization {
         echo "Usage: $SCRIPT_PATH run_serialization [load|save] [serialization_file]"
         exit 1
     fi
-    VITEST_SERIALIZATION_FILE=$2 npx vitest --no-api run serialization -t $1 $3
+    #TODO add --no-api once this is merged: https://github.com/vitest-dev/vitest/pull/4228
+    VITEST_SERIALIZATION_FILE=$2 npx vitest run serialization -t $1 $3
 }
 
 #loads data from the file and saves it back repeatedly

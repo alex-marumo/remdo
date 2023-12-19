@@ -9,3 +9,10 @@ export function getDataPath(nameOrPath: string) {
     ? nameOrPath
     : path.join(__dirname, "data", baseName);
 }
+
+export function htmlToCommaSeparatedText(html: string) {
+  return html
+    .replace(/<[^>]*>?/gm, "")
+    .trim()
+    .replace(/\s+/g, ",");
+}
