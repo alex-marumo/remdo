@@ -1,6 +1,8 @@
 //TODO try to use https://react-bootstrap.github.io/components/dropdowns/ or https://react-bootstrap.github.io/components/overlays/
 //TODO this is a react component, not a lexical plugin
 //TODO rename plugins to lexical plugins
+import { useNotesLexicalComposerContext } from "../NotesComposerContext";
+import { getNotesFromSelection } from "../api";
 import {
   NOTES_OPEN_QUICK_MENU_COMMAND,
   NOTES_START_MOVING_COMMAND,
@@ -9,12 +11,10 @@ import {
   NOTES_FOCUS_COMMAND,
   NOTES_SET_FOLD_LEVEL_COMMAND,
 } from "../commands";
-import { useNotesLexicalComposerContext } from "../NotesComposerContext";
-import { getNotesFromSelection } from "../api";
 import { getOffsetPosition } from "@/utils";
 import { INSERT_ORDERED_LIST_COMMAND } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
-import { SELECTION_CHANGE_COMMAND } from "lexical";
+import { BLUR_COMMAND, SELECTION_CHANGE_COMMAND } from "lexical";
 import { COMMAND_PRIORITY_HIGH, COMMAND_PRIORITY_LOW } from "lexical";
 import {
   CLICK_COMMAND,
@@ -24,12 +24,7 @@ import {
   KEY_ENTER_COMMAND,
   KEY_ESCAPE_COMMAND,
 } from "lexical";
-import React, {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 
 type Action = () => void;
@@ -110,80 +105,91 @@ function MenuOptions({ closeMenu, position, noteKeys }) {
   );
 
   useEffect(() => {
-    return mergeRegister(
-      editor.registerCommand(
-        KEY_ENTER_COMMAND,
-        (event: KeyboardEvent) => {
-          options[highlightedOptionIndex].action();
-          closeMenu();
-          event.preventDefault();
-          event.stopImmediatePropagation();
-          return true;
-        },
-        COMMAND_PRIORITY_CRITICAL
-      ),
-      editor.registerCommand<KeyboardEvent>(
-        KEY_DOWN_COMMAND,
-        event => {
-          if (
-            event.key === "ArrowDown" ||
-            (event.key === "Tab" && !event.shiftKey)
-          ) {
-            setHighlightedOptionIndex(
-              highlightedOptionIndex === null
-                ? 0
-                : (highlightedOptionIndex + 1) % options.length
-            );
-          } else if (
-            event.key == "ArrowUp" ||
-            (event.key === "Tab" && event.shiftKey)
-          ) {
-            setHighlightedOptionIndex(
-              (highlightedOptionIndex - 1 + options.length) % options.length
-            );
-          } else if (event.key >= "0" && event.key <= "9") {
-            editor.dispatchCommand(NOTES_SET_FOLD_LEVEL_COMMAND, {
-              level: +event.key,
-            });
+    return (
+      mergeRegister(
+        editor.registerCommand(
+          KEY_ENTER_COMMAND,
+          (event: KeyboardEvent) => {
+            options[highlightedOptionIndex].action();
             closeMenu();
-          } else {
-            const key = event.key.toLowerCase();
-            const selected = options.find(o => o.key === key);
-            if (!selected) {
-              return false;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            return true;
+          },
+          COMMAND_PRIORITY_CRITICAL
+        ),
+        editor.registerCommand<KeyboardEvent>(
+          KEY_DOWN_COMMAND,
+          (event) => {
+            if (
+              event.key === "ArrowDown" ||
+              (event.key === "Tab" && !event.shiftKey)
+            ) {
+              setHighlightedOptionIndex(
+                highlightedOptionIndex === null
+                  ? 0
+                  : (highlightedOptionIndex + 1) % options.length
+              );
+            } else if (
+              event.key == "ArrowUp" ||
+              (event.key === "Tab" && event.shiftKey)
+            ) {
+              setHighlightedOptionIndex(
+                (highlightedOptionIndex - 1 + options.length) % options.length
+              );
+            } else if (event.key >= "0" && event.key <= "9") {
+              editor.dispatchCommand(NOTES_SET_FOLD_LEVEL_COMMAND, {
+                level: +event.key,
+              });
+              closeMenu();
+            } else {
+              const key = event.key.toLowerCase();
+              const selected = options.find((o) => o.key === key);
+              if (!selected) {
+                return false;
+              }
+              selected.action();
+              closeMenu();
             }
-            selected.action();
+            event.preventDefault();
+            return true;
+          },
+          COMMAND_PRIORITY_CRITICAL
+        ),
+        editor.registerCommand<KeyboardEvent>(
+          KEY_ESCAPE_COMMAND,
+          (event) => {
             closeMenu();
-          }
-          event.preventDefault();
-          return true;
-        },
-        COMMAND_PRIORITY_CRITICAL
+            event.preventDefault();
+            return true;
+          },
+          COMMAND_PRIORITY_CRITICAL
+        ),
+        editor.registerCommand<KeyboardEvent>(
+          KEY_BACKSPACE_COMMAND,
+          (event) => {
+            closeMenu();
+            event.preventDefault();
+            return true;
+          },
+          COMMAND_PRIORITY_CRITICAL
+        ),
+        editor.registerCommand(
+          SELECTION_CHANGE_COMMAND,
+          closeMenu,
+          COMMAND_PRIORITY_HIGH
+        ),
+        editor.registerCommand(CLICK_COMMAND, closeMenu, COMMAND_PRIORITY_HIGH)
       ),
-      editor.registerCommand<KeyboardEvent>(
-        KEY_ESCAPE_COMMAND,
-        event => {
+      editor.registerCommand<FocusEvent>(
+        BLUR_COMMAND,
+        (event) => {
           closeMenu();
           event.preventDefault();
           return true;
         },
         COMMAND_PRIORITY_CRITICAL
-      ),
-      editor.registerCommand<KeyboardEvent>(
-        KEY_BACKSPACE_COMMAND,
-        event => {
-          closeMenu();
-          event.preventDefault();
-          return true;
-        },
-        COMMAND_PRIORITY_CRITICAL
-      ),
-      editor.registerCommand(
-        SELECTION_CHANGE_COMMAND,
-        closeMenu,
-        COMMAND_PRIORITY_HIGH
-      ),
-      editor.registerCommand(CLICK_COMMAND, closeMenu, COMMAND_PRIORITY_HIGH)
+      )
     );
   });
 
@@ -247,7 +253,7 @@ export function QuickMenuPlugin() {
     return mergeRegister(
       editor.registerCommand<KeyboardEvent>(
         KEY_DOWN_COMMAND,
-        event => {
+        (event) => {
           if (event.key !== "Shift") {
             hotKeyPressed.current = false;
             return false;
@@ -257,7 +263,7 @@ export function QuickMenuPlugin() {
             return false;
           }
           hotKeyPressed.current = false;
-          setNoteKeys(getNotesFromSelection().map(n => n.lexicalKey));
+          setNoteKeys(getNotesFromSelection().map((n) => n.lexicalKey));
           setPosition(
             getOffsetPosition(editor, window.getSelection().getRangeAt(0))
           );

@@ -1,4 +1,3 @@
-//FIXME test clicking outside of the menu
 import { test } from "./common";
 import { expect } from "@playwright/test";
 
@@ -116,5 +115,20 @@ test("invalid hot key", async ({ notebook, menu, page }) => {
 
   await expect(menu.locator()).toBeVisible();
   await page.keyboard.press("$");
+  await expect(menu.locator()).not.toBeVisible();
+});
+
+test.only("open and click outside of editor", async ({ page, notebook, menu }) => {
+  await notebook.load("tree");
+
+  await menu.open();
+
+  //menu is shown and has some options
+  await expect(menu.locator()).toBeVisible();
+  expect(await menu.locator("li").count()).toBeGreaterThan(0);
+
+  await page.locator("body").click();
+
+  //menu is closed
   await expect(menu.locator()).not.toBeVisible();
 });
