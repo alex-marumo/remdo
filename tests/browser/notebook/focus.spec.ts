@@ -21,10 +21,9 @@ test("focus on a particular note", async ({ page, notebook }) => {
     "note12"
   );
 
-  //FIXME this part fails withoth collab as the notebooks state is lost whenever a page is reloaded
-  //ideally breadcrumbs should not reload page at all
   //go back to the root element
-  //await page.locator("li.breadcrumb-item a").click();
-  //await notebook.noteLocator("note12").waitFor();
-  //expect(await notebook.html()).toMatchSnapshot("unfocused");
+  const rootBreadcrumb = page.locator("li.breadcrumb-item a").nth(1);
+  await rootBreadcrumb.click();
+  await notebook.noteLocator("note12").waitFor();
+  expect(await notebook.html()).toMatchSnapshot("unfocused");
 });

@@ -183,7 +183,7 @@ function MenuOptions({ closeMenu, position, noteKeys }) {
         BLUR_COMMAND,
         (event) => {
           const menu = document.getElementById("quick-menu");
-          if(menu && !menu.contains(event.relatedTarget as Node)){
+          if (menu && !menu.contains(event.relatedTarget as Node)) {
             //editor's focus is lost and the menu is not clicked, so we close it
             closeMenu();
           }
