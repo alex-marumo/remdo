@@ -1,6 +1,7 @@
 import { NotesState } from "./Editor/api";
 import React, { createContext, useContext, useState } from "react";
 import { Dropdown, NavDropdown } from "react-bootstrap";
+import { useNavigate } from "react-router";
 
 interface DocumentSelectorType {
   documentID: string;
@@ -31,6 +32,7 @@ export const DocumentSelectorProvider = ({ children }) => {
 
 export function DocumentSelector() {
   const { setDocumentID } = useDocumentSelector();
+  const navigate = useNavigate();
 
   return (
     <div data-testid="document-selector">
@@ -41,6 +43,7 @@ export function DocumentSelector() {
             key={document}
             onClick={(e) => {
               e.preventDefault();
+              navigate("/");
               setDocumentID(document);
             }}
           >

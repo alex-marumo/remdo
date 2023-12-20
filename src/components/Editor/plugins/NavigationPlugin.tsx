@@ -101,7 +101,10 @@ export function Navigation({ anchorRef, documentID }) {
     ({ text, key, focus }, index, { length }) => (
       <Breadcrumb.Item
         key={key}
-        onClick={() => focus()}
+        onClick={() => {
+          navigate(`/note/${key}`);
+          focus();
+        }}
         active={index === length - 1}
       >
         {text}
@@ -116,11 +119,12 @@ export function Navigation({ anchorRef, documentID }) {
           <DocumentSelector />
         </Breadcrumb.Item>
         <Breadcrumb.Item
-          onClick={() =>
+          onClick={() => {
+            navigate("/");
             editor.fullUpdate(() => Note.from("root").focus(), {
               discrete: true,
-            })
-          }
+            });
+          }}
         >
           {documentID}
         </Breadcrumb.Item>
