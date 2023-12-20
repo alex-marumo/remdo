@@ -10,6 +10,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: Change Submodule URL to HTTPS
+        run: |
+          git config submodule.lexical.url https://github.com/piotrlewalski/lexical.git
+          git submodule update --init --recursive
       - name: Install Dependencies
         run: |
           git submodule update --init --recursive
