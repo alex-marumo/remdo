@@ -118,7 +118,7 @@ test("invalid hot key", async ({ notebook, menu, page }) => {
   await expect(menu.locator()).not.toBeVisible();
 });
 
-test.only("open and click outside of editor", async ({ page, notebook, menu }) => {
+test("open and click outside of editor", async ({ page, notebook, menu }) => {
   await notebook.load("tree");
 
   await menu.open();

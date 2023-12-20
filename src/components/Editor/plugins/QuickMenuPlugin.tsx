@@ -105,88 +105,89 @@ function MenuOptions({ closeMenu, position, noteKeys }) {
   );
 
   useEffect(() => {
-    return (
-      mergeRegister(
-        editor.registerCommand(
-          KEY_ENTER_COMMAND,
-          (event: KeyboardEvent) => {
-            options[highlightedOptionIndex].action();
-            closeMenu();
-            event.preventDefault();
-            event.stopImmediatePropagation();
-            return true;
-          },
-          COMMAND_PRIORITY_CRITICAL
-        ),
-        editor.registerCommand<KeyboardEvent>(
-          KEY_DOWN_COMMAND,
-          (event) => {
-            if (
-              event.key === "ArrowDown" ||
-              (event.key === "Tab" && !event.shiftKey)
-            ) {
-              setHighlightedOptionIndex(
-                highlightedOptionIndex === null
-                  ? 0
-                  : (highlightedOptionIndex + 1) % options.length
-              );
-            } else if (
-              event.key == "ArrowUp" ||
-              (event.key === "Tab" && event.shiftKey)
-            ) {
-              setHighlightedOptionIndex(
-                (highlightedOptionIndex - 1 + options.length) % options.length
-              );
-            } else if (event.key >= "0" && event.key <= "9") {
-              editor.dispatchCommand(NOTES_SET_FOLD_LEVEL_COMMAND, {
-                level: +event.key,
-              });
-              closeMenu();
-            } else {
-              const key = event.key.toLowerCase();
-              const selected = options.find((o) => o.key === key);
-              if (!selected) {
-                return false;
-              }
-              selected.action();
-              closeMenu();
-            }
-            event.preventDefault();
-            return true;
-          },
-          COMMAND_PRIORITY_CRITICAL
-        ),
-        editor.registerCommand<KeyboardEvent>(
-          KEY_ESCAPE_COMMAND,
-          (event) => {
-            closeMenu();
-            event.preventDefault();
-            return true;
-          },
-          COMMAND_PRIORITY_CRITICAL
-        ),
-        editor.registerCommand<KeyboardEvent>(
-          KEY_BACKSPACE_COMMAND,
-          (event) => {
-            closeMenu();
-            event.preventDefault();
-            return true;
-          },
-          COMMAND_PRIORITY_CRITICAL
-        ),
-        editor.registerCommand(
-          SELECTION_CHANGE_COMMAND,
-          closeMenu,
-          COMMAND_PRIORITY_HIGH
-        ),
-        editor.registerCommand(CLICK_COMMAND, closeMenu, COMMAND_PRIORITY_HIGH)
+    return mergeRegister(
+      editor.registerCommand(
+        KEY_ENTER_COMMAND,
+        (event: KeyboardEvent) => {
+          options[highlightedOptionIndex].action();
+          closeMenu();
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          return true;
+        },
+        COMMAND_PRIORITY_CRITICAL
       ),
-      editor.registerCommand<FocusEvent>(
-        BLUR_COMMAND,
+      editor.registerCommand<KeyboardEvent>(
+        KEY_DOWN_COMMAND,
+        (event) => {
+          if (
+            event.key === "ArrowDown" ||
+            (event.key === "Tab" && !event.shiftKey)
+          ) {
+            setHighlightedOptionIndex(
+              highlightedOptionIndex === null
+                ? 0
+                : (highlightedOptionIndex + 1) % options.length
+            );
+          } else if (
+            event.key == "ArrowUp" ||
+            (event.key === "Tab" && event.shiftKey)
+          ) {
+            setHighlightedOptionIndex(
+              (highlightedOptionIndex - 1 + options.length) % options.length
+            );
+          } else if (event.key >= "0" && event.key <= "9") {
+            editor.dispatchCommand(NOTES_SET_FOLD_LEVEL_COMMAND, {
+              level: +event.key,
+            });
+            closeMenu();
+          } else {
+            const key = event.key.toLowerCase();
+            const selected = options.find((o) => o.key === key);
+            if (!selected) {
+              return false;
+            }
+            selected.action();
+            closeMenu();
+          }
+          event.preventDefault();
+          return true;
+        },
+        COMMAND_PRIORITY_CRITICAL
+      ),
+      editor.registerCommand<KeyboardEvent>(
+        KEY_ESCAPE_COMMAND,
         (event) => {
           closeMenu();
           event.preventDefault();
           return true;
+        },
+        COMMAND_PRIORITY_CRITICAL
+      ),
+      editor.registerCommand<KeyboardEvent>(
+        KEY_BACKSPACE_COMMAND,
+        (event) => {
+          closeMenu();
+          event.preventDefault();
+          return true;
+        },
+        COMMAND_PRIORITY_CRITICAL
+      ),
+      editor.registerCommand(
+        SELECTION_CHANGE_COMMAND,
+        closeMenu,
+        COMMAND_PRIORITY_HIGH
+      ),
+      editor.registerCommand(CLICK_COMMAND, closeMenu, COMMAND_PRIORITY_HIGH),
+      editor.registerCommand<FocusEvent>(
+        BLUR_COMMAND,
+        (event) => {
+          const menu = document.getElementById("quick-menu");
+          if(menu && !menu.contains(event.relatedTarget as Node)){
+            //editor's focus is lost and the menu is not clicked, so we close it
+            closeMenu();
+          }
+          return false;
         },
         COMMAND_PRIORITY_CRITICAL
       )
