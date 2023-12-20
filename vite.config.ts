@@ -4,7 +4,6 @@ import react from "@vitejs/plugin-react";
 import fs from "fs";
 import path from "path";
 import { visualizer } from "rollup-plugin-visualizer";
-import ufo from "ufo";
 import { PluginOption, defineConfig } from "vite";
 
 // TODO copied from lexical playground vite config + duplicated with tsconfig
