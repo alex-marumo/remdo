@@ -31,8 +31,19 @@ export function Demo() {
       <br />
       <Window transform="perspective(100px) rotateX(0deg) rotateY(-10deg)" />
 
-      
-      
+      <div className="container my-5">
+        <div className="row">
+          <div className="col-md-6 offset-md-3">
+            <div className="glass-effect p-4">
+              <h2 className="text-white">Glass Effect</h2>
+              <p className="text-white">
+                This is an example of a 3D glass effect using Bootstrap in a
+                dark theme.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

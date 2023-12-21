@@ -68,6 +68,16 @@ export function Dev() {
           </a>
         </li>
         <li>
+          <a href="/demo.html" target="_blank" className="btn btn-link">
+            Demo
+          </a>
+        </li>
+        <li>
+          <a href="/demo" target="_blank" className="btn btn-link">
+            Demo React
+          </a>
+        </li>
+        <li>
           <a
             href={
               "http://" +

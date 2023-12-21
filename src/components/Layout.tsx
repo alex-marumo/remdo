@@ -30,16 +30,9 @@ export function Layout() {
           <Logo />
           RemDo
         </a>
-        {isDebugMode && (
-          <>
-            <NavLink className="nav-link" to="/demo">
-              Demo
-            </NavLink>
-            <NavLink className="nav-link" to="/dev">
-              Dev Links
-            </NavLink>
-          </>
-        )}
+        <NavLink className="nav-link" to="/dev">
+          Dev 
+        </NavLink>
         <NavLink className="nav-link" to="/about">
           About
         </NavLink>
