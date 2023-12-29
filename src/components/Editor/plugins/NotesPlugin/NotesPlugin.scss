@@ -37,7 +37,8 @@ terribly long and hard to read in the browser
 
   li.note-folded + li { //the next li after a folded note, it's only child is a ul with the note's children
     margin-left: 1em;
-    height: 0px; //hides folded parent's children, but stills keep them in DOM, so they work well with selection, copy/paste, etc.
+    display: none;
+    //height: 0px; //hides folded parent's children, but stills keep them in DOM, so they work well with selection, copy/paste, etc.
     overflow: hidden;
   }
 

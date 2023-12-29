@@ -1,7 +1,7 @@
 import "lexical";
 import { LexicalNode } from "@lexical/LexicalNode";
 import { getActiveEditor, getActiveEditorState } from "@lexical/LexicalUpdates";
-import { $getNodeByKeyOrThrow } from "@lexical/LexicalUtils";
+import { $getNodeByKeyOrThrow, getElementByKeyOrThrow } from "@lexical/LexicalUtils";
 import {
   $createListItemNode,
   $createListNode,
@@ -321,7 +321,13 @@ export class Note {
 
   //TODO add setFolded/getFolded to RootNode
   set folded(value: boolean) {
-    !this.isRoot && this.lexicalNode.setFolded(value && this.hasChildren);
+    if(!this.isRoot) {
+      //TODO DOM manipulation should be done in createDOM
+      //the problem is that folded note's children have display set to none
+      //so they can be overwritten by Lexical reconciler
+      getElementByKeyOrThrow(getActiveEditor(), this.lexicalKey).classList.remove("note-folded");
+      this.lexicalNode.setFolded(value && this.hasChildren);
+    }
   }
 
   setFoldLevel(level: number) {
