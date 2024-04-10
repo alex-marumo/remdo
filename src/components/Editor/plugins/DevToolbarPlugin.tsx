@@ -10,6 +10,7 @@ import {
 } from "lexical";
 import React, { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { SPACER_COMMAND } from "../commands";
 
 function EditorStateInput() {
   const [editor] = useNotesLexicalComposerContext();
@@ -62,6 +63,14 @@ export const DevToolbarPlugin = ({ editorBottomRef }) => {
           return false;
         },
         COMMAND_PRIORITY_EDITOR
+      ),
+      editor.registerCommand<void>(
+        SPACER_COMMAND,
+        () => {
+          //do nothing, registration is needed so the command is shown in TreeView command log
+          return false;
+        },
+        COMMAND_PRIORITY_EDITOR
       )
     );
   }, [editor]);
@@ -72,6 +81,9 @@ export const DevToolbarPlugin = ({ editorBottomRef }) => {
 
   const clearContent = () => {
     editor.update(() => {
+      editor.dispatchCommand(SPACER_COMMAND, null);
+      editor.dispatchCommand(SPACER_COMMAND, null);
+      editor.dispatchCommand(SPACER_COMMAND, null);
       editor.dispatchCommand(CLEAR_EDITOR_COMMAND, null);
     });
   };
