@@ -243,6 +243,7 @@ beforeEach(async (context) => {
   context.component = component;
   context.queries = within(editorElement, {
     ...queries,
+    //FIXME
     getAllNotNestedIListItems: () =>
       context.queries
         .getAllByRole("listitem")

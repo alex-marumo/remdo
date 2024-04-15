@@ -1,22 +1,20 @@
 <ul>
-  <li dir="ltr" value="1"><span data-lexical-text="true">note0</span></li>
-  <li class="position-relative li-nested" value="2">
+  <li dir="ltr" value="1">
+    <span data-lexical-text="true">note0</span>
     <ul>
-      <li dir="ltr" value="1"><span data-lexical-text="true">note00</span></li>
-      <li class="position-relative li-nested" value="2">
+      <li dir="ltr" value="1">
+        <span data-lexical-text="true">note00</span>
         <ul>
           <li dir="ltr" value="1">
             <span data-lexical-text="true">note000</span>
           </li>
         </ul>
       </li>
-      <li dir="ltr" value="2"><span data-lexical-text="true">note01</span></li>
-      <li class="position-relative li-nested" value="3">
+      <li dir="ltr" value="2">
+        <span data-lexical-text="true">note01</span>
         <ul>
           <li dir="ltr" value="1">
             <span data-lexical-text="true">note1</span>
-          </li>
-          <li class="position-relative li-nested" value="2">
             <ul>
               <li dir="ltr" value="1">
                 <span data-lexical-text="true">note10</span>
@@ -26,13 +24,9 @@
               </li>
               <li dir="ltr" value="3">
                 <span data-lexical-text="true">note12</span>
-              </li>
-              <li class="position-relative li-nested" value="4">
                 <ul>
                   <li dir="ltr" value="1">
                     <span data-lexical-text="true">note120</span>
-                  </li>
-                  <li class="position-relative li-nested" value="2">
                     <ul>
                       <li dir="ltr" value="1">
                         <span data-lexical-text="true">note1200</span>

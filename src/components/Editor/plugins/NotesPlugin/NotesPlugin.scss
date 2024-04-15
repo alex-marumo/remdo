@@ -35,16 +35,20 @@ terribly long and hard to read in the browser
     @extend .bi-record-fill;
   }
 
-  li.note-folded + li { //the next li after a folded note, it's only child is a ul with the note's children
-    margin-left: 1em;
+  li.note-folded > ul {
     display: none;
-    //height: 0px; //hides folded parent's children, but stills keep them in DOM, so they work well with selection, copy/paste, etc.
-    overflow: hidden;
   }
 
-  li.li-nested::before {
-    display: none;
-  }
+  //li.note-folded + li { //the next li after a folded note, it's only child is a ul with the note's children
+  //  margin-left: 1em;
+  //  display: none;
+  //  //height: 0px; //hides folded parent's children, but stills keep them in DOM, so they work well with selection, copy/paste, etc.
+  //  overflow: hidden;
+  //}
+
+  //li.li-nested::before {
+  //  display: none;
+  //}
 
   li.li-checked {
     text-decoration: line-through;

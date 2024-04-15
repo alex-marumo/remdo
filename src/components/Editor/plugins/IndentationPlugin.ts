@@ -9,6 +9,8 @@ import {
 import { useEffect } from "react";
 
 function handleTab(event: KeyboardEvent) {
+  //lexical idents LI only if tab is pressed at the beginning of LI
+  //we want to ident regardless of the position of the cursor
   const selection = $getSelection();
 
   if (!$isRangeSelection(selection)) {

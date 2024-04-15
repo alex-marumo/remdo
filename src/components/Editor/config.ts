@@ -11,9 +11,6 @@ export const editorConfig: InitialConfigType & { disableCollab: boolean } = {
   theme: {
     list: {
       listitemChecked: "li-checked",
-      nested: {
-        listitem: "position-relative li-nested",
-      },
       ol: "editor-list-ol",
     },
     text: {

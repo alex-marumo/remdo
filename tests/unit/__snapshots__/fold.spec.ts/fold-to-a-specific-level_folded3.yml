@@ -7,8 +7,6 @@ root:
       children:
       - text: note0
         type: text
-    - type: listitem
-      children:
       - type: list
         children:
         - indent: 1
@@ -16,9 +14,6 @@ root:
           children:
           - text: note00
             type: text
-        - indent: 1
-          type: listitem
-          children:
           - type: list
             children:
             - indent: 2
@@ -35,8 +30,6 @@ root:
       children:
       - text: note1
         type: text
-    - type: listitem
-      children:
       - type: list
         children:
         - indent: 1
@@ -54,9 +47,6 @@ root:
           children:
           - text: note12
             type: text
-        - indent: 1
-          type: listitem
-          children:
           - type: list
             children:
             - folded: true
@@ -65,9 +55,6 @@ root:
               children:
               - text: note120
                 type: text
-            - indent: 2
-              type: listitem
-              children:
               - type: list
                 children:
                 - indent: 3

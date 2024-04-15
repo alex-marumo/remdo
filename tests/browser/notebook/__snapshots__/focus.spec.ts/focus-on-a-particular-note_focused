@@ -1,9 +1,9 @@
 <div>
-  <div dir="ltr"><div data-lexical-text="true"></div></div>
-  <div>
+  <div dir="ltr">
+    <div data-lexical-text="true"></div>
     <div>
-      <div dir="ltr"><div data-lexical-text="true"></div></div>
-      <div>
+      <div dir="ltr">
+        <div data-lexical-text="true"></div>
         <div>
           <div dir="ltr"><div data-lexical-text="true"></div></div>
         </div>
@@ -11,18 +11,16 @@
       <div dir="ltr"><div data-lexical-text="true"></div></div>
     </div>
   </div>
-  <div dir="ltr"><div data-lexical-text="true"></div></div>
-  <div>
+  <div dir="ltr">
+    <div data-lexical-text="true"></div>
     <ul>
       <div dir="ltr"><div data-lexical-text="true"></div></div>
       <div dir="ltr"><div data-lexical-text="true"></div></div>
-      <li dir="ltr" value="3"><span data-lexical-text="true">note12</span></li>
-      <li class="position-relative li-nested" value="4">
+      <li dir="ltr" value="3">
+        <span data-lexical-text="true">note12</span>
         <ul>
           <li dir="ltr" value="1">
             <span data-lexical-text="true">note120</span>
-          </li>
-          <li class="position-relative li-nested" value="2">
             <ul>
               <li dir="ltr" value="1">
                 <span data-lexical-text="true">note1200</span>

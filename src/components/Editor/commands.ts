@@ -30,3 +30,6 @@ export const NOTES_FOCUS_COMMAND: LexicalCommand<{ key: string }> =
 
 export const NOTES_SET_FOLD_LEVEL_COMMAND: LexicalCommand<{ level: number }> =
   createCommand("NOTES_SET_FOLD_LEVEL_COMMAND");
+
+export const SPACER_COMMAND: LexicalCommand<void> =
+  createCommand("*** SPACER ***");

@@ -11,8 +11,6 @@ root:
       children:
       - text: note1
         type: text
-    - type: listitem
-      children:
       - type: list
         children:
         - indent: 1

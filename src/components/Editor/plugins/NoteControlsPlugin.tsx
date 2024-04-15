@@ -49,8 +49,9 @@ export function NoteControlsPlugin({ anchorRef }) {
           ? folded
           : targetElement.classList.contains("note-folded")
       );
+      //TODO this could be solved by pure CSS
       setNoteHasChildren(
-        targetElement?.nextElementSibling?.classList.contains("li-nested")
+        targetElement?.querySelector("ul") !== null
       );
       setNoteElement(targetElement);
     },

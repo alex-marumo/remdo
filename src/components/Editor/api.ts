@@ -33,12 +33,6 @@ export function getNotesEditorState() {
   return getActiveEditorState() as NotesEditorState;
 }
 
-export function isNestedLI(liNode: ListItemNode) {
-  return liNode.getKey() === "root"
-    ? false
-    : liNode.getChildren().some($isListNode);
-}
-
 //TODO explain the difference between NotesEditorState and NotesState
 export class NotesState {
   _element: HTMLElement;
@@ -112,12 +106,7 @@ export class Note {
         : $getNodeByKey(keyOrNode as string);
     const liNode = findNearestListItemNode(baseNode);
 
-    if (!liNode) {
-      return new Note("root");
-    }
-    return isNestedLI(liNode)
-      ? new Note(liNode.getPreviousSibling()?.getKey() || liNode.getKey())
-      : new Note(liNode.getKey());
+    return liNode ? new Note(liNode.getKey()) : new Note("root");
   }
 
   constructor(key: string) {
@@ -126,7 +115,7 @@ export class Note {
 
   createChild(text = null): Note {
     const childNode = $createListItemNode();
-    const listNode = this._listNode(true).append(childNode);
+    this._getChildrenListNode(true).append(childNode);
     if (text) {
       childNode.append($createTextNode(text));
     }
@@ -167,42 +156,32 @@ export class Note {
   }
 
   get hasChildren(): boolean {
-    return this._listNode()?.getChildrenSize() > 0;
+    return this._getChildrenListNode()?.getChildrenSize() > 0;
   }
 
   get children() {
     const that = this;
     return {
       *[Symbol.iterator]() {
-        let child = that._listNode()?.getFirstChild();
-        while (child) {
-          if (!isNestedLI(child as LexicalListItemNode)) {
-            yield Note.from(child);
-          }
-          child = child.getNextSibling();
+        for (
+          let child = that._getChildrenListNode()?.getFirstChild();
+          child;
+          child = child.getNextSibling()
+        ) {
+          yield Note.from(child);
         }
       },
     };
   }
 
-  _listNode(createIfNeeded = false): ListNode | null {
-    if (this.isRoot) {
-      return this.lexicalNode.getChildren().find($isListNode) as ListNode;
+
+  _getChildrenListNode(createIfNeeded = false): ListNode | null {
+    let list = this.lexicalNode.getChildren().find($isListNode);
+    if (!list && createIfNeeded) {
+      list = $createListNode("bullet");
+      this.lexicalNode.append(list);
     }
-    // li <- this._lexicalNode
-    // li.li-nested
-    //   ul <- searched list node
-    let listNode = this.lexicalNode
-      .getNextSibling()
-      ?.getChildren()
-      .find($isListNode);
-    if (!listNode && createIfNeeded) {
-      const liNode = $createListItemNode();
-      this.lexicalNode.insertAfter(liNode);
-      listNode = $createListNode("bullet");
-      liNode.append(listNode);
-    }
-    return listNode;
+    return list;
   }
 
   get text() {
@@ -217,98 +196,67 @@ export class Note {
     ].join("");
   }
 
+  _appendChild(child: Note) {
+    this._getChildrenListNode(true).append(child.lexicalNode);
+  }
+
+  _insertChild(child: Note) {
+    this._getChildrenListNode(true).splice(0, 0, [child.lexicalNode]);
+  }
+
+  _insertNextSibling(noteToInsert: Note) {
+    if (noteToInsert.isRoot) {
+      throw new Error("Can't insert root note");
+    }
+    if(this.isRoot) {
+      throw new Error("Can't insert after root note");
+    }
+    const prevParentList = noteToInsert.lexicalNode.getParent();
+    this.lexicalNode.insertAfter(noteToInsert.lexicalNode);
+    if(prevParentList.getChildrenSize() === 0) {
+      prevParentList.remove();
+    }
+  }
+
   indent() {
-    if (!this.lexicalNode.getPreviousSibling()) {
+    const prevSibling = this.lexicalNode.getPreviousSibling();
+    if (prevSibling === null) {
       return;
     }
-    const prevSibling = this.lexicalNode.getPreviousSibling();
-    const prevNote = Note.from(prevSibling);
-    const prevListNode = prevNote._listNode(true);
-    const listNode = this._listNode();
-    prevListNode.append(this.lexicalNode);
-    if (listNode) {
-      //li <- this.lexicalNode
-      //li <- listNode.getParent if exists should be moved with this.lexicalNode
-      //  ul <-listNode
-      this.lexicalNode.insertAfter(listNode.getParent());
-    }
+    Note.from(prevSibling)._appendChild(this);
   }
 
   outdent() {
-    const parent = this.parent;
-    if (this.isRoot || parent.isRoot) {
+    if(this.parent.isRoot) {
       return;
     }
-    const list = this._listNode();
-    const parentList = parent._listNode();
-    if (!parentList) {
-      //this should never happen if the schema is correct
-      //which doesn't mean it won't
-      parent.lexicalNode
-        .getParents()
-        .find($isListItemNode)
-        ?.insertAfter(this.lexicalNode);
-    } else {
-      parentList.getParent().insertAfter(this.lexicalNode);
-    }
-    if (list) {
-      this.lexicalNode.insertAfter(list.getParentOrThrow());
-    }
-    if (parentList?.getChildrenSize() === 0) {
-      parentList.getParentOrThrow().remove();
-    }
+    this.parent._insertNextSibling(this);
   }
 
   moveDown() {
-    const lexicalNode = this.lexicalNode;
-    const childrenNode = this.hasChildren ? lexicalNode.getNextSibling() : null;
-    let targetNode = (childrenNode || lexicalNode).getNextSibling();
-    {
-      //if targetNode has children, then instert after their node
-      const targetNext = targetNode?.getNextSibling() as ListItemNode;
-      targetNode =
-        targetNext && isNestedLI(targetNext) ? targetNext : targetNode;
+    if(this.nextSibling) {
+      this.nextSibling._insertNextSibling(this);
     }
-    if (targetNode) {
-      //moved node has next sibling node, let's swap them
-      targetNode.insertAfter(lexicalNode);
-    } else {
-      //moved node is the last chilld of it's parent, so let's try to move it to parent's next sibling
-      const newParent = this.parent.nextSibling;
-      if (!newParent) return;
-      const oldParentListNode = this.parent._listNode();
-      newParent._listNode(true).splice(0, 0, [lexicalNode]);
-      if (oldParentListNode.getChildrenSize() === 0) {
-        //remove empty list node and it's parent (empty li)
-        oldParentListNode.getParentOrThrow().remove();
+    else {
+      const parent = this.parent;
+      parent.nextSibling?._insertChild(this);
+      if(!parent.hasChildren) {
+        parent._getChildrenListNode().remove();
       }
     }
-    childrenNode && lexicalNode.insertAfter(childrenNode);
   }
 
   moveUp() {
-    const lexicalNode = this.lexicalNode;
-    const childrenNode = this.hasChildren ? lexicalNode.getNextSibling() : null;
-    let targetNode = lexicalNode.getPreviousSibling() as ListItemNode;
-
-    if (targetNode) {
-      //previous node exists, let's insert before it
-      targetNode = isNestedLI(targetNode)
-        ? targetNode.getPreviousSibling()
-        : targetNode;
-      targetNode.insertBefore(lexicalNode);
-    } else {
-      //previous node doesn't exist, let's try to move it to parent's prev sibling
-      const newParent = this.parent.prevSibling;
-      if (!newParent) return;
-      const oldParentListNode = this.parent._listNode();
-      newParent._listNode(true).append(lexicalNode);
-      if (oldParentListNode.getChildrenSize() === 0) {
-        //remove empty list node and it's parent (empty li)
-        oldParentListNode.getParentOrThrow().remove();
+    if(this.prevSibling) {
+      this.prevSibling.lexicalNode.insertBefore(this.lexicalNode);
+    }
+    else {
+      const parent = this.parent;
+      parent.prevSibling?._appendChild(this);
+      if(!parent.hasChildren) {
+        parent._getChildrenListNode().remove();
       }
     }
-    childrenNode && lexicalNode.insertAfter(childrenNode);
   }
 
   focus() {
@@ -321,11 +269,14 @@ export class Note {
 
   //TODO add setFolded/getFolded to RootNode
   set folded(value: boolean) {
-    if(!this.isRoot) {
+    if (!this.isRoot) {
       //TODO DOM manipulation should be done in createDOM
       //the problem is that folded note's children have display set to none
       //so they can be overwritten by Lexical reconciler
-      getElementByKeyOrThrow(getActiveEditor(), this.lexicalKey).classList.remove("note-folded");
+      getElementByKeyOrThrow(
+        getActiveEditor(),
+        this.lexicalKey
+      ).classList.remove("note-folded");
       this.lexicalNode.setFolded(value && this.hasChildren);
     }
   }
@@ -355,22 +306,18 @@ export class Note {
   }
 
   get prevSibling() {
-    //this methos is not symetric with nextSibling, but that's fine
-    //the reason is that Note.from(nestedLI) will return note from parent node
     const sibling = this.lexicalNode.getPreviousSibling();
     return sibling ? Note.from(sibling) : null;
   }
 
   get nextSibling() {
-    const sibling = this.hasChildren
-      ? this.lexicalNode.getNextSibling()?.getNextSibling()
-      : this.lexicalNode.getNextSibling();
+    const sibling = this.lexicalNode.getNextSibling();
     return sibling ? Note.from(sibling) : null;
   }
 
   _walk(
     walker: (node: Note, currentLevel: number) => void,
-    level: number = -1
+    level = -1
   ) {
     walker(this, level);
     if (level === 0) {

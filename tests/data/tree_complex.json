@@ -33,18 +33,7 @@
                 "text": "note0",
                 "type": "text",
                 "version": 1
-              }
-            ]
-          },
-          {
-            "direction": "ltr",
-            "folded": false,
-            "format": "",
-            "indent": 0,
-            "type": "listitem",
-            "value": 2,
-            "version": 1,
-            "children": [
+              },
               {
                 "direction": "ltr",
                 "format": "",
@@ -72,18 +61,7 @@
                         "text": "note00",
                         "type": "text",
                         "version": 1
-                      }
-                    ]
-                  },
-                  {
-                    "direction": "ltr",
-                    "folded": false,
-                    "format": "",
-                    "indent": 1,
-                    "type": "listitem",
-                    "value": 2,
-                    "version": 1,
-                    "children": [
+                      },
                       {
                         "direction": "ltr",
                         "format": "",
@@ -159,18 +137,7 @@
                 "text": "note1",
                 "type": "text",
                 "version": 1
-              }
-            ]
-          },
-          {
-            "direction": "ltr",
-            "folded": false,
-            "format": "",
-            "indent": 0,
-            "type": "listitem",
-            "value": 3,
-            "version": 1,
-            "children": [
+              },
               {
                 "direction": "ltr",
                 "format": "",
@@ -223,7 +190,6 @@
                   },
                   {
                     "direction": "ltr",
-                    "folded": false,
                     "format": "",
                     "indent": 1,
                     "type": "listitem",
@@ -238,18 +204,7 @@
                         "text": "note12",
                         "type": "text",
                         "version": 1
-                      }
-                    ]
-                  },
-                  {
-                    "direction": "ltr",
-                    "folded": false,
-                    "format": "",
-                    "indent": 1,
-                    "type": "listitem",
-                    "value": 4,
-                    "version": 1,
-                    "children": [
+                      },
                       {
                         "direction": "ltr",
                         "format": "",
@@ -277,18 +232,7 @@
                                 "text": "note120",
                                 "type": "text",
                                 "version": 1
-                              }
-                            ]
-                          },
-                          {
-                            "direction": "ltr",
-                            "folded": false,
-                            "format": "",
-                            "indent": 2,
-                            "type": "listitem",
-                            "value": 2,
-                            "version": 1,
-                            "children": [
+                              },
                               {
                                 "direction": "ltr",
                                 "format": "",
