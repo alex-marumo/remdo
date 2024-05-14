@@ -6,6 +6,9 @@ const SKIP_CONSOLE_MESSAGES = [
   "Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools",
   "[vite] connecting...",
   "[vite] connected.",
+  'ArtificialNode__DO_NOT_USE should implement "exportJSON" method to ensure JSON and default HTML serialization works as expected',
+  'ArtificialNode__DO_NOT_USE should implement "importJSON" method to ensure JSON and default HTML serialization works as expected',
+  'ArtificialNode__DO_NOT_USE must implement static "clone" method',
 ];
 
 export const test = base.extend({
@@ -13,10 +16,10 @@ export const test = base.extend({
     page.on("console", (message) => {
       if (!SKIP_CONSOLE_MESSAGES.includes(message.text())) {
         console.log("Browser:", message);
-      }
-      if (["warning", "error"].includes(message.type())) {
-        console.error(`${message.type} inside the browser: `);
-        throw Error(message.text());
+        if (["warning", "error"].includes(message.type())) {
+          console.error(`${message.type} inside the browser: `);
+          throw Error(message.text());
+        }
       }
     });
 

@@ -10,7 +10,7 @@ import {
   ListItemNode,
 } from "@lexical/list";
 import { ListNode, ListItemNode as LexicalListItemNode } from "@lexical/list";
-import { findNearestListItemNode } from "@lexical/list/utils";
+import { $findNearestListItemNode } from "@lexical/list/utils";
 import {
   $getNodeByKey,
   $isTextNode,
@@ -104,7 +104,7 @@ export class Note {
       keyOrNode instanceof LexicalNode
         ? keyOrNode
         : $getNodeByKey(keyOrNode as string);
-    const liNode = findNearestListItemNode(baseNode);
+    const liNode = $findNearestListItemNode(baseNode);
 
     return liNode ? new Note(liNode.getKey()) : new Note("root");
   }

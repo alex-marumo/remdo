@@ -1,8 +1,7 @@
 import { NotesState, Note } from "@/components/Editor/api";
 import { patch } from "@/utils";
-import { $isListNode, ListItemNode, ListNode } from "@lexical/list";
+import { $isListItemNode, $isListNode, ListItemNode, ListNode } from "@lexical/list";
 //import * as lexicalList from "@lexical/list";
-import { updateChildrenListItemValue } from "@lexical/list/formatList";
 import {
   addClassNamesToElement,
   removeClassNamesFromElement,
@@ -135,6 +134,27 @@ patch(
     return newElement;
   }
 );
+
+
+//customized version of lexical's function, the only changes are commented
+//out lines
+function updateChildrenListItemValue(list: ListNode): void {
+  //const isNotChecklist = list.getListType() !== 'check';
+  let value = list.getStart();
+  for (const child of list.getChildren()) {
+    if ($isListItemNode(child)) {
+      if (child.getValue() !== value) {
+        child.setValue(value);
+      }
+      //if (isNotChecklist && child.getChecked() != null) {
+      //  child.setChecked(undefined);
+      //}
+      if (!$isListNode(child.getFirstChild())) {
+        value++;
+      }
+    }
+  }
+}
 
 patch(ListItemNode, "transform", function (old, node: LexicalNode) {
   return (node: LexicalNode) => {

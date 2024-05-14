@@ -10,6 +10,7 @@
     "bootstrap": "git+https://github.com/twbs/bootstrap.git#v5.3.2",
     "bootstrap-icons": "^1.9.1",
     "envalid": "^7.3.1",
+    "fs-extra": "^11.2.0",
     "lexical": "file:./lexical/packages/lexical",
     "prettier": "^2.8.1",
     "prop-types": "^15.8.1",

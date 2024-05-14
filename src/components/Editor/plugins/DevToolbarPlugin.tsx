@@ -131,9 +131,11 @@ export const DevToolbarPlugin = ({ editorBottomRef }) => {
       {editorBottom &&
         showEditorStateInput &&
         createPortal(<EditorStateInput />, editorBottom)}
+      {/*
       {editorBottom &&
         isDebugMode &&
         createPortal(<TreeViewPlugin />, editorBottom)}
+      */}
       <button
         type="button"
         className="btn btn-link float-end"
