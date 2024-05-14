@@ -7,13 +7,13 @@ import { getDataPath } from "tests/common.js";
 export class Notebook {
   constructor(private readonly page: Page) {}
 
-  locator() {
-    return this.page.locator(".editor-input");
+  locator(selector="") {
+    const editorSelector = ".editor-input" + (selector ? " " + selector : "");
+    return this.page.locator(editorSelector);
   }
 
   noteLocator(title: string): Locator {
-    //TODO try using other locators
-    return this.locator().locator("li :text-is('" + title + "')");
+    return this.locator("li span:text-is('" + title + "')");
   }
 
   async load(file: string) {
@@ -24,6 +24,10 @@ export class Notebook {
     await this.page.click("text=Submit Editor State");
     await this.page.click("text=Load State");
     await this.locator().focus();
+
+    //FIXME - wait for lexical to fully update the editor
+    //perhabs the whole loading mechanism should be improved
+    await this.page.waitForTimeout(50);
   }
 
   async html() {
