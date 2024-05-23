@@ -11,7 +11,6 @@ import { NoteControlsPlugin } from "./plugins/NoteControlsPlugin";
 import NotesPlugin from "./plugins/NotesPlugin";
 import { QuickMenuPlugin } from "./plugins/QuickMenuPlugin";
 import { RemdoAutoLinkPlugin } from "./plugins/RemdoAutoLinkPlugin";
-import { providerFactory } from "./yjsProvider";
 import FloatingTextFormatToolbarPlugin from "@lexical/playground/plugins/FloatingTextFormatToolbarPlugin";
 import "@lexical/playground/plugins/FloatingTextFormatToolbarPlugin/index.css";
 import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
@@ -30,14 +29,20 @@ import React, { useRef } from "react";
 function LexicalEditor() {
   const editorContainerRef = useRef();
   const editorBottomRef = useRef();
-  const { documentID } = useDocumentSelector();
+  const documentSelector = useDocumentSelector();
 
   return (
-    <LexicalComposer initialConfig={editorConfig} key={documentID}>
+    <LexicalComposer
+      initialConfig={editorConfig}
+      key={documentSelector.documentID}
+    >
       <div className="editor-container editor-shell">
         <DevToolbarPlugin editorBottomRef={editorBottomRef} />
         <QuickMenuPlugin />
-        <NotesPlugin anchorRef={editorContainerRef} documentID={documentID} />
+        <NotesPlugin
+          anchorRef={editorContainerRef}
+          documentID={documentSelector.documentID}
+        />
         <RichTextPlugin
           contentEditable={
             <div className="editor" ref={editorContainerRef}>
@@ -61,8 +66,8 @@ function LexicalEditor() {
           <HistoryPlugin />
         ) : (
           <CollaborationPlugin
-            id={documentID}
-            providerFactory={providerFactory}
+            id={documentSelector.documentID}
+            providerFactory={documentSelector.yjsProviderFactory}
             shouldBootstrap={true}
           />
         )}

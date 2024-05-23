@@ -1,11 +1,27 @@
 import { NotesState } from "./Editor/api";
-import React, { createContext, useContext, useState } from "react";
+import { Provider } from "@lexical/yjs";
+import React, {
+  createContext,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Dropdown, NavDropdown } from "react-bootstrap";
 import { useNavigate } from "react-router";
+import { WebsocketProvider } from "y-websocket";
+import * as Y from "yjs";
 
+//import conditionally, because it breaks unit tests, where indexedDB is
+//neither available nor used
+const yIDB = "indexedDB" in window ? import("y-indexeddb") : null;
+
+type ProviderFactory = (id: string, yjsDocMap: Map<string, Y.Doc>) => Provider;
 interface DocumentSelectorType {
   documentID: string;
   setDocumentID: (id: string) => void;
+  yjsProviderFactory: ProviderFactory;
+  getYjsDoc: () => Y.Doc;
 }
 
 const DocumentSelectorContext = createContext<DocumentSelectorType>(null);
@@ -22,9 +38,65 @@ export const useDocumentSelector = () => {
 
 export const DocumentSelectorProvider = ({ children }) => {
   const [documentID, setDocumentID] = useState("main");
+  const yjsDoc = useRef<Y.Doc | null>(null);
+
+  const yjsProviderFactory: ProviderFactory = useMemo((): ProviderFactory => {
+    const factory: ProviderFactory = (
+      id: string,
+      yjsDocMap: Map<string, Y.Doc>
+    ): Provider => {
+      let doc = yjsDocMap.get(id);
+
+      if (doc) {
+        doc.load();
+      } else {
+        doc = new Y.Doc();
+        yjsDocMap.set(id, doc);
+      }
+      yjsDoc.current = doc;
+
+      if (yIDB) {
+        yIDB.then(({ IndexeddbPersistence }) => {
+          new IndexeddbPersistence(id, doc);
+        });
+      } else if (!("__vitest_environment__" in globalThis)) {
+        console.warn(
+          "IndexedDB is not supported in this browser. Disabling offline mode."
+        );
+      }
+
+      const wsURL = `ws://${window.location.hostname}:8080`;
+      const roomName = "notes/0/" + id;
+      //console.log(`WebSocket URL: ${wsURL}/${roomName}`)
+      const wsProvider = new WebsocketProvider(wsURL, roomName, doc, {
+        connect: true,
+      });
+      wsProvider.shouldConnect = true; //reconnect after disconnecting
+
+      /*
+      const events = ["status", "synced", "sync", "update", "error", "destroy", "reload"];
+      events.forEach((event) => {
+        wsProvider.on(event, () => {
+          console.log("wsProvider", event);
+        });
+      });
+      */
+
+      // @ts-ignore
+      return wsProvider;
+    };
+    return factory;
+  }, []);
 
   return (
-    <DocumentSelectorContext.Provider value={{ documentID, setDocumentID }}>
+    <DocumentSelectorContext.Provider
+      value={{
+        documentID,
+        setDocumentID,
+        yjsProviderFactory,
+        getYjsDoc: () => yjsDoc.current,
+      }}
+    >
       {children}
     </DocumentSelectorContext.Provider>
   );

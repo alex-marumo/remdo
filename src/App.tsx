@@ -7,6 +7,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Dev } from "./components/Dev/Dev";
+import { Yjs } from "./components/Dev/Yjs";
 
 function App() {
   return (
@@ -20,7 +21,10 @@ function App() {
                 <Route path="note/:noteID" element="</>"></Route>
               </Route>
               <Route path="about" element={<div>About</div>} />
-              <Route path="dev" element={<Dev />} />
+              <Route path="dev">
+                <Route path="" element={<Dev />} index></Route>
+                <Route path="yjs" element={<Yjs />} />
+              </Route>
             </Route>
           </Routes>
         </DebugProvider>
