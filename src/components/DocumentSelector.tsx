@@ -116,8 +116,8 @@ export const DocumentSelectorProvider = ({ children }) => {
       value={{
         documentID,
         setDocumentID,
-        //yjsProviderFactory,
-        yjsProviderFactory: hocuspocusProviderFactory,
+        yjsProviderFactory,
+        //yjsProviderFactory: hocuspocusProviderFactory, //currently doesn't support persistance, even between page reloads
         getYjsDoc: () => yjsDoc.current,
         getYjsProvider: () => yjsProvider.current,
       }}
