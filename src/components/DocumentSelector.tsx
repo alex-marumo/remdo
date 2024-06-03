@@ -1,4 +1,5 @@
 import { NotesState } from "./Editor/api";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 import { Provider } from "@lexical/yjs";
 import React, {
   createContext,
@@ -92,12 +93,31 @@ export const DocumentSelectorProvider = ({ children }) => {
     return factory;
   }, []);
 
+  const hocuspocusProviderFactory: ProviderFactory =
+    useMemo((): ProviderFactory => {
+      const factory: ProviderFactory = (
+        id: string,
+        yjsDocMap: Map<string, Y.Doc>
+      ): Provider => {
+        const wsURL = `ws://${window.location.hostname}:8080`;
+        const roomName = "notes/0/" + id;
+        const provider = new HocuspocusProvider({ url: wsURL, name: roomName });
+
+        yjsProvider.current = provider;
+        yjsDocMap.set(id, provider.document);
+        yjsDoc.current = provider.document;
+        return provider;
+      };
+      return factory;
+    }, []);
+
   return (
     <DocumentSelectorContext.Provider
       value={{
         documentID,
         setDocumentID,
-        yjsProviderFactory,
+        //yjsProviderFactory,
+        yjsProviderFactory: hocuspocusProviderFactory,
         getYjsDoc: () => yjsDoc.current,
         getYjsProvider: () => yjsProvider.current,
       }}
