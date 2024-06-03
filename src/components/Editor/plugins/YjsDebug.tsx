@@ -26,8 +26,11 @@ function yXmlTextToJSON(value: Y.XmlText): Object {
         }
 
         const nestedNodes = [];
-        const children = [];
-        result["children"] = children;
+        let children = result["children"];
+        if (!children) {
+          children = [];
+          result["children"] = children;
+        }
         for (const nodeName in delta.attributes) {
           const attrs = [];
           for (const key in delta.attributes[nodeName]) {
