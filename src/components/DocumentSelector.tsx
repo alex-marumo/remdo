@@ -22,6 +22,7 @@ interface DocumentSelectorType {
   setDocumentID: (id: string) => void;
   yjsProviderFactory: ProviderFactory;
   getYjsDoc: () => Y.Doc;
+  getYjsProvider: () => Provider;
 }
 
 const DocumentSelectorContext = createContext<DocumentSelectorType>(null);
@@ -39,6 +40,7 @@ export const useDocumentSelector = () => {
 export const DocumentSelectorProvider = ({ children }) => {
   const [documentID, setDocumentID] = useState("main");
   const yjsDoc = useRef<Y.Doc | null>(null);
+  const yjsProvider = useRef<Provider | null>(null);
 
   const yjsProviderFactory: ProviderFactory = useMemo((): ProviderFactory => {
     const factory: ProviderFactory = (
@@ -83,6 +85,8 @@ export const DocumentSelectorProvider = ({ children }) => {
       */
 
       // @ts-ignore
+      yjsProvider.current = wsProvider;
+      // @ts-ignore
       return wsProvider;
     };
     return factory;
@@ -95,6 +99,7 @@ export const DocumentSelectorProvider = ({ children }) => {
         setDocumentID,
         yjsProviderFactory,
         getYjsDoc: () => yjsDoc.current,
+        getYjsProvider: () => yjsProvider.current,
       }}
     >
       {children}

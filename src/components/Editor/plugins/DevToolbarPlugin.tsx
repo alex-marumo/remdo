@@ -1,6 +1,10 @@
 import { useNotesLexicalComposerContext } from "../NotesComposerContext";
+import { SPACER_COMMAND } from "../commands";
+import { YjsDebug } from "./YjsDebug";
 import { useDebug } from "@/DebugContext";
+import { useDocumentSelector } from "@/components/DocumentSelector";
 import TreeViewPlugin from "@lexical/playground/plugins/TreeViewPlugin";
+import { useYjsHistory } from "@lexical/react/shared/useYjsCollaboration";
 import { mergeRegister } from "@lexical/utils";
 import { CONNECTED_COMMAND, TOGGLE_CONNECT_COMMAND } from "@lexical/yjs";
 import {
@@ -10,7 +14,7 @@ import {
 } from "lexical";
 import React, { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { SPACER_COMMAND } from "../commands";
+import * as Y from "yjs";
 
 function EditorStateInput() {
   const [editor] = useNotesLexicalComposerContext();
@@ -45,6 +49,7 @@ export const DevToolbarPlugin = ({ editorBottomRef }) => {
   const [editor] = useNotesLexicalComposerContext();
   const [darkMode, setDarkMode] = useState(getDarkMode());
   const [showEditorStateInput, setShowEditorStateInput] = useState(false);
+  const documentSelector = useDocumentSelector();
   const { isDebugMode } = useDebug();
   const editorBottom = editorBottomRef.current;
 
@@ -86,6 +91,11 @@ export const DevToolbarPlugin = ({ editorBottomRef }) => {
       editor.dispatchCommand(SPACER_COMMAND, null);
       editor.dispatchCommand(CLEAR_EDITOR_COMMAND, null);
     });
+    const yjsDoc = documentSelector.getYjsDoc();
+    if (yjsDoc) {
+      const undoManager = new Y.UndoManager(yjsDoc.get("root"));
+      undoManager.clear();
+    }
   };
 
   const toggleEditorStateInput = (event) => {
@@ -99,50 +109,53 @@ export const DevToolbarPlugin = ({ editorBottomRef }) => {
   }, [darkMode]);
 
   return (
-    isDebugMode && <div
-      className="d-none d-lg-block"
-    >
-      <button
-        type="button"
-        className="btn btn-link float-end"
-        onClick={toggleColorMode}
-      >
-        <i
-          className={`bi bi-${
-            darkMode ? "sun-fill" : "moon-stars-fill"
-          } text-secondary`}
-        ></i>
-        {darkMode ? "Light" : "Dark"} Mode
-      </button>
-      <button
-        type="button"
-        className="btn btn-link float-end"
-        onClick={clearContent}
-      >
-        Clear
-      </button>
-      <button
-        type="button"
-        className="btn btn-link float-end"
-        onClick={toggleEditorStateInput}
-      >
-        Load State
-      </button>
-      {editorBottom &&
-        showEditorStateInput &&
-        createPortal(<EditorStateInput />, editorBottom)}
-      {editorBottom &&
-        isDebugMode &&
-        createPortal(<TreeViewPlugin />, editorBottom)}
-      <button
-        type="button"
-        className="btn btn-link float-end"
-        onClick={() => {
-          editor.dispatchCommand(TOGGLE_CONNECT_COMMAND, !connected);
-        }}
-      >
-        {connected ? "Disconnect" : "Connect"}
-      </button>
-    </div>
+    isDebugMode && (
+      <div className="d-none d-lg-block">
+        <button
+          type="button"
+          className="btn btn-link float-end"
+          onClick={toggleColorMode}
+        >
+          <i
+            className={`bi bi-${
+              darkMode ? "sun-fill" : "moon-stars-fill"
+            } text-secondary`}
+          ></i>
+          {darkMode ? "Light" : "Dark"} Mode
+        </button>
+        <button
+          type="button"
+          className="btn btn-link float-end"
+          onClick={clearContent}
+        >
+          Clear
+        </button>
+        <button
+          type="button"
+          className="btn btn-link float-end"
+          onClick={toggleEditorStateInput}
+        >
+          Load State
+        </button>
+        {editorBottom &&
+          showEditorStateInput &&
+          createPortal(<EditorStateInput />, editorBottom)}
+        {editorBottom &&
+          isDebugMode &&
+          createPortal(<YjsDebug />, editorBottom)}
+        {editorBottom &&
+          isDebugMode &&
+          createPortal(<TreeViewPlugin />, editorBottom)}
+        <button
+          type="button"
+          className="btn btn-link float-end"
+          onClick={() => {
+            editor.dispatchCommand(TOGGLE_CONNECT_COMMAND, !connected);
+          }}
+        >
+          {connected ? "Disconnect" : "Connect"}
+        </button>
+      </div>
+    )
   );
 };
