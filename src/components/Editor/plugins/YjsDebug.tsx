@@ -1,6 +1,5 @@
 import { useDocumentSelector } from "@/components/DocumentSelector";
 import ReactJson from "@microlink/react-json-view";
-import * as decoding from "lib0/decoding";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as Y from "yjs";
 
