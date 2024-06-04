@@ -92,14 +92,14 @@ export function YjsDebug() {
   const [documentData, setDocumentData] = useState({});
 
   const refreshDocumentElements = useCallback(() => {
-    const newDocumentElements = documentSelector.getYjsDoc().share;
+    const newDocumentElements = documentSelector.getYjsDoc()?.share;
 
-    newDocumentElements.forEach((value, key) => {
+    newDocumentElements?.forEach((value, key) => {
       setDocumentData((prev) => {
         return { ...prev, [key]: yjsToJSON(value) };
       });
     });
-    documentElements.current.forEach((_, key: string) => {
+    documentElements.current?.forEach((_, key: string) => {
       if (!newDocumentElements.get(key)) {
         setDocumentData((prev) => {
           const newDocumentData = { ...prev };
