@@ -6,89 +6,66 @@ import * as Y from "yjs";
 
 type YElement = Y.AbstractType<any>;
 
+const DEFAULTS = {
+  list: {
+    __dir: "ltr",
+    __format: 0,
+    __indent: 0,
+    __listType: "bullet",
+    __start: 1,
+    __tag: "ul",
+  },
+  listitem: {
+    __folded: false,
+    __format: 0,
+    __indent: 0,
+    __dir: "ltr",
+    __value: null,
+  },
+  text: {
+    __style: "",
+    __mode: 0,
+    __detail: 0,
+    __format: 0,
+  },
+};
+
+function addUnlessDefault(
+  result: object,
+  key: string,
+  value: any,
+  type: string
+) {
+  const defaultValue = DEFAULTS[type]?.[key];
+  if (defaultValue !== null && defaultValue !== value) {
+    result[key] = value;
+  }
+}
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 function yXmlTextToJSON(value: Y.XmlText): Object {
   const result = {};
-  value
-    .toDelta()
-    .forEach(
-      (delta: {
-        attributes: { [x: string]: { [x: string]: any } };
-        insert: Y.AbstractType<Y.YEvent<any>>;
-      }) => {
-        if (delta.insert.getAttributes) {
-          console.log("delta", delta.insert.getAttributes());
-          const attrs = delta.insert.getAttributes();
-          for (const key in attrs) {
-            console.log(key, attrs[key]);
-            result[key] = attrs[key];
-          }
-        }
+  value.toDelta().forEach((delta: { insert: YElement }) => {
+    const sharedType = delta.insert as Y.XmlText;
+    const attrs = sharedType.getAttributes && sharedType.getAttributes();
+    for (const key in attrs) {
+      addUnlessDefault(result, key, attrs[key], attrs["__type"]);
+    }
 
-        const nestedNodes = [];
-        let children = result["children"];
-        if (!children) {
-          children = [];
-          result["children"] = children;
-        }
-        for (const nodeName in delta.attributes) {
-          const attrs = [];
-          for (const key in delta.attributes[nodeName]) {
-            attrs.push({ key, value: delta.attributes[nodeName][key] });
-          }
-          // sort attributes to get a unique order
-          attrs.sort((a, b) => (a.key < b.key ? -1 : 1));
-          nestedNodes.push({ nodeName, attrs });
-        }
-        // sort node order to get a unique order
-        nestedNodes.sort((a, b) => (a.nodeName < b.nodeName ? -1 : 1));
-        for (let i = 0; i < nestedNodes.length; i++) {
-          const node = nestedNodes[i];
-          result.push(`<${node.nodeName}`);
-          for (let j = 0; j < node.attrs.length; j++) {
-            const attr = node.attrs[j];
-            result.push(` ${attr.key}="${attr.value}"`);
-          }
-          result.push(">");
-        }
-        children.push(yjsToJSON(delta.insert));
-        for (let i = nestedNodes.length - 1; i >= 0; i--) {
-          result.push(`</${nestedNodes[i].nodeName}>`);
-        }
-      }
-    );
-  ////flatten the array
-  //while (Array.isArray(result) && result.length === 1) {
-  //  result = result[0];
-  //}
-  //if (
-  //  result.length === 2 &&
-  //  result[0] instanceof Object &&
-  //  typeof result[1] === "string"
-  //) {
-  //  //node properties & text
-  //  result[0]["text"] = result[1];
-  //  result.splice(1, 1);
-  //} else if (
-  //  result.length === 3 &&
-  //  result[0] instanceof Object &&
-  //  typeof result[1] === "string" &&
-  //  result[2] instanceof Object
-  //) {
-  //  //node properties & text & children
-  //  result[0]["text"] = result[1];
-  //  result[0]["children"] = result[2];
-  //  result.splice(1, 2);
-  //}
+    const children = result["children"] ?? [];
+    result["children"] = children;
+    children.push(yjsToJSON(delta.insert));
+  });
   return result;
 }
 
 function yMapToJSON(value: Y.Map<any>): object {
   const result = {};
+  const type = value.get("__type");
   value._map.forEach((item, key) => {
     if (!item.deleted) {
       const v = item.content.getContent()[item.length - 1];
-      result[key] = yjsToJSON(v);
+      addUnlessDefault(result, key, yjsToJSON(v), type);
     }
   });
   return result;
@@ -123,7 +100,7 @@ export function YjsDebug() {
         return { ...prev, [key]: yjsToJSON(value) };
       });
     });
-    documentElements.current.forEach((value: YElement, key: string) => {
+    documentElements.current.forEach((_, key: string) => {
       if (!newDocumentElements.get(key)) {
         setDocumentData((prev) => {
           const newDocumentData = { ...prev };
@@ -150,14 +127,16 @@ export function YjsDebug() {
     <div>
       <div className="text-white font-weight-bold">Yjs Info</div>
       <div>DocumentID: {documentSelector.documentID}</div>
-      <div>
+      <div style={{fontSize: "0.75rem"}}>
         <ReactJson
           src={documentData}
           name={null}
           displayObjectSize={false}
           displayDataTypes={false}
           quotesOnKeys={false}
+          indentWidth={2}
           theme="ashes"
+          enableClipboard={false}
           sortKeys={true}
         />
       </div>
