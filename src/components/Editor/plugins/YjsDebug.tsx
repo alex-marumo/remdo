@@ -33,17 +33,16 @@ function addUnlessDefault(
   result: object,
   key: string,
   value: any,
-  type: string
+  lexicalType: string
 ) {
-  const defaultValue = DEFAULTS[type]?.[key];
+  const defaultValue = DEFAULTS[lexicalType]?.[key];
   if (defaultValue !== null && defaultValue !== value) {
     result[key] = value;
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-function yXmlTextToJSON(value: Y.XmlText): Object {
-  const result = {};
+function yXmlTextToJSON(value: Y.XmlText) {
+  const result = {__yType: "XmlText"}
   value.toDelta().forEach((delta: { insert: YElement }) => {
     const sharedType = delta.insert as Y.XmlText;
     const attrs = sharedType.getAttributes && sharedType.getAttributes();
@@ -55,16 +54,24 @@ function yXmlTextToJSON(value: Y.XmlText): Object {
     result["children"] = children;
     children.push(yjsToJSON(delta.insert));
   });
+
+  //flatten if there is only one child
+  if(result["children"]?.length === 1) {
+    result['child'] = result["children"][0];
+    delete result["children"];
+  }
   return result;
 }
 
-function yMapToJSON(value: Y.Map<any>): object {
-  const result = {};
-  const type = value.get("__type");
+function yMapToJSON(value: Y.Map<any>) {
+  const result = new Map();
+  result["__yType"] =  "Map";
+
+  const lexicalType = value.get("__type");
   value._map.forEach((item, key) => {
     if (!item.deleted) {
       const v = item.content.getContent()[item.length - 1];
-      addUnlessDefault(result, key, yjsToJSON(v), type);
+      addUnlessDefault(result, key, yjsToJSON(v), lexicalType);
     }
   });
   return result;
