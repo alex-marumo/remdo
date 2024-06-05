@@ -2,9 +2,13 @@
 import babel from "@rollup/plugin-babel";
 import react from "@vitejs/plugin-react";
 import fs from "fs";
+import { createRequire } from "module";
 import path from "path";
 import { visualizer } from "rollup-plugin-visualizer";
 import { PluginOption, defineConfig } from "vite";
+
+const require = createRequire(import.meta.url);
+const transformErrorMessages = require("./lexical/scripts/error-codes/transform-error-messages");
 
 // TODO copied from lexical playground vite config + duplicated with tsconfig
 
@@ -132,7 +136,7 @@ const moduleResolution = [
   "LexicalPlainTextPlugin",
   "LexicalRichTextPlugin",
   "LexicalClearEditorPlugin",
-  'LexicalClickableLinkPlugin',
+  "LexicalClickableLinkPlugin",
   "LexicalCollaborationContext",
   "LexicalCollaborationPlugin",
   "LexicalHistoryPlugin",
@@ -240,9 +244,7 @@ playgroundResolveAlias.unshift(
   },
   {
     find: "@lexical/yjs/Utils",
-    replacement: path.resolve(
-      "./lexical/packages/lexical-yjs/src/Utils.ts"
-    ),
+    replacement: path.resolve("./lexical/packages/lexical-yjs/src/Utils.ts"),
   },
   {
     find: "@lexical/yjs/CollabElementNode",
@@ -285,7 +287,7 @@ export default defineConfig({
     },
     watch: {
       ignored: ["data/**"],
-    }
+    },
   },
 
   define: {
@@ -317,7 +319,7 @@ export default defineConfig({
       plugins: [
         "@babel/plugin-transform-flow-strip-types",
         [
-          require("./lexical/scripts/error-codes/transform-error-messages"),
+          transformErrorMessages,
           {
             noMinify: true,
           },
