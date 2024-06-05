@@ -354,3 +354,17 @@ afterAll(async () => {
   //an ugly workaround - otherwise we may loose some messages written to console
   await new Promise((r) => setTimeout(r, 10));
 });
+
+export function createChildren(
+  note: Note,
+  count: number
+): [Array<Note>, ...Note[]] {
+  const start = [...note.children].length;
+  for (let i = 0; i < count; ++i) {
+    note.createChild(`note${start + i}`);
+  }
+  const n: Array<Note> = [note, ...note.children];
+  const n1: Array<Note> = [...note.children];
+
+  return [n, ...n1];
+}

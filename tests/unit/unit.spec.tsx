@@ -1,5 +1,5 @@
 //TODO refactor using loadEditorState
-import { debug } from "./common";
+import { createChildren, debug } from "./common";
 import { Note, NotesState } from "@/components/Editor/api";
 import { $isListNode, $isListItemNode } from "@lexical/list";
 import { $createTextNode, $getRoot, $setSelection, ElementNode } from "lexical";
@@ -51,20 +51,6 @@ function checkChildren(
     }
   });
   expect(notes).toHaveLength(expectedCount + 1); //+1 for root which is not listed as a child
-}
-
-export function createChildren(
-  note: Note,
-  count: number
-): [Array<Note>, ...Note[]] {
-  const start = [...note.children].length;
-  for (let i = 0; i < count; ++i) {
-    note.createChild(`note${start + i}`);
-  }
-  const n: Array<Note> = [note, ...note.children];
-  const n1: Array<Note> = [...note.children];
-
-  return [n, ...n1];
 }
 
 describe("API", async () => {

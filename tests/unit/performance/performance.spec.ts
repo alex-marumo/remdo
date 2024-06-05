@@ -1,4 +1,4 @@
-import { createChildren } from "./unit.spec";
+import { createChildren } from "../common";
 import { Note } from "@/components/Editor/api";
 import { $getRoot, $createTextNode } from "lexical";
 import { it } from "vitest";
@@ -36,7 +36,7 @@ class Timer {
   }
 }
 
-/** returns number of notes including the given */
+/** returns number of notes including the one that's passed as the argument */
 function countNotes(note: Note): number {
   let count = 0;
   for (const child of note.children) {
@@ -84,7 +84,7 @@ it(
       });
     }
 
-    //on blank document the first note is blank, let's fix that if needed
+    //on a blank document the first note is empty, let's fix that if needed
     lexicalUpdate(() => {
       const root = Note.from($getRoot());
       const firstChild = [...root.children][0];
@@ -110,7 +110,11 @@ it(
         `added: ${count}/${N}, total: ${total},`,
         timer.calculateRemainingTime(N, count)
       );
-      await new Promise((r) => setTimeout(r, 50)); //TODO try to find a better way to flish websocket data, without that delay some of the data was lost if too many nodes were added (like N=1000, BATCH=50 run twice)
+
+      //TODO try to find a better way to flush websocket data,
+      //without that delay some of the data was lost if too many nodes were
+      //added (like N=1000, BATCH=50 run twice)
+      await new Promise((r) => setTimeout(r, 50));
     }
     logPerformance("notes count", total);
   },
@@ -133,18 +137,19 @@ it(
 );
 
 /**
- * creates a tree with N nodes, each having MAX_CHILDREN children at most
+ * clears existing nodes and then creates a tree with N nodes, each having MAX_CHILDREN children at most
  */
 it(
-  "tree",
+  "create tree",
   async ({ lexicalUpdate }) => {
-    const N = getCount(20, 20);
+    const N = getCount(200, 2);
     const MAX_CHILDREN = 8;
     const timer = new Timer();
 
     let n = N;
     const queue: Note[] = [];
     lexicalUpdate(() => {
+      $getRoot().clear();
       const root = Note.from($getRoot());
       queue.push(root);
     });
@@ -160,6 +165,7 @@ it(
       });
     }
 
+    //remove the first, empty note
     lexicalUpdate(() => {
       const root = Note.from($getRoot());
       [...root.children][0].lexicalNode.remove();
