@@ -7,7 +7,9 @@ function getCount(performaceCount: number, regularCount: number) {
   return process.env.VITE_PERFORMANCE_TESTS ? performaceCount : regularCount;
 }
 
-function logPerformance(...args: any[]) {
+function performanceLogger(...args: any[]) {
+  //don't print the message in non-performance text context to not mess up
+  //with other info
   if (process.env.VITE_PERFORMANCE_TESTS) {
     console.log(...args);
   }
@@ -45,6 +47,14 @@ function countNotes(note: Note): number {
   return count + 1;
 }
 
+function logNoteCount(lexicalUpdate: (fn: () => void) => void) {
+  lexicalUpdate(() => {
+    const root = Note.from($getRoot());
+    const count = countNotes(root);
+    performanceLogger(`Notes count: ${count}`);
+  });
+}
+
 /**
  * removes all notes
  */
@@ -60,9 +70,9 @@ it("clear", async ({ lexicalUpdate }) => {
 it(
   "add nodes",
   async ({ lexicalUpdate }) => {
-    const N = getCount(100, 20);
+    const N = getCount(1000, 20);
     const MAX_CHILDREN = 8;
-    const BATCH_SIZE = 20;
+    const BATCH_SIZE = 100;
 
     function addNotes(count: number) {
       lexicalUpdate(() => {
@@ -106,17 +116,17 @@ it(
         total = countNotes(root);
       });
 
-      logPerformance(
+      performanceLogger(
         `added: ${count}/${N}, total: ${total},`,
         timer.calculateRemainingTime(N, count)
       );
 
       //TODO try to find a better way to flush websocket data,
-      //without that delay some of the data was lost if too many nodes were
+      //without that delay some of the data can be lost if too many nodes are
       //added (like N=1000, BATCH=50 run twice)
       await new Promise((r) => setTimeout(r, 50));
     }
-    logPerformance("notes count", total);
+    logNoteCount(lexicalUpdate);
   },
   60 * 60 * 1000
 );
@@ -126,13 +136,7 @@ it(
  */
 it(
   "count notes",
-  async ({ lexicalUpdate }) => {
-    lexicalUpdate(() => {
-      const root = Note.from($getRoot());
-      const count = countNotes(root);
-      logPerformance("notes count", count);
-    });
-  },
+  async ({ lexicalUpdate }) => logNoteCount(lexicalUpdate),
   20 * 60 * 1000
 );
 
@@ -154,7 +158,7 @@ it(
       queue.push(root);
     });
     while (n > 0) {
-      logPerformance(n, timer.calculateRemainingTime(N, n));
+      performanceLogger(n, timer.calculateRemainingTime(N, n));
       lexicalUpdate(() => {
         const currentNote = queue.shift();
         const parentName = currentNote.text.replace("root", "note");

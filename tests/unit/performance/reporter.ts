@@ -1,23 +1,27 @@
-import { UserConsoleLog, Vitest } from "vitest";
+import { getTests } from "@vitest/runner/utils";
+import { File, UserConsoleLog, Vitest } from "vitest";
 import { DefaultReporter } from "vitest/reporters";
 
 export default class PerformanceReporter extends DefaultReporter {
-  onCollected() {
-  }
+  onCollected() {}
 
-  onFinished(): Promise<void> {
-    // Don't print the summary
+  onFinished(files?: File[], errors?: unknown[]): Promise<void> {
+    // print summary only if there are failed tests
+    const failed = getTests(files).find((t) => t.result?.state === "fail");
+    if (failed) {
+      this.reportSummary(files, errors);
+    }
     return;
   }
 
   onInit(ctx: Vitest) {
-    // Disable the banner
+    // disable the initial banner
     ctx.logger.printBanner = () => {};
     super.onInit(ctx);
   }
 
   onUserConsoleLog(log: UserConsoleLog) {
-    //Don't print test info, just the message
+    // don't print test info, just the message
     const stream =
       log.type === "stdout"
         ? this.ctx.logger.outputStream
