@@ -20,6 +20,6 @@ export default class PerformanceReporter extends DefaultReporter {
     ctx.logger.printBanner = () => {};
     super.onInit(ctx);
 
-    process.stdout.write("Running performance tests...\n");
+    process.stdout.write("Running performance test...\n");
   }
 }

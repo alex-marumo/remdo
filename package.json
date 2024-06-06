@@ -40,7 +40,7 @@
     "test-browser-collab": "npx playwright test --project=chromium",
     "test-browser-watch": "VITE_DISABLECOLLAB=true ./utils.sh watch_repo 'npm run test-browser && echo \"\\x1b[32mDone, waiting for file changes...\\x1b[0m\"'",
     "test-unit": "VITE_DISABLECOLLAB=true npx vitest run",
-    "test-performance": "VITE_PERFORMANCE_TESTS=true time -f 'Time: %es' npx vitest run performance --reporter ./tests/unit/performance/reporter.ts -t",
+    "test-performance": "VITE_PERFORMANCE_TESTS=true VITE_LOG_LEVEL=info time -f 'Time: %es' npx vitest run performance/performance --reporter ./tests/unit/performance/reporter.ts -t",
     "test-unit-collab": "npx vitest run",
     "test-unit-watch-coverage": "VITE_DISABLECOLLAB=true npx vitest --ui --coverage.enabled --coverage.include=src/**",
     "test-unit-watch": "VITE_DISABLECOLLAB=true npx vitest --ui",

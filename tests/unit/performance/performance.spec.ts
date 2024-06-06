@@ -72,9 +72,13 @@ class Timer {
     const minutes = Math.floor(roundedRemainingTime / 60);
     const seconds = roundedRemainingTime % 60;
 
-    return `~${
-      minutes > 0 ? minutes + ":" : ""
-    }${seconds}s remaining${adjustmentInfo}`;
+    if (minutes > 0 || seconds > 0) {
+      return `~${
+        minutes > 0 ? minutes + ":" : ""
+      }${seconds}s remaining${adjustmentInfo}`;
+    } else {
+      return "almost done!";
+    }
   }
 }
 
@@ -109,10 +113,10 @@ it("clear", async ({ lexicalUpdate }) => {
  */
 it(
   "add notes",
-  async ({ lexicalUpdate, logger }) => {
-    const N = getCount(40, 20);
+  async ({ lexicalUpdate, logger, expect }) => {
+    const N = getCount(5000, 20);
     const MAX_CHILDREN = 8;
-    const BATCH_SIZE = 10; // too big value causes errors during sync
+    const BATCH_SIZE = 100; // too big value causes errors during sync
 
     function addNotes(count: number) {
       lexicalUpdate(() => {
@@ -134,15 +138,16 @@ it(
       });
     }
 
-    logger.info("Test started, counting exising notes...");
+    await logger.info("Test started");
+    await logger.info(" counting existing notes...");
+
     const initialCount = countNotes(lexicalUpdate);
     const adjustedN = adjustDeltaToGetRoundedTotal(initialCount, N);
-    //FIXME double check if notes are added correctly
-    //TODO move the message to adjustDeltaToGetRoundedTotal
-    logger.info(
-      `Initial notes count: ${initialCount} adding ${adjustedN} more (adjusted by ${
+    const expectedFinalCount = initialCount + adjustedN;
+    await logger.info(
+      ` initial notes count: ${initialCount} adding ${adjustedN} more (adjusted by ${
         adjustedN - N
-      }) for the total of ${initialCount + adjustedN} notes`
+      }) for the total of ${expectedFinalCount} notes`
     );
 
     //on a blank document the first note is empty, let's fix that if needed
@@ -155,14 +160,15 @@ it(
     });
 
     const timer = new Timer(N);
-    for (let count = N, batch = 1; count > 0; batch++) {
-      const currentBatchSize = Math.min(BATCH_SIZE, count);
+    const numberOfBatches = Math.ceil(adjustedN / BATCH_SIZE);
+    for (let remainingCount = adjustedN, batch = 1; remainingCount > 0; batch++) {
+      const currentBatchSize = Math.min(BATCH_SIZE, remainingCount);
       addNotes(currentBatchSize);
-      count -= currentBatchSize;
+      remainingCount -= currentBatchSize;
 
       logger.info(
-        ` batch ${batch}/${Math.ceil(N / BATCH_SIZE)}`,
-        timer.calculateRemainingTime(count)
+        ` batch ${batch}/${numberOfBatches}`,
+        timer.calculateRemainingTime(remainingCount)
       );
 
       //TODO try to find a better way to flush websocket data,
@@ -170,7 +176,11 @@ it(
       //added (like N=1000, BATCH=50 run twice)
       await new Promise((r) => setTimeout(r, 50));
     }
-    logger.info(`Final notes count: ${countNotes(lexicalUpdate)}`);
+
+    const finalCount = countNotes(lexicalUpdate);
+    expect(finalCount).toBe(expectedFinalCount);
+
+    await logger.info(`Done, final notes count: ${finalCount}`);
   },
   60 * 60 * 1000
 );
