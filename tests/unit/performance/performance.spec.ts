@@ -1,4 +1,5 @@
 import { createChildren } from "../common";
+import { adjustDeltaToGetRoundedTotal } from "./utils.spec";
 import { Note } from "@/components/Editor/api";
 import { $getRoot, $createTextNode } from "lexical";
 import { it } from "vitest";
@@ -11,48 +12,96 @@ function performanceLogger(...args: any[]) {
   //don't print the message in non-performance text context to not mess up
   //with other info
   if (process.env.VITE_PERFORMANCE_TESTS) {
-    console.log(...args);
+    //use process.stdout.write instead of console log to avoid buffering
+    process.stdout.write(args.join(" ") + "\n"); 
   }
 }
 
+/**
+ * Timer class to estimate remaining time
+ * uses linear regression to keep improving the estimate as the test progresses
+ */
 class Timer {
   private startTime: number;
+  private totalItems: number;
+  private times: number[] = [];
+  private itemsProcessed: number[] = [];
+  private previousRemainingTime: number | null = null;
+  private previousElapsedTime: number = 0;
 
-  constructor() {
+  constructor(totalItems: number) {
     this.startTime = Date.now();
+    this.totalItems = totalItems;
   }
 
-  calculateRemainingTime(totalItems: number, itemsLeft: number): string {
+  calculateRemainingTime(itemsProcessed: number): string {
     const currentTime = Date.now();
     const elapsedTime = currentTime - this.startTime;
+    const timeSinceLastStep = elapsedTime - this.previousElapsedTime;
 
-    const processedItems = totalItems - itemsLeft;
-    const timePerItem = elapsedTime / processedItems;
-    const estimatedRemainingTime = timePerItem * itemsLeft;
+    this.times.push(elapsedTime);
+    this.itemsProcessed.push(itemsProcessed);
 
-    const seconds = Math.round(estimatedRemainingTime / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
+    if (this.itemsProcessed.length < 2) {
+      this.previousElapsedTime = elapsedTime;
+      return "calculating remaining time...";
+    }
 
-    return `${minutes}:${remainingSeconds}s remaining`;
+    const n = this.itemsProcessed.length;
+    const sumX = this.itemsProcessed.reduce((a, b) => a + b, 0);
+    const sumY = this.times.reduce((a, b) => a + b, 0);
+    const sumXY = this.itemsProcessed.reduce(
+      (sum, x, i) => sum + x * this.times[i],
+      0
+    );
+    const sumXX = this.itemsProcessed.reduce((sum, x) => sum + x * x, 0);
+
+    const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+
+    const estimatedRemainingTime =
+      slope * (this.totalItems - itemsProcessed) + intercept;
+    const remainingTime = estimatedRemainingTime / 1000;
+
+    let adjustmentInfo = "";
+    if (this.previousRemainingTime !== null) {
+      const adjustment =
+        estimatedRemainingTime - this.previousRemainingTime + timeSinceLastStep;
+      if (Math.abs(adjustment) > 1000) {
+        adjustmentInfo = ` (adjusted by ${adjustment > 0 ? "+" : ""}${(
+          adjustment / 1000
+        ).toFixed(2)}s)`;
+      }
+    }
+
+    this.previousRemainingTime = estimatedRemainingTime;
+    this.previousElapsedTime = elapsedTime;
+
+    const roundedRemainingTime = Math.round(remainingTime);
+    const minutes = Math.floor(roundedRemainingTime / 60);
+    const seconds = roundedRemainingTime % 60;
+
+    return `~${
+      minutes > 0 ? minutes + ":" : ""
+    }${seconds}s remaining${adjustmentInfo}`;
   }
 }
 
-/** returns number of notes including the one that's passed as the argument */
-function countNotes(note: Note): number {
-  let count = 0;
-  for (const child of note.children) {
-    count += countNotes(child);
+function countNotes(lexicalUpdate: (fn: () => void) => void) {
+  /** returns number of notes including the one that's passed as the argument */
+  function countChildren(note: Note): number {
+    return Array.from(note.children).reduce(
+      (acc, child) => acc + countChildren(child) + 1,
+      0
+    );
   }
-  return count + 1;
-}
 
-function logNoteCount(lexicalUpdate: (fn: () => void) => void) {
+  let count: number;
   lexicalUpdate(() => {
     const root = Note.from($getRoot());
-    const count = countNotes(root);
-    performanceLogger(`Notes count: ${count}`);
+    count = countChildren(root);
   });
+  return count;
 }
 
 /**
@@ -68,11 +117,11 @@ it("clear", async ({ lexicalUpdate }) => {
  * creates new N notes, never causing that any note has more than MAX_CHILDREN
  */
 it(
-  "add nodes",
+  "add notes",
   async ({ lexicalUpdate }) => {
-    const N = getCount(1000, 20);
+    const N = getCount(40, 20);
     const MAX_CHILDREN = 8;
-    const BATCH_SIZE = 100;
+    const BATCH_SIZE = 10; // too big value causes errors during sync
 
     function addNotes(count: number) {
       lexicalUpdate(() => {
@@ -94,6 +143,15 @@ it(
       });
     }
 
+    performanceLogger("Test started, counting exising notes...");
+    const initialCount = countNotes(lexicalUpdate);
+    const adjustedN = adjustDeltaToGetRoundedTotal(N, initialCount);
+    performanceLogger(
+      `Initial notes count: ${initialCount} adding ${adjustedN} more (adjusted by ${
+        N - adjustedN
+      }) for the total of ${initialCount + adjustedN} notes`
+    );
+
     //on a blank document the first note is empty, let's fix that if needed
     lexicalUpdate(() => {
       const root = Note.from($getRoot());
@@ -103,22 +161,15 @@ it(
       }
     });
 
-    let total: number;
-
-    const timer = new Timer();
-    for (let count = N; count > 0; ) {
+    const timer = new Timer(N);
+    for (let count = N, batch = 1; count > 0; batch++) {
       const currentBatchSize = Math.min(BATCH_SIZE, count);
       addNotes(currentBatchSize);
       count -= currentBatchSize;
 
-      lexicalUpdate(() => {
-        const root = Note.from($getRoot());
-        total = countNotes(root);
-      });
-
       performanceLogger(
-        `added: ${count}/${N}, total: ${total},`,
-        timer.calculateRemainingTime(N, count)
+        ` batch ${batch}/${Math.ceil(N / BATCH_SIZE)}`,
+        timer.calculateRemainingTime(count)
       );
 
       //TODO try to find a better way to flush websocket data,
@@ -126,7 +177,7 @@ it(
       //added (like N=1000, BATCH=50 run twice)
       await new Promise((r) => setTimeout(r, 50));
     }
-    logNoteCount(lexicalUpdate);
+    performanceLogger(`Final notes count: ${countNotes(lexicalUpdate)}`);
   },
   60 * 60 * 1000
 );
@@ -136,19 +187,20 @@ it(
  */
 it(
   "count notes",
-  async ({ lexicalUpdate }) => logNoteCount(lexicalUpdate),
+  async ({ lexicalUpdate }) => countNotes(lexicalUpdate),
   20 * 60 * 1000
 );
 
 /**
- * clears existing nodes and then creates a tree with N nodes, each having MAX_CHILDREN children at most
+ * clears existing nodes and then creates a tree with N nodes
+ * each having MAX_CHILDREN children at most
  */
 it(
   "create tree",
   async ({ lexicalUpdate }) => {
     const N = getCount(200, 2);
     const MAX_CHILDREN = 8;
-    const timer = new Timer();
+    const timer = new Timer(N);
 
     let n = N;
     const queue: Note[] = [];
@@ -158,7 +210,7 @@ it(
       queue.push(root);
     });
     while (n > 0) {
-      performanceLogger(n, timer.calculateRemainingTime(N, n));
+      performanceLogger(n, timer.calculateRemainingTime(n));
       lexicalUpdate(() => {
         const currentNote = queue.shift();
         const parentName = currentNote.text.replace("root", "note");
