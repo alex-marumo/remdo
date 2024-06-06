@@ -3,7 +3,8 @@ import { File, UserConsoleLog, Vitest } from "vitest";
 import { DefaultReporter } from "vitest/reporters";
 
 export default class PerformanceReporter extends DefaultReporter {
-  onCollected() {}
+  onCollected() {
+  }
 
   onFinished(files?: File[], errors?: unknown[]): Promise<void> {
     // print summary only if there are failed tests or unhandled errors
@@ -18,14 +19,7 @@ export default class PerformanceReporter extends DefaultReporter {
     // disable the initial banner
     ctx.logger.printBanner = () => {};
     super.onInit(ctx);
-  }
 
-  onUserConsoleLog(log: UserConsoleLog) {
-    // don't print test info, just the message
-    const stream =
-      log.type === "stdout"
-        ? this.ctx.logger.outputStream
-        : this.ctx.logger.errorStream;
-    stream.write(log.content);
+    process.stdout.write("Running performance tests...\n");
   }
 }

@@ -1,4 +1,5 @@
 import { getDataPath } from "../common";
+import { Logger } from "./logger";
 import Editor from "@/components/Editor/Editor";
 import { NotesLexicalEditor } from "@/components/Editor/NotesComposerContext";
 import { Note } from "@/components/Editor/api";
@@ -20,7 +21,7 @@ import { LexicalEditor } from "lexical";
 import path from "path";
 import React from "react";
 import { MemoryRouter, Navigate, Route, Routes } from "react-router-dom";
-import { afterAll, expect, beforeEach, afterEach } from "vitest";
+import { expect, beforeEach, afterEach } from "vitest";
 
 /* 
  vitest saves file snapshots in the same folder as the test file
@@ -61,8 +62,8 @@ declare module "vitest" {
       typeof queries & { getAllNotNestedIListItems: typeof getAllByRole.bind }
     >;
     lexicalUpdate: (fn: () => void) => void;
+    logger: Logger;
     load: (name: string) => Record<string, Note>;
-    log: (message: string) => void;
     editor: NotesLexicalEditor;
     expect: typeof expect;
   }
@@ -202,12 +203,14 @@ function getMinimizedState(editor: LexicalEditor) {
 }
 
 beforeEach(async (context) => {
-  const LOG_FILE_PATH = path.join(process.cwd(), "data", "test.log");
-  fs.writeFileSync(LOG_FILE_PATH, "", "utf8");
-
   function testHandler(editor: NotesLexicalEditor) {
     context.editor = editor;
   }
+
+  const logger = new Logger();
+  context.logger = logger;
+
+  await logger.info("beforeEach hook started");
 
   //lexical/node_modules causes YJS to be loaded twice and leads to issues
   expect(fs.existsSync("lexical/node_modules")).toBeFalsy();
@@ -216,7 +219,7 @@ beforeEach(async (context) => {
   const serializationFile = process.env.VITEST_SERIALIZATION_FILE;
   if (serializationFile) {
     const fileName = path.basename(serializationFile);
-    console.log(fileName);
+    logger.info(fileName);
     routerEntries.push(`/?documentID=${fileName}`);
   }
 
@@ -302,29 +305,13 @@ beforeEach(async (context) => {
     }
   };
 
-  context.log = function (...args: any[]) {
-    const formattedArgs = args
-      .map((arg) => {
-        if (typeof arg === "object") {
-          return JSON.stringify(arg);
-        }
-        return String(arg);
-      })
-      .join(" ");
-    const formattedMessage = `${new Date().toISOString()} - ${formattedArgs}\n`;
-
-    fs.appendFileSync(LOG_FILE_PATH, formattedMessage);
-    console.log(formattedMessage);
-  };
-
   if (!process.env.VITE_DISABLECOLLAB) {
     //wait for yjs to connect via websocket and init the editor content
     let i = 0;
     const waitingTime = 10;
     while (editorElement.children.length == 0) {
       if ((i += waitingTime) % 1000 === 0) {
-        console.log(`waiting for yjs to load some data - ${i}ms`);
-        //console.log(editorElement.outerHTML)
+        await logger.warn(`waiting for yjs to load some data - ${i}ms`);
       }
       await new Promise((r) => setTimeout(r, waitingTime));
     }
@@ -339,6 +326,7 @@ beforeEach(async (context) => {
       root.clear();
     });
   }
+  await logger.info("beforeEach hook finished");
 });
 
 afterEach(async (context) => {
@@ -348,11 +336,6 @@ afterEach(async (context) => {
     await new Promise((r) => setTimeout(r, 10));
   }
   context.component.unmount();
-});
-
-afterAll(async () => {
-  //an ugly workaround - otherwise we may loose some messages written to console
-  await new Promise((r) => setTimeout(r, 10));
 });
 
 export function createChildren(

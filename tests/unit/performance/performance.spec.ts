@@ -1,20 +1,11 @@
 import { createChildren } from "../common";
-import { adjustDeltaToGetRoundedTotal } from "./utils.spec";
+import { adjustDeltaToGetRoundedTotal } from "./utils";
 import { Note } from "@/components/Editor/api";
 import { $getRoot, $createTextNode } from "lexical";
 import { it } from "vitest";
 
 function getCount(performaceCount: number, regularCount: number) {
   return process.env.VITE_PERFORMANCE_TESTS ? performaceCount : regularCount;
-}
-
-function performanceLogger(...args: any[]) {
-  //don't print the message in non-performance text context to not mess up
-  //with other info
-  if (process.env.VITE_PERFORMANCE_TESTS) {
-    //use process.stdout.write instead of console log to avoid buffering
-    process.stdout.write(args.join(" ") + "\n"); 
-  }
 }
 
 /**
@@ -118,7 +109,7 @@ it("clear", async ({ lexicalUpdate }) => {
  */
 it(
   "add notes",
-  async ({ lexicalUpdate }) => {
+  async ({ lexicalUpdate, logger }) => {
     const N = getCount(40, 20);
     const MAX_CHILDREN = 8;
     const BATCH_SIZE = 10; // too big value causes errors during sync
@@ -143,12 +134,14 @@ it(
       });
     }
 
-    performanceLogger("Test started, counting exising notes...");
+    logger.info("Test started, counting exising notes...");
     const initialCount = countNotes(lexicalUpdate);
-    const adjustedN = adjustDeltaToGetRoundedTotal(N, initialCount);
-    performanceLogger(
+    const adjustedN = adjustDeltaToGetRoundedTotal(initialCount, N);
+    //FIXME double check if notes are added correctly
+    //TODO move the message to adjustDeltaToGetRoundedTotal
+    logger.info(
       `Initial notes count: ${initialCount} adding ${adjustedN} more (adjusted by ${
-        N - adjustedN
+        adjustedN - N
       }) for the total of ${initialCount + adjustedN} notes`
     );
 
@@ -167,7 +160,7 @@ it(
       addNotes(currentBatchSize);
       count -= currentBatchSize;
 
-      performanceLogger(
+      logger.info(
         ` batch ${batch}/${Math.ceil(N / BATCH_SIZE)}`,
         timer.calculateRemainingTime(count)
       );
@@ -177,7 +170,7 @@ it(
       //added (like N=1000, BATCH=50 run twice)
       await new Promise((r) => setTimeout(r, 50));
     }
-    performanceLogger(`Final notes count: ${countNotes(lexicalUpdate)}`);
+    logger.info(`Final notes count: ${countNotes(lexicalUpdate)}`);
   },
   60 * 60 * 1000
 );
@@ -187,7 +180,11 @@ it(
  */
 it(
   "count notes",
-  async ({ lexicalUpdate }) => countNotes(lexicalUpdate),
+  async ({ lexicalUpdate, logger }) => {
+    await logger.info("Counting notes...");
+    const count = countNotes(lexicalUpdate);
+    await logger.info(`Notes count: ${count}`);
+  },
   20 * 60 * 1000
 );
 
@@ -197,7 +194,7 @@ it(
  */
 it(
   "create tree",
-  async ({ lexicalUpdate }) => {
+  async ({ lexicalUpdate, logger }) => {
     const N = getCount(200, 2);
     const MAX_CHILDREN = 8;
     const timer = new Timer(N);
@@ -210,7 +207,7 @@ it(
       queue.push(root);
     });
     while (n > 0) {
-      performanceLogger(n, timer.calculateRemainingTime(n));
+      logger.info(n, timer.calculateRemainingTime(n));
       lexicalUpdate(() => {
         const currentNote = queue.shift();
         const parentName = currentNote.text.replace("root", "note");
