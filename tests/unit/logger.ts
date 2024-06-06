@@ -1,4 +1,3 @@
-
 const consoleDisabledError = () => {
   throw new Error("use context.logger instead of console in test");
 };
@@ -8,7 +7,7 @@ console.warn = consoleDisabledError;
 console.error = consoleDisabledError;
 
 /**
-* Custom, optionally unbuffered logger that obeys the VITE_LOG_LEVEL
+ * Custom, optionally unbuffered logger that obeys the VITE_LOG_LEVEL
  */
 export class Logger {
   _unbuffered: boolean;
