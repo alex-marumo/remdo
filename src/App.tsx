@@ -1,13 +1,12 @@
 import "./App.scss";
 import { DebugProvider } from "./DebugContext";
-import { Layout } from "./components/Layout";
-import Editor from "@/components/Editor/Editor";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
-import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Dev } from "./components/Dev/Dev";
 import { Yjs } from "./components/Dev/Yjs";
+import { Layout } from "./components/Layout";
+import Editor from "@/components/Editor/Editor";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
   return (
