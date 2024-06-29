@@ -3,7 +3,7 @@ import {
   useDocumentSelector,
 } from "../DocumentSelector";
 import "./Editor.scss";
-import { editorConfig } from "./config";
+import { useEditorConfig } from "./config";
 import { DevComponentTestPlugin } from "./plugins/DevComponentTestPlugin";
 import { DevToolbarPlugin } from "./plugins/DevToolbarPlugin";
 import { IndentationPlugin } from "./plugins/IndentationPlugin";
@@ -30,6 +30,7 @@ function LexicalEditor() {
   const editorContainerRef = useRef();
   const editorBottomRef = useRef();
   const documentSelector = useDocumentSelector();
+  const editorConfig = useEditorConfig();
 
   return (
     <LexicalComposer

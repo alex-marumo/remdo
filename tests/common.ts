@@ -16,3 +16,5 @@ export function htmlToCommaSeparatedText(html: string) {
     .trim()
     .replace(/\s+/g, ",");
 }
+
+export const collabEnabled = process.env.VITE_COLLAB === "true";

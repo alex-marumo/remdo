@@ -1,6 +1,10 @@
 const consoleDisabledError = () => {
   throw new Error("use context.logger instead of console in test");
 };
+
+const _info = console.info;
+const _warn = console.warn;
+
 console.log = consoleDisabledError;
 console.info = consoleDisabledError;
 console.warn = consoleDisabledError;
@@ -32,7 +36,7 @@ export class Logger {
       if (this._unbuffered) {
         await this._write(process.stdout, args);
       } else {
-        console.info(args);
+        _info(args);
       }
     }
   }
@@ -41,7 +45,7 @@ export class Logger {
     if (this._unbuffered) {
       await this._write(process.stderr, args);
     } else {
-      console.warn(args);
+      _warn(args);
     }
   }
 }

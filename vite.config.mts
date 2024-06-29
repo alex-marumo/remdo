@@ -347,7 +347,6 @@ export default defineConfig({
     include: ["tests/unit/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     environment: "jsdom",
     open: false,
-    threads: !!process.env.VITE_DISABLECOLLAB,
     coverage: {
       provider: "v8",
       reportsDirectory: "data/coverage",

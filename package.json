@@ -43,7 +43,7 @@
     "test-performance": "VITE_PERFORMANCE_TESTS=true VITE_LOG_LEVEL=info time -f 'Time: %es' npx vitest run performance/performance --reporter ./tests/unit/performance/reporter.ts -t",
     "test-unit-collab": "npx vitest run",
     "test-unit-watch-coverage": "VITE_DISABLECOLLAB=true npx vitest --ui --coverage.enabled --coverage.include=src/**",
-    "test-unit-watch": "VITE_DISABLECOLLAB=true npx vitest --ui",
+    "test-unit-watch": "VITE_DISABLECOLLAB=true npx vitest --watch --ui",
     "test": "npm run test-unit && npm run test-browser",
     "kill-npm-processes": "ps -eaf | grep 'npm run' | awk '{print $2}' |  xargs kill",
     "load": "./utils.sh run_serialization load",

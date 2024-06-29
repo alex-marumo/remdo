@@ -1,4 +1,4 @@
-import { getDataPath } from "../common";
+import { collabEnabled, getDataPath } from "../common";
 import { Logger } from "./logger";
 import Editor from "@/components/Editor/Editor";
 import { NotesLexicalEditor } from "@/components/Editor/NotesComposerContext";
@@ -20,7 +20,7 @@ import { $getRoot, CLEAR_HISTORY_COMMAND } from "lexical";
 import { LexicalEditor } from "lexical";
 import path from "path";
 import React from "react";
-import { MemoryRouter, Navigate, Route, Routes } from "react-router-dom";
+import { MemoryRouter, Navigate, Route, Routes, createSearchParams } from "react-router-dom";
 import { expect, beforeEach, afterEach } from "vitest";
 
 /* 
@@ -215,18 +215,25 @@ beforeEach(async (context) => {
   //lexical/node_modules causes YJS to be loaded twice and leads to issues
   expect(fs.existsSync("lexical/node_modules")).toBeFalsy();
 
-  const routerEntries = ["/"];
+  const urlParams = [];
   const serializationFile = process.env.VITEST_SERIALIZATION_FILE;
   if (serializationFile) {
     const fileName = path.basename(serializationFile);
     logger.info(fileName);
-    routerEntries.push(`/?documentID=${fileName}`);
+    urlParams.push(["documentID", fileName]);
   }
+
+  if (!collabEnabled) {
+    logger.info("Collab disabled");
+    urlParams.push(["collab", "false"]);
+  }
+  const initialEntry = "/?" + createSearchParams(urlParams).toString();
+  logger.info("URL: ", initialEntry);
 
   //TODO test only editor, without router, layout, etc. required editor to abstract from routes
   const component = render(
     <ComponentTestContext.Provider value={{ testHandler }}>
-      <MemoryRouter initialEntries={routerEntries}>
+      <MemoryRouter initialEntries={[initialEntry]}>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route element={<Editor />}>
@@ -305,7 +312,7 @@ beforeEach(async (context) => {
     }
   };
 
-  if (!process.env.VITE_DISABLECOLLAB) {
+  if (collabEnabled) {
     //wait for yjs to connect via websocket and init the editor content
     let i = 0;
     const waitingTime = 10;
@@ -331,7 +338,7 @@ beforeEach(async (context) => {
 
 afterEach(async (context) => {
   debug();
-  if (!process.env.VITE_DISABLECOLLAB) {
+  if (collabEnabled) {
     //an ugly workaround - to give a chance for yjs to sync
     await new Promise((r) => setTimeout(r, 10));
   }
