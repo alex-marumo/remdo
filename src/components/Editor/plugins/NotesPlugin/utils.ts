@@ -1,6 +1,17 @@
-import { $createListItemNode, $createListNode, $isListItemNode, $isListNode } from "@lexical/list";
+import {
+  $createListItemNode,
+  $createListNode,
+  $isListItemNode,
+  $isListNode,
+} from "@lexical/list";
 import { mergeLists } from "@lexical/list/formatList";
-import { $getNearestNodeFromDOMNode, $getRoot, $isDecoratorNode, LexicalNode, RootNode } from "lexical";
+import {
+  $getNearestNodeFromDOMNode,
+  $getRoot,
+  $isDecoratorNode,
+  RootNode,
+} from "lexical";
+import { nanoid } from "nanoid";
 
 //copied, unexported function from lexical/packages/lexical-rich-text/src/index.ts
 export function $isTargetWithinDecorator(target: HTMLElement): boolean {
@@ -44,3 +55,8 @@ export function $fixRoot(rootNode: RootNode) {
     }
   }
 }
+
+globalThis.remdoGenerateNoteID = () => {
+  return nanoid(8);
+};
+
