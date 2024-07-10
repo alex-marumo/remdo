@@ -1,5 +1,5 @@
 import { Note } from "@/components/Editor/api";
-import { $getRoot } from "@lexical/LexicalUtils";
+import { $getRoot } from "lexical";
 
 /**
  * Given a number `initialCount` and a number `delta`

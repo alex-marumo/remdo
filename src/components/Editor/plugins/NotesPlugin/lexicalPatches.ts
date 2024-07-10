@@ -1,13 +1,10 @@
 import { NotesState, Note } from "@/components/Editor/api";
 import { patch } from "@/utils";
 import { $isListItemNode, $isListNode, ListItemNode, ListNode } from "@lexical/list";
-//import * as lexicalList from "@lexical/list";
 import {
   addClassNamesToElement,
   removeClassNamesFromElement,
 } from "@lexical/utils";
-import { Binding } from "@lexical/yjs";
-import { CollabElementNode } from "@lexical/yjs/CollabElementNode";
 import { LexicalNode, RangeSelection } from "lexical";
 import { EditorConfig } from "lexical";
 
@@ -223,21 +220,21 @@ but monkey patching it causes errorKlassMismatch.
 On top of that I coudn't find a better place to access binding as it's 
 not exposed by useYjsCollaboration.
 */
-patch(
-  CollabElementNode,
-  "syncPropertiesFromLexical",
-  function (old: Function, binding: Binding, ...args: any[]) {
-    if (!binding.nodeProperties.get("listitem")) {
-      binding.nodeProperties.set("listitem", [
-        "__type",
-        "__format",
-        "__indent",
-        "__dir",
-        "__value",
-        "__checked",
-        "__folded",
-      ]);
-    }
-    return old(binding, ...args);
-  }
-);
+//patch(
+//  CollabElementNode,
+//  "syncPropertiesFromLexical",
+//  function (old: Function, binding: Binding, ...args: any[]) {
+//    if (!binding.nodeProperties.get("listitem")) {
+//      binding.nodeProperties.set("listitem", [
+//        "__type",
+//        "__format",
+//        "__indent",
+//        "__dir",
+//        "__value",
+//        "__checked",
+//        "__folded",
+//      ]);
+//    }
+//    return old(binding, ...args);
+//  }
+//);

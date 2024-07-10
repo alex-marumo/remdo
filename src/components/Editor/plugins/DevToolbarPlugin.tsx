@@ -3,7 +3,6 @@ import { SPACER_COMMAND } from "../commands";
 import { YjsDebug } from "./YjsDebug";
 import { useDebug } from "@/DebugContext";
 import { useDocumentSelector } from "@/components/DocumentSelector";
-import TreeViewPlugin from "@lexical/playground/plugins/TreeViewPlugin";
 import { useYjsHistory } from "@lexical/react/shared/useYjsCollaboration";
 import { mergeRegister } from "@lexical/utils";
 import { CONNECTED_COMMAND, TOGGLE_CONNECT_COMMAND } from "@lexical/yjs";
@@ -15,6 +14,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import * as Y from "yjs";
+import TreeViewPlugin from "./NotesPlugin/playground";
 
 function EditorStateInput() {
   const [editor] = useNotesLexicalComposerContext();

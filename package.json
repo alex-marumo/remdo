@@ -6,15 +6,15 @@
     "@hocuspocus/extension-logger": "^2.13.0",
     "@hocuspocus/provider": "^2.13.0",
     "@hocuspocus/server": "^2.13.0",
-    "@lexical/list": "file:./lexical/packages/lexical-list",
-    "@lexical/react": "file:./lexical/packages/lexical-react",
-    "@lexical/utils": "file:./lexical/packages/lexical-utils",
+    "@lexical/list": "^0.16.1",
+    "@lexical/react": "^0.16.1",
+    "@lexical/utils": "^0.16.1",
     "@testing-library/react": "^15.0.7",
     "bootstrap": "git+https://github.com/twbs/bootstrap.git#v5.3.2",
     "bootstrap-icons": "^1.9.1",
     "envalid": "^8.0.0",
     "fs-extra": "^11.2.0",
-    "lexical": "file:./lexical/packages/lexical",
+    "lexical": "^0.16.1",
     "prettier": "^2.8.1",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
@@ -91,5 +91,6 @@
     "vite": "^5.2.11",
     "vitest": "^1.0.4",
     "vitest-preview": "^0.0.1"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

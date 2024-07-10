@@ -1,16 +1,13 @@
 import "lexical";
-import { LexicalNode } from "@lexical/LexicalNode";
-import { getActiveEditor, getActiveEditorState } from "@lexical/LexicalUpdates";
-import { $getNodeByKeyOrThrow, getElementByKeyOrThrow } from "@lexical/LexicalUtils";
+//import { LexicalNode } from "@lexical/LexicalNode";
+//import { getActiveEditor, getActiveEditorState } from "@lexical/LexicalUpdates";
+//import { $getNodeByKeyOrThrow, getElementByKeyOrThrow } from "@lexical/LexicalUtils";
 import {
   $createListItemNode,
   $createListNode,
-  $isListItemNode,
   $isListNode,
-  ListItemNode,
 } from "@lexical/list";
 import { ListNode, ListItemNode as LexicalListItemNode } from "@lexical/list";
-import { $findNearestListItemNode } from "@lexical/list/utils";
 import {
   $getNodeByKey,
   $isTextNode,
@@ -18,7 +15,13 @@ import {
   EditorState,
   $getSelection,
   $isRangeSelection,
+  $getEditor,
+  $getNodeByKeyOrThrow,
+  LexicalNode
 } from "lexical";
+
+import { $findNearestListItemNode, getElementByKeyOrThrow } from "./plugins/NotesPlugin/lexicalUnexported";
+
 
 //TODO
 //create folder api and split this to Note and NotesState
@@ -30,7 +33,7 @@ interface NotesEditorState extends EditorState {
 }
 
 export function getNotesEditorState() {
-  return getActiveEditorState() as NotesEditorState;
+  return $getEditor().getEditorState() as NotesEditorState;
 }
 
 //TODO explain the difference between NotesEditorState and NotesState
@@ -57,9 +60,9 @@ export class NotesState {
       !focusNodeKey || focusNodeKey === "root"
         ? null
         : {
-            nodeKey: focusNodeKey,
-            parentKey: this._element.dataset.focusParentKey,
-          };
+          nodeKey: focusNodeKey,
+          parentKey: this._element.dataset.focusParentKey,
+        };
   }
 
   _forceLexicalUpdate() {
@@ -86,7 +89,8 @@ export class NotesState {
   }
 
   static getActive() {
-    return new NotesState(getActiveEditor()._rootElement);
+    //return new NotesState(getActiveEditor()._rootElement);
+    return new NotesState($getEditor()._rootElement as HTMLElement);
   }
 
   static documents(): string[] {
@@ -101,9 +105,9 @@ export class Note {
 
   static from(keyOrNode: LexicalNode | string): Note {
     const baseNode =
-      keyOrNode instanceof LexicalNode
-        ? keyOrNode
-        : $getNodeByKey(keyOrNode as string);
+      typeof keyOrNode === "string"
+        ? $getNodeByKey(keyOrNode as string)
+        : keyOrNode;
     const liNode = $findNearestListItemNode(baseNode);
 
     return liNode ? new Note(liNode.getKey()) : new Note("root");
@@ -208,12 +212,12 @@ export class Note {
     if (noteToInsert.isRoot) {
       throw new Error("Can't insert root note");
     }
-    if(this.isRoot) {
+    if (this.isRoot) {
       throw new Error("Can't insert after root note");
     }
     const prevParentList = noteToInsert.lexicalNode.getParent();
     this.lexicalNode.insertAfter(noteToInsert.lexicalNode);
-    if(prevParentList.getChildrenSize() === 0) {
+    if (prevParentList.getChildrenSize() === 0) {
       prevParentList.remove();
     }
   }
@@ -227,33 +231,33 @@ export class Note {
   }
 
   outdent() {
-    if(this.parent.isRoot) {
+    if (this.parent.isRoot) {
       return;
     }
     this.parent._insertNextSibling(this);
   }
 
   moveDown() {
-    if(this.nextSibling) {
+    if (this.nextSibling) {
       this.nextSibling._insertNextSibling(this);
     }
     else {
       const parent = this.parent;
       parent.nextSibling?._insertChild(this);
-      if(!parent.hasChildren) {
+      if (!parent.hasChildren) {
         parent._getChildrenListNode().remove();
       }
     }
   }
 
   moveUp() {
-    if(this.prevSibling) {
+    if (this.prevSibling) {
       this.prevSibling.lexicalNode.insertBefore(this.lexicalNode);
     }
     else {
       const parent = this.parent;
       parent.prevSibling?._appendChild(this);
-      if(!parent.hasChildren) {
+      if (!parent.hasChildren) {
         parent._getChildrenListNode().remove();
       }
     }
@@ -274,7 +278,7 @@ export class Note {
       //the problem is that folded note's children have display set to none
       //so they can be overwritten by Lexical reconciler
       getElementByKeyOrThrow(
-        getActiveEditor(),
+        $getEditor(),
         this.lexicalKey
       ).classList.remove("note-folded");
       this.lexicalNode.setFolded(value && this.hasChildren);

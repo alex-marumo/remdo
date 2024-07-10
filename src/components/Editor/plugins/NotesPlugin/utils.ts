@@ -4,7 +4,6 @@ import {
   $isListItemNode,
   $isListNode,
 } from "@lexical/list";
-import { mergeLists } from "@lexical/list/formatList";
 import {
   $getNearestNodeFromDOMNode,
   $getRoot,
@@ -12,6 +11,7 @@ import {
   RootNode,
 } from "lexical";
 import { nanoid } from "nanoid";
+import { mergeLists } from "./lexicalUnexported";
 
 //copied, unexported function from lexical/packages/lexical-rich-text/src/index.ts
 export function $isTargetWithinDecorator(target: HTMLElement): boolean {

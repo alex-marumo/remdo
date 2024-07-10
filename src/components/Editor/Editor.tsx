@@ -11,8 +11,6 @@ import { NoteControlsPlugin } from "./plugins/NoteControlsPlugin";
 import NotesPlugin from "./plugins/NotesPlugin";
 import { QuickMenuPlugin } from "./plugins/QuickMenuPlugin";
 import { RemdoAutoLinkPlugin } from "./plugins/RemdoAutoLinkPlugin";
-import FloatingTextFormatToolbarPlugin from "@lexical/playground/plugins/FloatingTextFormatToolbarPlugin";
-import "@lexical/playground/plugins/FloatingTextFormatToolbarPlugin/index.css";
 import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
 import LexicalClickableLinkPlugin from "@lexical/react/LexicalClickableLinkPlugin";
 import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
@@ -55,7 +53,6 @@ function LexicalEditor() {
         />
         <NoteControlsPlugin anchorRef={editorContainerRef} />
         <DevComponentTestPlugin />
-        <FloatingTextFormatToolbarPlugin />
         <ClearEditorPlugin />
         <ListPlugin />
         <LinkPlugin />

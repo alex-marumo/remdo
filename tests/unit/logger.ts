@@ -1,5 +1,6 @@
-const consoleDisabledError = () => {
-  throw new Error("use context.logger instead of console in test");
+const consoleDisabledError = (...args: any[]) => {
+  const message = args.map((arg) => arg.toString()).join(" ");
+  throw new Error("use context.logger instead of console in test. Message: " + message);
 };
 
 const _info = console.info;
