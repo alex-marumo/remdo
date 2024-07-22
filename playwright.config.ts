@@ -83,7 +83,7 @@ const config: PlaywrightTestConfig = {
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: `PORT=${ port } SERVER_MODE = playwright npm run server`,
+    command: `PORT=${ port } SERVER_MODE=playwright npm run server`,
     port: port,
     timeout: 5 * 1000,
     reuseExistingServer: !env.CI,
