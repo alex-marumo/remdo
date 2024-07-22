@@ -12,7 +12,7 @@ console.warn = consoleDisabledError;
 console.error = consoleDisabledError;
 
 /**
- * Custom, optionally unbuffered logger that obeys the VITE_LOG_LEVEL
+ * Custom, optionally unbuffered, logger that obeys the VITE_LOG_LEVEL
  */
 export class Logger {
   _unbuffered: boolean;
@@ -21,12 +21,16 @@ export class Logger {
     this._unbuffered = process.env.VITE_PERFORMANCE_TESTS === "true";
   }
 
-  async _write(stream: NodeJS.WriteStream, args: any[]) {
-    await new Promise<void>((resolve) => {
-      stream.write(args.join(" ") + "\n", "utf-8", () => {
-        resolve();
+  async _write(stream: NodeJS.WriteStream, consoleStream: typeof console.log, args: any[]) {
+    if (this._unbuffered) {
+      await new Promise<void>((resolve) => {
+        stream.write(args.join(" ") + "\n", "utf-8", () => {
+          resolve();
+        });
       });
-    });
+    } else {
+      consoleStream(...args);
+    }
   }
 
   async info(...args: any[]) {
@@ -34,19 +38,11 @@ export class Logger {
       process.env.VITE_LOG_LEVEL === "info" ||
       process.env.VITE_LOG_LEVEL === "debug"
     ) {
-      if (this._unbuffered) {
-        await this._write(process.stdout, args);
-      } else {
-        _info(args);
-      }
+      await this._write(process.stdout, _info, args);
     }
   }
 
   async warn(...args: any[]) {
-    if (this._unbuffered) {
-      await this._write(process.stderr, args);
-    } else {
-      _warn(args);
-    }
+    await this._write(process.stderr, _warn, args);
   }
 }
