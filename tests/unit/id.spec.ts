@@ -33,7 +33,7 @@ it('modify', async ({ load, expect, lexicalUpdate }) => {
   });
 });
 
-it.only('reorder', async ({ load, editor, expect, logger, lexicalUpdate }) => {
+it('reorder', async ({ load, editor, expect, logger, lexicalUpdate }) => {
   //the idea is to test if lexical doesn't make any optimizations that would break id/text relationship
   load("flat");
   let id0 = "", id1 = "", text0 = "", text1 = "";
