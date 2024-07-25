@@ -2,6 +2,7 @@ import { useDocumentSelector } from "@/components/DocumentSelector";
 import ReactJson from "@microlink/react-json-view";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as Y from "yjs";
+import { useEditorConfig } from "../config";
 
 type YElement = Y.AbstractType<any>;
 
@@ -97,6 +98,7 @@ export function YjsDebug() {
   const documentSelector = useDocumentSelector();
   const documentElements = useRef(new Map());
   const [documentData, setDocumentData] = useState({});
+  const editorConfig = useEditorConfig();
 
   const refreshDocumentElements = useCallback(() => {
     const newDocumentElements = documentSelector.getYjsDoc()?.share;
@@ -129,7 +131,7 @@ export function YjsDebug() {
     };
   }, [documentSelector, refreshDocumentElements]);
 
-  return (
+  return !editorConfig.disableCollab && (
     <div>
       <div className="text-white font-weight-bold">Yjs Info</div>
       <div>DocumentID: {documentSelector.documentID}</div>

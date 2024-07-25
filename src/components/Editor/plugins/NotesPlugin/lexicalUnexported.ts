@@ -1,7 +1,7 @@
 //unexported, but useful items from lexical
 
 import { $isListItemNode, $isListNode, ListItemNode, ListNode } from "@lexical/list";
-import { LexicalNode, Spread } from "lexical";
+import { $getNearestNodeFromDOMNode, $isDecoratorNode, LexicalNode, Spread } from "lexical";
 import { $findMatchingParent} from "@lexical/utils";
 
 // Reconciling
@@ -80,3 +80,10 @@ export function $findNearestListItemNode(
   );
   return matchingParent as ListItemNode | null;
 }
+
+//copied, unexported function from lexical/packages/lexical-rich-text/src/index.ts
+export function $isTargetWithinDecorator(target: HTMLElement): boolean {
+  const node = $getNearestNodeFromDOMNode(target);
+  return $isDecoratorNode(node);
+}
+

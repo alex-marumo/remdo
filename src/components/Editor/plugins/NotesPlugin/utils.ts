@@ -5,19 +5,11 @@ import {
   $isListNode,
 } from "@lexical/list";
 import {
-  $getNearestNodeFromDOMNode,
   $getRoot,
-  $isDecoratorNode,
   RootNode,
 } from "lexical";
 import { nanoid } from "nanoid";
 import { mergeLists } from "./lexicalUnexported";
-
-//copied, unexported function from lexical/packages/lexical-rich-text/src/index.ts
-export function $isTargetWithinDecorator(target: HTMLElement): boolean {
-  const node = $getNearestNodeFromDOMNode(target);
-  return $isDecoratorNode(node);
-}
 
 /**
  *  forces the right editor structure:

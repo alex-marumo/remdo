@@ -141,11 +141,9 @@ export const DevToolbarPlugin = ({ editorBottomRef }) => {
           showEditorStateInput &&
           createPortal(<EditorStateInput />, editorBottom)}
         {editorBottom &&
-          isDebugMode &&
-          createPortal(<YjsDebug />, editorBottom)}
-        {editorBottom &&
-          isDebugMode &&
           createPortal(<TreeViewPlugin />, editorBottom)}
+        {editorBottom &&
+          createPortal(<YjsDebug />, editorBottom)}
         <button
           type="button"
           className="btn btn-link float-end"

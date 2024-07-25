@@ -5,10 +5,9 @@ import {
   NOTES_SET_FOLD_LEVEL_COMMAND,
   NOTES_TOGGLE_FOLD_COMMAND,
 } from "../../commands";
-import { $fixRoot, $isTargetWithinDecorator } from "./utils";
+import { $fixRoot } from "./utils";
 import { Navigation } from "../NavigationPlugin";
 import { SearchPlugin } from "../SearchPlugin";
-import { NoteControlsPlugin } from "../NoteControlsPlugin";
 import "./NotesPlugin.scss";
 import { $createListItemNode, $isListItemNode } from "@lexical/list";
 import { ListItemNode } from "@lexical/list";
@@ -29,10 +28,10 @@ import {
 } from "lexical";
 import { COMMAND_PRIORITY_CRITICAL } from "lexical";
 import { useEffect, useCallback } from "react";
-import React from "react";
 import { ListNode } from "@lexical/list";
 import { TextNode } from "lexical";
 import { applyNodePatches } from "./lexicalPatches";
+import { $isTargetWithinDecorator } from "./lexicalUnexported";
 
 applyNodePatches(TextNode);
 applyNodePatches(ListNode);
