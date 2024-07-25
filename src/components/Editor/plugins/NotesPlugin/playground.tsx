@@ -2,7 +2,6 @@ import { $isListItemNode } from '@lexical/list';
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {TreeView} from '@lexical/react/LexicalTreeView';
 import { LexicalNode } from 'lexical/packages/lexical/src';
-import * as React from 'react';
 
 function $customPrintNode(node: LexicalNode): string {
   if($isListItemNode(node)) {
