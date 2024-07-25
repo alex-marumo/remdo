@@ -114,7 +114,7 @@ export class Note {
   }
 
   //TODO rename to createNote
-  createChild(text = null): Note {
+  createChild(text:string | null = null): Note {
     const childNode = $createListItemNode();
     this._getChildrenListNode(true).append(childNode);
     if (text) {
