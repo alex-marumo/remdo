@@ -43,13 +43,13 @@ it(
       });
     }
 
-    await logger.info("Test started");
-    await logger.info(" counting existing notes...");
+    await logger.debug("Test started");
+    await logger.debug(" counting existing notes...");
 
     const initialCount = countNotes(lexicalUpdate);
     const adjustedN = adjustDeltaToGetRoundedTotal(initialCount, N);
     const expectedFinalCount = initialCount + adjustedN;
-    await logger.info(
+    await logger.debug(
       ` initial notes count: ${initialCount} adding ${adjustedN} more (adjusted by ${
         adjustedN - N
       }) for the total of ${expectedFinalCount} notes`
@@ -71,7 +71,7 @@ it(
       addNotes(currentBatchSize);
       remainingCount -= currentBatchSize;
 
-      logger.info(
+      logger.debug(
         ` batch ${batch}/${numberOfBatches}`,
         timer.calculateRemainingTime(remainingCount)
       );
@@ -85,7 +85,7 @@ it(
     const finalCount = countNotes(lexicalUpdate);
     expect(finalCount).toBe(expectedFinalCount);
 
-    await logger.info(`Done, final notes count: ${finalCount}`);
+    await logger.debug(`Done, final notes count: ${finalCount}`);
   },
   60 * 60 * 1000
 );
@@ -96,9 +96,9 @@ it(
 it(
   "count notes",
   async ({ lexicalUpdate, logger }) => {
-    await logger.info("Counting notes...");
+    await logger.debug("Counting notes...");
     const count = countNotes(lexicalUpdate);
-    await logger.info(`Notes count: ${count}`);
+    await logger.debug(`Notes count: ${count}`);
   },
   20 * 60 * 1000
 );
@@ -122,7 +122,7 @@ it(
       queue.push(root);
     });
     while (n > 0) {
-      logger.info(n, timer.calculateRemainingTime(n));
+      logger.debug(n, timer.calculateRemainingTime(n));
       lexicalUpdate(() => {
         const currentNote = queue.shift();
         const parentName = currentNote.text.replace("root", "note");

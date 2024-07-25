@@ -18,3 +18,4 @@ export function htmlToCommaSeparatedText(html: string) {
 }
 
 export const collabEnabled = process.env.VITE_COLLAB === "true";
+export const debugEnabled = process.env.VITE_DEBUG === "true";

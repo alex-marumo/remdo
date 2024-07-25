@@ -1,7 +1,4 @@
 import "lexical";
-//import { LexicalNode } from "@lexical/LexicalNode";
-//import { getActiveEditor, getActiveEditorState } from "@lexical/LexicalUpdates";
-//import { $getNodeByKeyOrThrow, getElementByKeyOrThrow } from "@lexical/LexicalUtils";
 import {
   $createListItemNode,
   $createListNode,
@@ -22,7 +19,6 @@ import {
 
 import { $findNearestListItemNode, getElementByKeyOrThrow } from "./plugins/NotesPlugin/lexicalUnexported";
 
-
 //TODO
 //create folder api and split this to Note and NotesState
 
@@ -39,7 +35,7 @@ export function getNotesEditorState() {
 //TODO explain the difference between NotesEditorState and NotesState
 export class NotesState {
   _element: HTMLElement;
-  _focus: null | { nodeKey: string; parentKey: string };
+  _focus: null | { nodeKey: string; parentKey: string } = null;
 
   constructor(element: HTMLElement) {
     this._element = element;
@@ -117,6 +113,7 @@ export class Note {
     this._lexicalKey = key;
   }
 
+  //TODO rename to createNote
   createChild(text = null): Note {
     const childNode = $createListItemNode();
     this._getChildrenListNode(true).append(childNode);
@@ -189,6 +186,7 @@ export class Note {
   }
 
   get text() {
+    //TODO use getTextContent
     if (this.isRoot) {
       return ROOT_TEXT;
     }
@@ -198,6 +196,14 @@ export class Note {
         .filter((child) => $isTextNode(child))
         .map((child) => child.getTextContent()),
     ].join("");
+  }
+
+  set text(value: string) {
+    if (this.isRoot) {
+      throw new Error("Can't set text on root note");
+    }
+    this.lexicalNode.clear();
+    this.lexicalNode.append($createTextNode(value));
   }
 
   _appendChild(child: Note) {
@@ -317,6 +323,10 @@ export class Note {
   get nextSibling() {
     const sibling = this.lexicalNode.getNextSibling();
     return sibling ? Note.from(sibling) : null;
+  }
+
+  get id() {
+    return this.isRoot ? "root" : this.lexicalNode.__id;
   }
 
   _walk(

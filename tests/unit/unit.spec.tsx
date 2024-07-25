@@ -1,5 +1,5 @@
 //TODO refactor using loadEditorState
-import { createChildren, debug } from "./common";
+import { createChildren } from "./common";
 import { Note, NotesState } from "@/components/Editor/api";
 import { $isListNode, $isListItemNode } from "@lexical/list";
 import { $createTextNode, $getRoot, $setSelection, ElementNode } from "lexical";
@@ -228,7 +228,6 @@ describe("API", async () => {
       createChildren(root, 1);
     });
 
-    debug();
     //note1
     expect(context.queries.getAllNotNestedIListItems()).toHaveLength(1);
   });
