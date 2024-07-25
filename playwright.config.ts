@@ -35,7 +35,7 @@ const config: PlaywrightTestConfig = {
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!env.CI,
   retries: 5, //FIXME
-  workers: env.VITE_COLLAB || env.CI ? 1 : 10,
+  workers: env.VITE_COLLAB || env.CI ? 1 : 7,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ["html", { open: "never", outputFolder: "./data/playwright-report" }],
