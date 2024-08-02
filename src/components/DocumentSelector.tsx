@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import { Dropdown, NavDropdown } from "react-bootstrap";
 import { useNavigate } from "react-router";
+import { useSearchParams } from "react-router-dom";
 import { WebsocketProvider } from "y-websocket";
 import * as Y from "yjs";
 
@@ -39,7 +40,8 @@ export const useDocumentSelector = () => {
 };
 
 export const DocumentSelectorProvider = ({ children }) => {
-  const [documentID, setDocumentID] = useState("main");
+  const [searchParams] = useSearchParams();
+  const [documentID, setDocumentID] = useState(searchParams.get("documentID") ?? "main");
   const yjsDoc = useRef<Y.Doc | null>(null);
   const yjsProvider = useRef<Provider | null>(null);
 
