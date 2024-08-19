@@ -7,7 +7,7 @@ const _warn = console.warn;
 const _error = console.error;
 
 const consoleDisabledError = (...args: any[]) => {
-  const message = args.map((arg) => arg.toString()).join(" ");
+  const message = args.map((arg) => arg?.toString()).join(" ");
   _error("use context.logger instead of console in test.");
   _info(message);
 };
