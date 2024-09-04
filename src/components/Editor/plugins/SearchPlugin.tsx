@@ -5,12 +5,11 @@ import {
   NOTES_MOVE_COMMAND,
 } from "../commands";
 import { useNotesLexicalComposerContext } from "../NotesComposerContext";
-import { Note, NotesState } from "../api";
+import { Note } from "../api";
 import { getOffsetPosition } from "@/utils";
 import { mergeRegister } from "@lexical/utils";
 import {
   $getNearestNodeFromDOMNode,
-  $setSelection,
   COMMAND_PRIORITY_CRITICAL,
   COMMAND_PRIORITY_LOW,
   KEY_ARROW_DOWN_COMMAND,
@@ -19,13 +18,16 @@ import {
 } from "lexical";
 import { KEY_ENTER_COMMAND } from "lexical";
 import { LexicalEditor } from "lexical";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { $setSearchFilter } from "./NotesPlugin/utils";
+
+type StopAction = () => void;
 
 class Action {
-  stop: () => void;
+  stop: StopAction;
 
-  constructor({ stop }) {
+  constructor({ stop }: { stop: StopAction }) {
     this.stop = stop;
   }
 
@@ -35,7 +37,6 @@ class Action {
 class ActionSearch extends Action {
   placeholder =
     "Type to search... (Arrow Down/Up to navigate, Enter to zoom to the highlighted note, Esc to cancel)";
-  command = NOTES_FOCUS_COMMAND;
   highlighterID = "search-highlighter";
   dispatch(editor: LexicalEditor, targetKey: string) {
     editor.dispatchCommand(NOTES_FOCUS_COMMAND, {
@@ -53,14 +54,13 @@ type NoteData = {
 class ActionMove extends Action {
   notesData: NoteData[];
 
-  constructor({ stop, notesData }) {
+  constructor({ stop, notesData }: { stop: StopAction; notesData: NoteData[] }) {
     super({ stop });
     this.notesData = notesData;
   }
 
   placeholder =
     "Search for the new location... (Arrow Down/Up to navigate, Enter to move, Esc to cancel)";
-  command = NOTES_MOVE_COMMAND;
   //info = () => (
   //  <div className="text-secondary">Moving note: {this.notesData[0].text}</div>
   //);
@@ -83,13 +83,7 @@ function Finder({ action, filter }) {
   );
 
   useEffect(() => {
-    editor.fullUpdate(
-      () => {
-        NotesState.getActive().setFilter(filter);
-        $setSelection(null);
-      },
-      { discrete: true }
-    );
+    editor.update(() => $setSearchFilter(filter));
     if (index >= results().length) {
       setIndex(0);
     }
@@ -167,12 +161,7 @@ export function SearchPlugin() {
       setNoteFilter("");
     }
     searchInputRef.current.blur();
-    editor.fullUpdate(
-      () => {
-        NotesState.getActive().setFilter("");
-      },
-      { discrete: true }
-    );
+    editor.fullUpdate(() => $setSearchFilter(""));
     editor.focus();
   }, [editor, noteFilter]);
 

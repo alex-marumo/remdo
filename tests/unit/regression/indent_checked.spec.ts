@@ -1,7 +1,4 @@
 import "../common";
-import { Note } from "@/components/Editor/api";
-import { $isListItemNode } from "@lexical/list";
-import { $getEditor, $isTextNode } from "lexical";
 import { it } from "vitest";
 
 it("broken schema", async ({ load, expect, lexicalUpdate }) => {

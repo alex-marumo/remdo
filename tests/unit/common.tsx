@@ -54,13 +54,15 @@ NodeSnapshotEnvironment.prototype.resolveRawPath = function (
   return Promise.resolve(snapshotPath); //noop, just to avoid type errors
 };
 
+export type Queries = BoundFunctions<
+  typeof queries & { getAllNotNestedIListItems: typeof getAllByRole.bind }
+>;
+
 declare module 'vitest' {
   //TODO consider using external functions instead of extending context
   export interface TestContext {
     component: RenderResult;
-    queries: BoundFunctions<
-      typeof queries & { getAllNotNestedIListItems: typeof getAllByRole.bind }
-    >;
+    queries: Queries;
     lexicalUpdate: (fn: () => void) => void;
     logger: Logger;
     load: (name: string) => Record<string, Note>;

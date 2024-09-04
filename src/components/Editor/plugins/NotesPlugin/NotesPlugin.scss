@@ -51,7 +51,19 @@ terribly long and hard to read in the browser
   //}
 
   li.li-checked {
-    text-decoration: line-through;
-    color: var(--bs-tertiary-color);
+      text-decoration: line-through;
+      color: var(--bs-tertiary-color);
+  }
+  
+  .filtered::before {
+    display: none;
+  }
+  
+  .filtered > span {
+    display: none;
+  }
+  
+  .filtered > li.unfiltered {
+    display: block !important;
   }
 }

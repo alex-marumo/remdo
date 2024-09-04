@@ -10,6 +10,7 @@ export function getDataPath(nameOrPath: string) {
     : path.join(__dirname, "data", baseName);
 }
 
+//TODO remove and use Notebook.getNotes instead
 export function htmlToCommaSeparatedText(html: string) {
   return html
     .replace(/<[^>]*>?/gm, "")

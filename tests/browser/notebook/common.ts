@@ -7,7 +7,7 @@ import { getDataPath } from "tests/common.js";
 export class Notebook {
   constructor(private readonly page: Page) {}
 
-  locator(selector="") {
+  locator(selector=""): Locator {
     const editorSelector = ".editor-input" + (selector ? " " + selector : "");
     return this.page.locator(editorSelector);
   }
@@ -54,6 +54,17 @@ export class Notebook {
     await noteLocator.click({
       position: { x: 1, y: 1 }, 
     });
+  }
+
+  async getNotes() {
+    const result: string[] = [];
+    for (const notes of await this.locator("span").all()) {
+      const text = await notes.textContent();
+      if (await notes.isVisible() && text) {
+        result.push(text);
+      }
+    }
+    return result;
   }
 }
 

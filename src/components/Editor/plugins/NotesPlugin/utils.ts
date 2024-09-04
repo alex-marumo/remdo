@@ -5,11 +5,13 @@ import {
   $isListNode,
 } from "@lexical/list";
 import {
+  $getEditor,
   $getRoot,
+  $setSelection,
   RootNode,
 } from "lexical";
 import { nanoid } from "nanoid";
-import { mergeLists } from "./lexicalUnexported";
+import { FULL_RECONCILE, mergeLists } from "./lexicalUnexported";
 
 /**
  *  forces the right editor structure:
@@ -47,6 +49,13 @@ export function $fixRoot(rootNode: RootNode) {
     }
   }
 }
+
+export function $setSearchFilter(filter: string) {
+  const editor = $getEditor();
+  editor._dirtyType = FULL_RECONCILE;
+  editor._remdoState.setFilter(filter);
+  $setSelection(null);
+};
 
 globalThis.remdoGenerateNoteID = () => {
   return nanoid(8);

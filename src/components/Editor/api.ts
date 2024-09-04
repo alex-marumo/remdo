@@ -75,15 +75,6 @@ export class NotesState {
     this._forceLexicalUpdate();
   }
 
-  setFilter(filter: string) {
-    this._element.dataset.filter = filter;
-    this._forceLexicalUpdate();
-  }
-
-  get filter() {
-    return this._element.dataset.filter;
-  }
-
   static getActive() {
     //return new NotesState(getActiveEditor()._rootElement);
     return new NotesState($getEditor()._rootElement as HTMLElement);
