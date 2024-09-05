@@ -18,7 +18,7 @@ it("clear", async ({ lexicalUpdate }) => {
  */
 it(
   "add notes",
-  async ({ lexicalUpdate, logger, expect }) => {
+  async ({ lexicalUpdate, expect }) => {
     const N = getCount(5000, 20);
     const MAX_CHILDREN = 8;
     const BATCH_SIZE = 100; // too big value causes errors during sync
@@ -95,7 +95,7 @@ it(
  */
 it(
   "count notes",
-  async ({ lexicalUpdate, logger }) => {
+  async ({ lexicalUpdate }) => {
     await logger.debug("Counting notes...");
     const count = countNotes(lexicalUpdate);
     await logger.debug(`Notes count: ${count}`);
@@ -109,7 +109,7 @@ it(
  */
 it(
   "create tree",
-  async ({ lexicalUpdate, logger }) => {
+  async ({ lexicalUpdate }) => {
     const N = getCount(200, 2);
     const MAX_CHILDREN = 8;
     const timer = new Timer(N);

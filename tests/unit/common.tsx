@@ -20,7 +20,14 @@ import { $getRoot, CLEAR_HISTORY_COMMAND } from 'lexical';
 import { LexicalEditor } from 'lexical';
 import path from 'path';
 import { MemoryRouter, createSearchParams } from 'react-router-dom';
-import { expect, beforeEach, afterEach } from 'vitest';
+import { expect, beforeEach, afterEach, beforeAll } from 'vitest';
+
+declare global {
+  // let/const won't work here
+  // eslint-disable-next-line no-var
+  var logger: Logger;
+}
+
 
 /* 
  vitest saves file snapshots in the same folder as the test file
@@ -64,7 +71,6 @@ declare module 'vitest' {
     component: RenderResult;
     queries: Queries;
     lexicalUpdate: (fn: () => void) => void;
-    logger: Logger;
     load: (name: string) => Record<string, Note>;
     editor: NotesLexicalEditor;
     expect: typeof expect;
@@ -178,13 +184,14 @@ function getMinimizedState(editor: LexicalEditor) {
   });
 }
 
+beforeAll(() => {
+  globalThis.logger = new Logger();
+});
+
 beforeEach(async (context) => {
   function testHandler(editor: NotesLexicalEditor) {
     context.editor = editor;
   }
-
-  const logger = new Logger();
-  context.logger = logger;
 
   await logger.debug('beforeEach hook started');
 
