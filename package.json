@@ -44,6 +44,7 @@
     "test-unit-collab": "VITE_COLLAB=true npx vitest run",
     "test-unit-watch-coverage": "npx vitest --ui --coverage.enabled --coverage.include=src/**",
     "test-unit-watch": "npx vitest --watch --ui",
+    "test-unit-minimal": "npx vitest --reporter=./tests/unit/reporter.ts --watch --ui",
     "test": "npm run test-unit && npm run test-browser",
     "kill-npm-processes": "ps -eaf | grep 'npm run' | awk '{print $2}' |  xargs kill",
     "load": "./utils.sh run_serialization load",
