@@ -271,6 +271,7 @@ beforeEach(async (context) => {
       throw err;
     }
   };
+  logger.setFlushFunction(() => context.lexicalUpdate(() => {}));
 
   if (collabEnabled) {
     //wait for yjs to connect via websocket and init the editor content
@@ -302,6 +303,7 @@ afterEach(async (context) => {
     await new Promise((r) => setTimeout(r, 10));
   }
   context.component.unmount();
+  logger.setFlushFunction(null);
 });
 
 export function createChildren(

@@ -4,11 +4,15 @@ import { debugEnabled } from '../common';
 
 const _info = console.info;
 const _warn = console.warn;
-const _error = console.error;
+
+let warned = false;
 
 const consoleDisabledError = (...args: any[]) => {
   const message = args.map((arg) => arg?.toString()).join(" ");
-  _error("use context.logger instead of console in test.");
+  if (!warned) {
+    warned = true;
+    _warn("use context.logger instead of console in test.");
+  }
   _info(message);
 };
 
@@ -22,9 +26,14 @@ console.error = consoleDisabledError;
  */
 export class Logger {
   _performanceTests: boolean;
+  _flushFunction: (() => void) | null = null;
 
   constructor() {
     this._performanceTests = process.env.VITE_PERFORMANCE_TESTS === "true";
+  }
+
+  setFlushFunction(func: (() => void) | null) {
+    this._flushFunction = func;
   }
 
   async _write(stream: NodeJS.WriteStream, consoleStream: typeof console.log, args: any[]) {
@@ -35,7 +44,8 @@ export class Logger {
         });
       });
     } else {
-      consoleStream(...args);
+      const messages = args.map(arg => arg?.toJSON ? JSON.stringify(arg, null, 2) : arg);
+      consoleStream(...messages);
     }
   }
 
@@ -84,7 +94,7 @@ export class Logger {
       );
     }
     //end of copied code
-    this.info("Generating preview.");
+    this._flushFunction?.();
     if (debugEnabled) {
       //debug mode enables Tree View, which is rendered asynchonously
       //so let's wait a bit before generating the preview
