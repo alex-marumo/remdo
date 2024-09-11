@@ -27,7 +27,7 @@ it("insert paragraph after a note with children", async ({ load, lexicalUpdate, 
   expect(editor).toMatchFileSnapshot("inserted.yml");
 });
 
-it.only("insert paragraph after a folded note", async ({ load, lexicalUpdate, editor, expect }) => {
+it("insert paragraph after a folded note", async ({ load, lexicalUpdate, editor, expect }) => {
   const { note0 } = load("folded");
   lexicalUpdate(() => {
     note0.lexicalNode.getFirstChild()?.selectEnd();
