@@ -3,15 +3,17 @@ root:
   children:
   - type: list
     children:
-    - folded: true
-      type: listitem
+    - type: listitem
       children:
-      - text: note0 - modified
+      - text: note0
         type: text
       - type: list
         children:
         - indent: 1
           type: listitem
+          children: []
+        - indent: 1
+          type: listitem
           children:
-          - text: note1
+          - text: note00
             type: text

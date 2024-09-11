@@ -1,4 +1,5 @@
 import "./common"; //imported for side effects
+import { INSERT_PARAGRAPH_COMMAND } from "lexical";
 import { it } from "vitest";
 
 it("minimize", async ({ load, editor, expect }) => {
@@ -15,4 +16,23 @@ it("set text", async ({ load, lexicalUpdate, expect }) => {
     note0.text = newNoteText;
     expect(note0.text).toBe(newNoteText);
   });
+});
+
+it("insert paragraph after a note with children", async ({ load, lexicalUpdate, editor, expect }) => {
+  const { note0 } = load("basic");
+  lexicalUpdate(() => {
+    note0.lexicalNode.getFirstChild()?.selectEnd();
+  });
+  editor.dispatchCommand(INSERT_PARAGRAPH_COMMAND, undefined);
+  expect(editor).toMatchFileSnapshot("inserted.yml");
+});
+
+it.only("insert paragraph after a folded note", async ({ load, lexicalUpdate, editor, expect }) => {
+  const { note0 } = load("folded");
+  lexicalUpdate(() => {
+    note0.lexicalNode.getFirstChild()?.selectEnd();
+  });
+  editor.dispatchCommand(INSERT_PARAGRAPH_COMMAND, undefined);
+  logger.preview();
+  expect(editor).toMatchFileSnapshot("inserted.yml");
 });

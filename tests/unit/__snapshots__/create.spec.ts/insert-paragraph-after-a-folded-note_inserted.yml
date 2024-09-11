@@ -6,7 +6,7 @@ root:
     - folded: true
       type: listitem
       children:
-      - text: note0 - modified
+      - text: note0
         type: text
       - type: list
         children:
@@ -15,3 +15,5 @@ root:
           children:
           - text: note1
             type: text
+    - type: listitem
+      children: []

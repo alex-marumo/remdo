@@ -28,31 +28,9 @@ export function applyNodePatches(NodeType: any) {
   patch(NodeType, "createDOM", function (oldMethod, config, editor) {
     const notesState = NotesState.getActive();
     //
-    // search filter
-    //
-    //TODO try to use "changeFocus" tag instead of changing state
-    if (notesState.filter) {
-      if ($isListNode(this)) {
-        //TODO this could be specific for ListNode.createDOM
-        if (this.getParent().getKey() === "root") {
-          return oldMethod(config, editor);
-        }
-        return document.createElement("div");
-      }
-      if (!Note.from(this).text.includes(notesState.filter)) {
-        return document.createElement("div");
-      } else {
-        //during search focus and fold are ignored
-        return oldMethod(config, editor);
-      }
-    }
-
-    //
     // focus & fold
     //
-    //TODO simplify
     const note = Note.from(this);
-    const parents = [...note.parents];
     if (
       !notesState.focus ||
       notesState.focus.parentKey === this.getKey() ||
@@ -61,21 +39,6 @@ export function applyNodePatches(NodeType: any) {
         (p) => p.lexicalKey === notesState.focus.nodeKey
       )
     ) {
-      //
-      // is folded?
-      //
-      /*
-      if (notesState?.focus?.nodeKey !== note.lexicalKey) {
-        for (const p of parents) {
-          if (p.folded) {
-            return document.createElement("div");
-          }
-          if (p.lexicalKey === notesState.focus?.nodeKey) {
-            break;
-          }
-        }
-      }
-      */
       const dom: HTMLElement = oldMethod(config, editor);
       return dom;
     } else {
@@ -83,55 +46,6 @@ export function applyNodePatches(NodeType: any) {
     }
   });
 }
-
-patch(ListItemNode, "clone", function (oldClone, oldNode: ListItemNode) {
-  const newNode = oldClone(oldNode);
-  newNode.__folded = oldNode.__folded ?? false;
-  return newNode;
-});
-
-patch(ListItemNode, "importJSON", function (oldImportJSON, serializedNode) {
-  //lexical implements multi-level indents by adding some extra styles to the
-  //node, we don't allow them, so there is no need for the extra styles
-  serializedNode.indent = 0;
-  const node = oldImportJSON(serializedNode);
-  node.__folded = serializedNode["folded"] ?? false;
-  return node;
-});
-
-patch(ListItemNode, "exportJSON", function (oldExportJSON) {
-  return {
-    ...oldExportJSON(),
-    folded: this.__folded,
-  };
-});
-
-patch(
-  ListItemNode,
-  "insertNewAfter",
-  function (old, selection: RangeSelection, restoreSelection = true) {
-    // if the current element doesn't have children this code does the same what
-    // the original method does, which is inserting a new element after the
-    // current
-    // if the current element has children, the new element is inserted as a
-    // first child (if the current element is not folded) or after children list
-    const nextListItem = this.getNextSibling();
-    let childrenListNode: ListNode = nextListItem
-      ?.getChildren()
-      .find($isListNode);
-
-    const newElement = old(selection, restoreSelection);
-
-    if (this.getFolded()) {
-      nextListItem?.insertAfter(newElement);
-    } else {
-      childrenListNode?.getFirstChild()?.insertBefore(newElement);
-    }
-
-    return newElement;
-  }
-);
-
 
 //customized version of lexical's function, the only changes are commented
 //out lines
@@ -178,14 +92,11 @@ patch(ListItemNode, "createDOM", function (old, config: EditorConfig, editor) {
   to patch createDOM/updateDOM
   */
   const dom = old(config, editor);
-  const className = config.theme.list.listitemChecked;
+  const className = config.theme.list?.listitemChecked;
   if (this.getChecked()) {
     addClassNamesToElement(dom, className);
   } else {
     removeClassNamesFromElement(dom, className);
-  }
-  if (this.getFolded()) {
-    addClassNamesToElement(dom, "note-folded");
   }
   return dom;
 });

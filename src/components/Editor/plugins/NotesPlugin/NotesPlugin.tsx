@@ -82,25 +82,27 @@ export function NotesPlugin({ anchorRef, documentID }) {
         INSERT_PARAGRAPH_COMMAND,
         () => {
           //this replaces $handleListInsertParagraph logic
-          //the default implementation replaces an empty list item with a
-          //paragraph effectively ending the list
-          //this version just creates a new empty list item
-          //
-          //the code below is directly copied from the beginning of
-          //$handleListInsertParagraph function from lexical's code
           const selection = $getSelection();
 
           if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
             return false;
           }
-          // Only run this code on empty list items
           const anchor = selection.anchor.getNode();
 
-          if (!$isListItemNode(anchor) || anchor.getTextContent() !== "") {
-            return false;
-          }
-          //end of copied code
+          const note = Note.from(anchor);
 
+          if (note.hasChildren) {
+            if (!note.folded) {
+              //TODO use Note API to insert
+              const newListItemNode = $createListItemNode();
+              note._getChildrenListNode()?.getFirstChild()?.insertBefore(newListItemNode);
+              newListItemNode.select();
+            }
+            else {
+              note.parent.createChild().lexicalNode.select();
+            }
+            return true;
+          }
           const newListItemNode = $createListItemNode();
           anchor.insertAfter(newListItemNode);
           newListItemNode.select();

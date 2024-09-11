@@ -104,8 +104,15 @@ export class Note {
     this._lexicalKey = key;
   }
 
+  toJSON(): Record<string, any> {
+    return {
+      [this.text]: [...this.children].map(child => child.toJSON()),
+    };
+  }
+
+
   //TODO rename to createNote
-  createChild(text:string | null = null): Note {
+  createChild(text: string | null = null): Note {
     const childNode = $createListItemNode();
     this._getChildrenListNode(true).append(childNode);
     if (text) {
@@ -333,23 +340,6 @@ export class Note {
     }
   }
 }
-
-//TODO move somewhere else
-declare module "@lexical/list" {
-  interface ListItemNode {
-    getFolded(): boolean;
-    setFolded(value: boolean): void;
-    __folded: boolean | null;
-  }
-}
-
-LexicalListItemNode.prototype.getFolded = function () {
-  return this.getLatest().__folded;
-};
-
-LexicalListItemNode.prototype.setFolded = function (value: boolean): void {
-  this.getWritable().__folded = !!value;
-};
 
 export function getNotesFromSelection() {
   const selection = $getSelection();
