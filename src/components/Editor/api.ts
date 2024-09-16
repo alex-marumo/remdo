@@ -268,7 +268,7 @@ export class Note {
   }
 
   focus() {
-    NotesState.getActive().setFocus(this);
+    $getEditor()._remdoState.setFocus(this.lexicalNode);
   }
 
   get folded() {

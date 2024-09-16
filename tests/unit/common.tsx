@@ -344,3 +344,10 @@ export function getNotes(editor: Editor): Record<string, Note> {
   return notes;
 }
 
+export function getVisibleNotes(queries: Queries) {
+  return queries
+    .getAllByRole("generic")
+    .filter(el => el.tagName.toLowerCase() === "span")
+    .map(el => el.textContent);
+}
+

@@ -20,7 +20,6 @@ export function useNotesLexicalComposerContext() {
   editor.fullUpdate = (updateFunction, options) => {
     editor._dirtyType = FULL_RECONCILE;
     editor.update(() => {
-      NotesState.getActive()._forceLexicalUpdate();
       updateFunction();
     }, options);
   };

@@ -54,6 +54,14 @@ terribly long and hard to read in the browser
       text-decoration: line-through;
       color: var(--bs-tertiary-color);
   }
+
+  ul.filtered {
+    padding-left: 0;
+  }
+
+  .filtered br {
+    display: none;
+  }
   
   .filtered::before {
     display: none;

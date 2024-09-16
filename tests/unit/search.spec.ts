@@ -1,11 +1,7 @@
 import "./common"; //imported for side effects
 import { $setSearchFilter } from "@/components/Editor/plugins/NotesPlugin/utils";
 import { it } from "vitest";
-import { Queries } from "./common";
-
-function getNotes(queries: Queries) {
-  return queries.getAllByRole("generic").map(el => el.textContent);
-}
+import { getVisibleNotes } from "./common";
 
 it("search", async ({ load, queries, lexicalUpdate, expect }) => {
   load("tree_complex");
@@ -23,13 +19,13 @@ it("search", async ({ load, queries, lexicalUpdate, expect }) => {
     'note1200',
     'note1201'
   ];
-  expect(getNotes(queries)).toEqual(allNotes);
+  expect(getVisibleNotes(queries)).toEqual(allNotes);
 
   lexicalUpdate(() => $setSearchFilter("n"));
-  expect(getNotes(queries)).toEqual(allNotes);
+  expect(getVisibleNotes(queries)).toEqual(allNotes);
 
   lexicalUpdate(() => $setSearchFilter("note0"));
-  expect(getNotes(queries)).toEqual([
+  expect(getVisibleNotes(queries)).toEqual([
     'note0',
     'note00',
     'note000',
@@ -37,7 +33,7 @@ it("search", async ({ load, queries, lexicalUpdate, expect }) => {
   ]);
 
   lexicalUpdate(() => $setSearchFilter("note00"));
-  expect(getNotes(queries)).toEqual([
+  expect(getVisibleNotes(queries)).toEqual([
     'note00',
     'note000',
   ]);

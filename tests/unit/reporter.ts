@@ -7,21 +7,22 @@ export default class MinimalReporter extends BasicReporter {
       console.log("Starting...");
     };
     super.onInit(ctx);
-  }
 
-  reportTestSummary(): Promise<void> {
-    console.log('Done, waiting for changes...');
-    return new Promise(() => {});
-  }
+    const disabledLogs = [
+      'to show help',
+      ' Test Files',
+      '     Tests',
+      '  Duration',
+      '  Start at',
+    ];
 
-  onTaskUpdate() {
-  }
-
-  onWatcherStart(): Promise<void> {
-    return new Promise(() => {});
-  }
-
-  onCollected() {
+    const originalLog = ctx.logger.log.bind(ctx.logger);
+    ctx.logger.log = function (...args: any[]) {
+      if (args[0] && !disabledLogs.find(log => args[0].includes(log))) {
+        args[0] = args[0].trim();
+        return originalLog(...args);
+      }
+    };
   }
 
   onUserConsoleLog(log: UserConsoleLog) {

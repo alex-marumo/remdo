@@ -24,7 +24,7 @@ import {
   KEY_ENTER_COMMAND,
   KEY_ESCAPE_COMMAND,
 } from "lexical";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 
 type Action = () => void;
@@ -145,6 +145,7 @@ function MenuOptions({ closeMenu, position, noteKeys }) {
             const key = event.key.toLowerCase();
             const selected = options.find((o) => o.key === key);
             if (!selected) {
+              closeMenu();
               return false;
             }
             selected.action();
