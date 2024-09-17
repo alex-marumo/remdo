@@ -6,7 +6,7 @@ test("indent outdent", async ({ page, notebook }) => {
 
   expect(await notebook.html()).toMatchSnapshot("flat");
 
-  await notebook.noteLocator("note2").selectText(); //FIXME should be focus, but this doesn't work yet
+  await notebook.selectNote("note2");
 
   //indent
   await page.keyboard.press("Tab");
@@ -31,7 +31,7 @@ test("indent outdent with children", async ({ page, notebook }) => {
 
   expect(await notebook.html()).toMatchSnapshot("base");
 
-  await notebook.noteLocator("note1").selectText(); //FIXME should be focus, but this doesn't work yet
+  await notebook.selectNote("note1");
 
   //indent and make note1 sibling of note01
   await page.keyboard.press("Tab");

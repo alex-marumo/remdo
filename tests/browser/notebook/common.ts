@@ -40,6 +40,13 @@ export class Notebook {
       .trim();
   }
 
+  async selectNote(title: string) {
+    await this.noteLocator(title).selectText();
+
+    //it takes some time for the selection to be visible and lexical to update
+    await this.page.waitForTimeout(200);
+  }
+
   /** places cursor on the very end of given's note title */
   async clickEndOfNote(title: string) {
     const noteLocator = this.noteLocator(title);
