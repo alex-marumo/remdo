@@ -14,7 +14,7 @@ import {
   within,
 } from '@testing-library/react';
 import { NodeSnapshotEnvironment } from '@vitest/snapshot/environment';
-import fs from 'fs';
+import fs, { promises, readFile, readFileSync } from 'fs';
 import yaml from 'js-yaml';
 import { $getRoot, CLEAR_HISTORY_COMMAND } from 'lexical';
 import { LexicalEditor } from 'lexical';
@@ -43,14 +43,11 @@ NodeSnapshotEnvironment.prototype.resolveRawPath = function (
   testPath: string,
   rawPath: string,
 ): Promise<string> {
-  //currentTestName gives result like this: tests/unit/fold.spec.ts > fold all
-  //the idea is to get only the actual name (i.e. "fold all")
-  //and then replace all non-alphanumeric characters with a hyphen
-  const testNameWithFile = expect.getState().currentTestName;
-  const sub = ' > ';
-  const testName = testNameWithFile
-    .slice(testNameWithFile.indexOf(sub) + sub.length)
-    .replace(/[^a-zA-Z0-9]/g, '-');
+  //replace all non-alphanumeric characters with a hyphen
+  const testName = expect
+    .getState()
+    .currentTestName
+    ?.replace(/[^a-zA-Z0-9]/g, '-');
 
   const snapshotPath = path.join(
     path.dirname(testPath),
@@ -271,7 +268,7 @@ beforeEach(async (context) => {
       throw err;
     }
   };
-  logger.setFlushFunction(() => context.lexicalUpdate(() => {}));
+  logger.setFlushFunction(() => context.lexicalUpdate(() => { }));
 
   if (collabEnabled) {
     //wait for yjs to connect via websocket and init the editor content
