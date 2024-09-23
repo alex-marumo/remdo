@@ -4,15 +4,15 @@ import {
 } from "@lexical/react/LexicalComposerContext";
 import { LexicalEditor } from "lexical";
 import { EditorUpdateOptions } from "@lexical/LexicalEditor";
-import { FULL_RECONCILE } from "./plugins/NotesPlugin/lexicalUnexported";
+import { FULL_RECONCILE } from "./plugins/NotesPlugin/utils/unexported";
 
-export interface NotesLexicalEditor extends LexicalEditor {
+export interface RemdoLexicalEditor extends LexicalEditor {
   fullUpdate(updateFunction: () => void, options?: EditorUpdateOptions): void;
 }
 
-export function useNotesLexicalComposerContext() {
+export function useRemdoLexicalComposerContext() {
   const [editor, context] = useLexicalComposerContext() as [
-    NotesLexicalEditor,
+    RemdoLexicalEditor,
     LexicalComposerContextType
   ];
   //TODO check if this is still needed
@@ -22,5 +22,5 @@ export function useNotesLexicalComposerContext() {
       updateFunction();
     }, options);
   };
-  return [editor, context] as [NotesLexicalEditor, LexicalComposerContextType];
+  return [editor, context] as [RemdoLexicalEditor, LexicalComposerContextType];
 }

@@ -1,8 +1,8 @@
-import { useDocumentSelector } from "../DocumentSelector/DocumentSelector";
+import { useDocumentSelector } from "../../DocumentSelector/DocumentSelector";
 import ReactJson from "@microlink/react-json-view";
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as Y from "yjs";
-import { useEditorConfig } from "../config";
+import { useEditorConfig } from "../../config";
 
 type YElement = Y.AbstractType<any>;
 

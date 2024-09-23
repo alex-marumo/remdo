@@ -1,8 +1,8 @@
-import { useNotesLexicalComposerContext } from "../NotesComposerContext";
-import { SPACER_COMMAND } from "../commands";
+import { useRemdoLexicalComposerContext } from "../../ComposerContext";
+import { SPACER_COMMAND } from "../../commands";
 import { YjsDebug } from "./YjsDebug";
 import { useDebug } from "@/DebugContext";
-import { useDocumentSelector } from "../DocumentSelector/DocumentSelector";
+import { useDocumentSelector } from "../../DocumentSelector/DocumentSelector";
 import { mergeRegister } from "@lexical/utils";
 import { CONNECTED_COMMAND, TOGGLE_CONNECT_COMMAND } from "@lexical/yjs";
 import {
@@ -13,10 +13,10 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import * as Y from "yjs";
-import TreeViewPlugin from "./NotesPlugin/playground";
+import TreeViewPlugin from "./TreeViewPlugin";
 
 function EditorStateInput() {
-  const [editor] = useNotesLexicalComposerContext();
+  const [editor] = useRemdoLexicalComposerContext();
   const loadEditorState = () => {
     const editorStateElement: HTMLTextAreaElement = document.getElementById(
       "editor-state"
@@ -45,7 +45,7 @@ function EditorStateInput() {
 
 export const DevToolbarPlugin = ({ editorBottomRef }) => {
   const [connected, setConnected] = useState(false);
-  const [editor] = useNotesLexicalComposerContext();
+  const [editor] = useRemdoLexicalComposerContext();
   const [darkMode, setDarkMode] = useState(getDarkMode());
   const [showEditorStateInput, setShowEditorStateInput] = useState(false);
   const documentSelector = useDocumentSelector();

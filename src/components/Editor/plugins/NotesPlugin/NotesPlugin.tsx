@@ -1,11 +1,11 @@
-import { useNotesLexicalComposerContext } from "@/components/Editor/NotesComposerContext";
+import { useRemdoLexicalComposerContext } from "@/components/Editor/ComposerContext";
 import { Note, NotesState } from "@/components/Editor/api";
 import {
   NOTES_MOVE_COMMAND,
   NOTES_SET_FOLD_LEVEL_COMMAND,
   NOTES_TOGGLE_FOLD_COMMAND,
 } from "../../commands";
-import { $fixRoot } from "./utils";
+import { $fixRoot } from "./utils/utils";
 import { Navigation } from "../NavigationPlugin";
 import { SearchPlugin } from "../SearchPlugin";
 import "./NotesPlugin.scss";
@@ -30,15 +30,15 @@ import { COMMAND_PRIORITY_CRITICAL } from "lexical";
 import { useEffect, useCallback } from "react";
 import { ListNode } from "@lexical/list";
 import { TextNode } from "lexical";
-import { applyNodePatches } from "./lexicalPatches";
-import { $isTargetWithinDecorator } from "./lexicalUnexported";
+import { applyNodePatches } from "./utils/patches";
+import { $isTargetWithinDecorator } from "./utils/unexported";
 
 applyNodePatches(TextNode);
 applyNodePatches(ListNode);
 applyNodePatches(ListItemNode);
 
 export function NotesPlugin({ anchorRef, documentID }) {
-  const [editor] = useNotesLexicalComposerContext();
+  const [editor] = useRemdoLexicalComposerContext();
 
   const handleReorder = useCallback(
     //TODO convert that to custom commands

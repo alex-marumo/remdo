@@ -1,7 +1,7 @@
 //TODO try to use https://react-bootstrap.github.io/components/dropdowns/ or https://react-bootstrap.github.io/components/overlays/
 //TODO this is a react component, not a lexical plugin
 //TODO rename plugins to lexical plugins
-import { useNotesLexicalComposerContext } from "../NotesComposerContext";
+import { useRemdoLexicalComposerContext } from "../ComposerContext";
 import { getNotesFromSelection } from "../api";
 import {
   NOTES_OPEN_QUICK_MENU_COMMAND,
@@ -53,7 +53,7 @@ class NoteMenuOption {
 
 //TODO add option for checking
 function MenuOptions({ closeMenu, position, noteKeys }) {
-  const [editor] = useNotesLexicalComposerContext();
+  const [editor] = useRemdoLexicalComposerContext();
   const [highlightedOptionIndex, setHighlightedOptionIndex] = useState(null);
   const options = useMemo(
     () => [
@@ -244,7 +244,7 @@ function MenuOptions({ closeMenu, position, noteKeys }) {
 }
 
 export function QuickMenuPlugin() {
-  const [editor] = useNotesLexicalComposerContext();
+  const [editor] = useRemdoLexicalComposerContext();
   const hotKeyPressed = useRef(false);
   const [position, setPosition] = useState<{ left: number; top: number }>(null);
   const anchorElement = editor.getRootElement()?.parentElement;

@@ -1,5 +1,5 @@
 import "./common"; //imported for side effects
-import { $setSearchFilter } from "@/components/Editor/plugins/NotesPlugin/utils";
+import { $setSearchFilter } from "@/components/Editor/plugins/NotesPlugin/utils/utils";
 import { it } from "vitest";
 import { getVisibleNotes } from "./common";
 

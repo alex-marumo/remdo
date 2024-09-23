@@ -1,4 +1,4 @@
-import { useNotesLexicalComposerContext } from "../NotesComposerContext";
+import { useRemdoLexicalComposerContext } from "../ComposerContext";
 import { Note } from "../api";
 import { NOTES_FOCUS_COMMAND } from "../commands";
 import { DocumentSelector } from "../DocumentSelector/DocumentSelector";
@@ -12,7 +12,7 @@ import Breadcrumb from "react-bootstrap/Breadcrumb";
 import { useNavigate, useParams } from "react-router-dom";
 
 export function Navigation({ anchorRef, documentID }) {
-  const [editor] = useNotesLexicalComposerContext();
+  const [editor] = useRemdoLexicalComposerContext();
   const navigate = useNavigate();
   const locationParams = useParams();
   const rootRef = useRef("");

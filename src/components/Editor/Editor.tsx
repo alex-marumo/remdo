@@ -4,11 +4,11 @@ import {
 } from "./DocumentSelector/DocumentSelector";
 import "./Editor.scss";
 import { useEditorConfig } from "./config";
-import { DevComponentTestPlugin } from "./plugins/DevComponentTestPlugin";
-import { DevToolbarPlugin } from "./plugins/DevToolbarPlugin";
+import { DevComponentTestPlugin } from "./plugins/Dev/DevComponentTestPlugin";
+import { DevToolbarPlugin } from "./plugins/Dev/DevToolbarPlugin";
 import { IndentationPlugin } from "./plugins/IndentationPlugin";
 import { NoteControlsPlugin } from "./plugins/NoteControlsPlugin";
-import NotesPlugin from "./plugins/NotesPlugin";
+import { NotesPlugin } from "./plugins/NotesPlugin/NotesPlugin";
 import { QuickMenuPlugin } from "./plugins/QuickMenuPlugin";
 import { RemdoAutoLinkPlugin } from "./plugins/RemdoAutoLinkPlugin";
 import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";

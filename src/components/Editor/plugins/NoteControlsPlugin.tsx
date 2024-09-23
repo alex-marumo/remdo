@@ -1,5 +1,5 @@
 //TODO add tests
-import { useNotesLexicalComposerContext } from "../NotesComposerContext";
+import { useRemdoLexicalComposerContext } from "../ComposerContext";
 import { Note } from "../api";
 import { NOTES_OPEN_QUICK_MENU_COMMAND } from "../commands";
 import { RemdoNodeEventPlugin } from "./RemdoNodeEventPlugin";
@@ -13,11 +13,11 @@ import {
   RootNode,
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
-import React, { MouseEvent, useCallback, useEffect, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 export function NoteControlsPlugin({ anchorRef }) {
-  const [editor] = useNotesLexicalComposerContext();
+  const [editor] = useRemdoLexicalComposerContext();
   const [menuStyle, setMenuStyle] = useState(null);
   const [noteElement, setNoteElement] = useState(null);
   const [noteFolded, setNoteFolded] = useState(false);

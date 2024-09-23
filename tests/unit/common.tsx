@@ -1,9 +1,9 @@
 import { collabEnabled, debugEnabled, getDataPath } from '../common';
 import { Logger } from './logger';
 import Editor from '@/components/Editor/Editor';
-import { NotesLexicalEditor } from '@/components/Editor/NotesComposerContext';
+import { RemdoLexicalEditor } from '@/components/Editor/ComposerContext';
 import { Note } from '@/components/Editor/api';
-import { TestContext as ComponentTestContext } from '@/components/Editor/plugins/DevComponentTestPlugin';
+import { TestContext as ComponentTestContext } from '@/components/Editor/plugins/Dev/DevComponentTestPlugin';
 import { Routes } from '@/Routes';
 import {
   BoundFunctions,
@@ -69,7 +69,7 @@ declare module 'vitest' {
     queries: Queries;
     lexicalUpdate: (fn: () => void) => void;
     load: (name: string) => Record<string, Note>;
-    editor: NotesLexicalEditor;
+    editor: RemdoLexicalEditor;
     expect: typeof expect;
   }
 }
@@ -186,7 +186,7 @@ beforeAll(() => {
 });
 
 beforeEach(async (context) => {
-  function testHandler(editor: NotesLexicalEditor) {
+  function testHandler(editor: RemdoLexicalEditor) {
     context.editor = editor;
   }
 

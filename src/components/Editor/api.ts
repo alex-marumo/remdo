@@ -17,7 +17,7 @@ import {
   LexicalNode
 } from "lexical";
 
-import { $findNearestListItemNode, getElementByKeyOrThrow } from "./plugins/NotesPlugin/lexicalUnexported";
+import { $findNearestListItemNode, getElementByKeyOrThrow } from "./plugins/NotesPlugin/utils/unexported";
 
 //TODO
 //create folder api and split this to Note and NotesState

@@ -4,7 +4,7 @@ import {
   NOTES_SEARCH_COMMAND,
   NOTES_MOVE_COMMAND,
 } from "../commands";
-import { useNotesLexicalComposerContext } from "../NotesComposerContext";
+import { useRemdoLexicalComposerContext } from "../ComposerContext";
 import { Note } from "../api";
 import { getOffsetPosition } from "@/utils";
 import { mergeRegister } from "@lexical/utils";
@@ -20,7 +20,7 @@ import { KEY_ENTER_COMMAND } from "lexical";
 import { LexicalEditor } from "lexical";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { $setSearchFilter } from "./NotesPlugin/utils";
+import { $setSearchFilter } from "./NotesPlugin/utils/utils";
 
 type StopAction = () => void;
 
@@ -74,7 +74,7 @@ class ActionMove extends Action {
 }
 
 function Finder({ action, filter }) {
-  const [editor] = useNotesLexicalComposerContext();
+  const [editor] = useRemdoLexicalComposerContext();
   const [index, setIndex] = useState(0);
 
   const results = useCallback(
@@ -150,7 +150,7 @@ function Finder({ action, filter }) {
 }
 
 export function SearchPlugin() {
-  const [editor] = useNotesLexicalComposerContext();
+  const [editor] = useRemdoLexicalComposerContext();
   const [noteFilter, setNoteFilter] = useState("");
   const searchInputRef = useRef(null);
   const [action, setAction] = useState(null);

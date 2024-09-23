@@ -11,7 +11,7 @@ import {
   RootNode,
 } from "lexical";
 import { nanoid } from "nanoid";
-import { FULL_RECONCILE, mergeLists } from "./lexicalUnexported";
+import { FULL_RECONCILE, mergeLists } from "./unexported";
 
 /**
  *  forces the right editor structure:
