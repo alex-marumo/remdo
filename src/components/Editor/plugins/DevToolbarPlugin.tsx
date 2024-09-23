@@ -2,8 +2,7 @@ import { useNotesLexicalComposerContext } from "../NotesComposerContext";
 import { SPACER_COMMAND } from "../commands";
 import { YjsDebug } from "./YjsDebug";
 import { useDebug } from "@/DebugContext";
-import { useDocumentSelector } from "@/components/DocumentSelector";
-import { useYjsHistory } from "@lexical/react/shared/useYjsCollaboration";
+import { useDocumentSelector } from "../DocumentSelector/DocumentSelector";
 import { mergeRegister } from "@lexical/utils";
 import { CONNECTED_COMMAND, TOGGLE_CONNECT_COMMAND } from "@lexical/yjs";
 import {
@@ -11,7 +10,7 @@ import {
   CLEAR_HISTORY_COMMAND,
   COMMAND_PRIORITY_EDITOR,
 } from "lexical";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import * as Y from "yjs";
 import TreeViewPlugin from "./NotesPlugin/playground";

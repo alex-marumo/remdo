@@ -1,6 +1,6 @@
-import { useDocumentSelector } from "@/components/DocumentSelector";
+import { useDocumentSelector } from "../DocumentSelector/DocumentSelector";
 import ReactJson from "@microlink/react-json-view";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as Y from "yjs";
 import { useEditorConfig } from "../config";
 

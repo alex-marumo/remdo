@@ -1,7 +1,7 @@
 import { useNotesLexicalComposerContext } from "../NotesComposerContext";
 import { Note } from "../api";
 import { NOTES_FOCUS_COMMAND } from "../commands";
-import { DocumentSelector } from "@/components/DocumentSelector";
+import { DocumentSelector } from "../DocumentSelector/DocumentSelector";
 import { isBeforeEvent } from "@/utils";
 import { ListItemNode } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";

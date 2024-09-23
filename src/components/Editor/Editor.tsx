@@ -1,7 +1,7 @@
 import {
   DocumentSelectorProvider,
   useDocumentSelector,
-} from "../DocumentSelector";
+} from "./DocumentSelector/DocumentSelector";
 import "./Editor.scss";
 import { useEditorConfig } from "./config";
 import { DevComponentTestPlugin } from "./plugins/DevComponentTestPlugin";

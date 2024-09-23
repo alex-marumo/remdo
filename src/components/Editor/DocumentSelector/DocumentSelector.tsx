@@ -1,7 +1,7 @@
-import { NotesState } from "./Editor/api";
+import { NotesState } from "../api";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { Provider } from "@lexical/yjs";
-import React, {
+import {
   createContext,
   useContext,
   useMemo,

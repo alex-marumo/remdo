@@ -1,10 +1,9 @@
-import { NotesState } from "./api";
 import {
   LexicalComposerContextType,
   useLexicalComposerContext,
 } from "@lexical/react/LexicalComposerContext";
 import { LexicalEditor } from "lexical";
-import { EditorUpdateOptions } from "lexical/LexicalEditor";
+import { EditorUpdateOptions } from "@lexical/LexicalEditor";
 import { FULL_RECONCILE } from "./plugins/NotesPlugin/lexicalUnexported";
 
 export interface NotesLexicalEditor extends LexicalEditor {
