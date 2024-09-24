@@ -12,7 +12,7 @@ import { it } from "vitest";
 
 const SERIALIZATION_FILE = process.env.VITEST_SERIALIZATION_FILE as string;
 
-it.runIf(SERIALIZATION_FILE)("load", async ({ load, logger }) => {
+it.runIf(SERIALIZATION_FILE)("load", async ({ load }) => {
   const dataPath = getDataPath(SERIALIZATION_FILE);
   logger.info();
   logger.info();
@@ -20,7 +20,7 @@ it.runIf(SERIALIZATION_FILE)("load", async ({ load, logger }) => {
   load(dataPath);
 });
 
-it.runIf(SERIALIZATION_FILE)("save", ({ editor, logger }) => {
+it.runIf(SERIALIZATION_FILE)("save", ({ editor }) => {
   /**
    * uses lexicalStateKeyCompare to put children at the end for easier reading
    */
