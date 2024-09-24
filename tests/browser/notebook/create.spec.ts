@@ -13,7 +13,7 @@ test("add the first child to note with existing children", async ({
 
 test("create some empty notes", async ({ page, notebook }) => {
   await notebook.load("flat");
-  await notebook.noteLocator("note2").selectText();
+  await notebook.selectNote("note2");
 
   await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");

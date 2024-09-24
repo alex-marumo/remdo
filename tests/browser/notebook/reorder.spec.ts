@@ -9,7 +9,7 @@ test("reorder flat", async ({ page, notebook }) => {
   await notebook.load("flat");
   expect(await notebook.html()).toMatchSnapshot("base");
 
-  await notebook.noteLocator("note2").selectText();
+  await notebook.clickEndOfNote("note2");
 
   await page.keyboard.press("Meta+ArrowUp");
   expect(await notebook.html()).toMatchSnapshot("note2 moved up");
