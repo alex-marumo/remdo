@@ -6,7 +6,7 @@ import {
   NOTES_TOGGLE_FOLD_COMMAND,
 } from "../../commands";
 import { $fixRoot } from "./utils/utils";
-import { Navigation } from "../NavigationPlugin";
+import { BreadcrumbPlugin } from "../BreadcrumbsPlugin";
 import { SearchPlugin } from "../SearchPlugin";
 import "./NotesPlugin.scss";
 import { $createListItemNode, $isListItemNode } from "@lexical/list";
@@ -32,12 +32,14 @@ import { ListNode } from "@lexical/list";
 import { TextNode } from "lexical";
 import { applyNodePatches } from "./utils/patches";
 import { $isTargetWithinDecorator } from "./utils/unexported";
+import { FocusPlugin } from "../FocusPlugin";
 
 applyNodePatches(TextNode);
 applyNodePatches(ListNode);
 applyNodePatches(ListItemNode);
 
-export function NotesPlugin({ anchorRef, documentID }) {
+export function NotesPlugin({ anchorRef, documentID }:
+  { anchorRef: React.RefObject<HTMLElement>; documentID: string }) {
   const [editor] = useRemdoLexicalComposerContext();
 
   const handleReorder = useCallback(
@@ -233,7 +235,8 @@ export function NotesPlugin({ anchorRef, documentID }) {
 
   return (
     <>
-      <Navigation anchorRef={anchorRef} documentID={documentID} />
+      <BreadcrumbPlugin documentID={documentID} />
+      <FocusPlugin anchorRef={anchorRef} />
       <SearchPlugin />
     </>
   );
