@@ -8,8 +8,10 @@ import { useRemdoLexicalComposerContext } from "../ComposerContext";
 import { Note } from "../api";
 import { getOffsetPosition } from "@/utils";
 import { mergeRegister } from "@lexical/utils";
+import { ListItemNode } from "@lexical/list";
 import {
   $getNearestNodeFromDOMNode,
+  $getNodeByKey,
   COMMAND_PRIORITY_CRITICAL,
   COMMAND_PRIORITY_LOW,
   KEY_ARROW_DOWN_COMMAND,
@@ -125,7 +127,17 @@ function Finder({ action, filter }) {
           return true;
         },
         COMMAND_PRIORITY_CRITICAL
-      )
+      ),
+      editor.registerCommand(
+        NOTES_MOVE_COMMAND,
+        ({ keys, targetKey }) => {
+          const moved: ListItemNode = $getNodeByKey(keys[0]);
+          const target: ListItemNode = $getNodeByKey(targetKey);
+          target.insertAfter(moved);
+          return true;
+        },
+        COMMAND_PRIORITY_LOW
+      ),
     );
   }, [action, editor, index, results]);
 
