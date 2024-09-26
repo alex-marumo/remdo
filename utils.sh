@@ -17,7 +17,15 @@ function repo_files {
         echo $NEW_FILES $TRACKED_FILES
     else
         SUBMODULES_REGEXP=$(git submodule foreach --quiet 'echo ^$path' | $SCRIPT_PATH list_to_regexp)
-        echo $NEW_FILES $TRACKED_FILES | grep -Ev $SUBMODULES_REGEXP
+        echo "$NEW_FILES $TRACKED_FILES" |
+          grep -Ev "$SUBMODULES_REGEXP" |
+          cut -d ' ' -f 1 | #convert to one file per line
+          grep -Ev '\.(mts|svg|png|ico|json)$' | #exclude some file types
+          while read -r file; do # remove symlinks
+            if [ ! -L "$file" ]; then
+              echo "$file"
+            fi
+          done
     fi
 }
 
