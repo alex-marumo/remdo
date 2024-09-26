@@ -3,9 +3,9 @@ import {
   NOTES_START_MOVING_COMMAND,
   NOTES_SEARCH_COMMAND,
   NOTES_MOVE_COMMAND,
-} from "../commands";
-import { useRemdoLexicalComposerContext } from "../ComposerContext";
-import { Note } from "../api";
+} from "./utils/commands";
+import { useRemdoLexicalComposerContext } from "./ComposerContext";
+import { Note } from "./utils/api";
 import { getOffsetPosition } from "@/utils";
 import { mergeRegister } from "@lexical/utils";
 import { ListItemNode } from "@lexical/list";
@@ -22,7 +22,7 @@ import { KEY_ENTER_COMMAND } from "lexical";
 import { LexicalEditor } from "lexical";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { $setSearchFilter } from "./NotesPlugin/utils/utils";
+import { $setSearchFilter } from "./utils/utils";
 
 type StopAction = () => void;
 

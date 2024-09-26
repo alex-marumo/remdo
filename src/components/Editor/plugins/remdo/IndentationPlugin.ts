@@ -1,4 +1,4 @@
-import { Note } from "../api";
+import { Note } from "./utils/api";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
   $getSelection,

@@ -1,8 +1,8 @@
 //TODO try to use https://react-bootstrap.github.io/components/dropdowns/ or https://react-bootstrap.github.io/components/overlays/
 //TODO this is a react component, not a lexical plugin
 //TODO rename plugins to lexical plugins
-import { useRemdoLexicalComposerContext } from "../ComposerContext";
-import { getNotesFromSelection } from "../api";
+import { useRemdoLexicalComposerContext } from "./ComposerContext";
+import { getNotesFromSelection } from "./utils/api";
 import {
   NOTES_OPEN_QUICK_MENU_COMMAND,
   NOTES_START_MOVING_COMMAND,
@@ -10,7 +10,7 @@ import {
   NOTES_TOGGLE_FOLD_COMMAND,
   NOTES_FOCUS_COMMAND,
   NOTES_SET_FOLD_LEVEL_COMMAND,
-} from "../commands";
+} from "./utils/commands";
 import { getOffsetPosition } from "@/utils";
 import { INSERT_ORDERED_LIST_COMMAND } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";

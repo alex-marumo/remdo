@@ -1,17 +1,17 @@
-import { BreadcrumbPlugin } from "../BreadcrumbsPlugin";
-import { SearchPlugin } from "../SearchPlugin";
-import "./NotesPlugin.scss";
+import { BreadcrumbPlugin } from "./remdo/BreadcrumbsPlugin";
+import { SearchPlugin } from "./remdo/SearchPlugin";
+import "./RemdoPlugin.scss";
 import { ListItemNode } from "@lexical/list";
 import { ListNode } from "@lexical/list";
 import { TextNode } from "lexical";
-import { applyNodePatches } from "./utils/patches";
-import { FocusPlugin } from "../FocusPlugin";
-import { ReorderPlugin } from "../ReorderPlugin";
-import { InsertParagraphPlugin } from "../InsertParagraphPlugin";
-import { FoldPlugin } from "../FoldPlugin";
-import { FixRootPlugin } from "../FixRootPlugin";
-import { CheckPlugin } from "../CheckPlugin";
-import { BackspacePlugin } from "../BackspacePlugin";
+import { applyNodePatches } from "./remdo/utils/patches";
+import { FocusPlugin } from "./remdo/FocusPlugin";
+import { ReorderPlugin } from "./remdo/ReorderPlugin";
+import { InsertParagraphPlugin } from "./remdo/InsertParagraphPlugin";
+import { FoldPlugin } from "./remdo/FoldPlugin";
+import { FixRootPlugin } from "./remdo/FixRootPlugin";
+import { CheckPlugin } from "./remdo/CheckPlugin";
+import { BackspacePlugin } from "./remdo/BackspacePlugin";
 
 applyNodePatches(TextNode);
 applyNodePatches(ListNode);

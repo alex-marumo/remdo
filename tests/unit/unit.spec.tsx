@@ -1,6 +1,6 @@
 //TODO refactor using loadEditorState
 import { createChildren } from "./common";
-import { Note, NotesState } from "@/components/Editor/api";
+import { Note, NotesState } from "@/components/Editor/plugins/remdo/utils/api";
 import { $isListNode, $isListItemNode } from "@lexical/list";
 import { $createTextNode, $getRoot, $setSelection, ElementNode } from "lexical";
 import { describe, it, expect, beforeEach } from "vitest";

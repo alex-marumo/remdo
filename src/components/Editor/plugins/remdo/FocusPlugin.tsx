@@ -1,9 +1,9 @@
 import { $getNearestNodeFromDOMNode, COMMAND_PRIORITY_LOW } from "lexical";
-import { NOTES_FOCUS_COMMAND } from "../commands";
+import { NOTES_FOCUS_COMMAND } from "./utils/commands";
 import { useEffect } from "react";
-import { useRemdoLexicalComposerContext } from "../ComposerContext";
+import { useRemdoLexicalComposerContext } from "./ComposerContext";
 import { useNavigate, useParams } from "react-router-dom";
-import { Note } from "../api";
+import { Note } from "./utils/api";
 import { isBeforeEvent } from "@/utils";
 
 export function FocusPlugin({ anchorRef }:

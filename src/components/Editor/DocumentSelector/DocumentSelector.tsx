@@ -1,4 +1,4 @@
-import { NotesState } from "../api";
+import { NotesState } from "../plugins/remdo/utils/api";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { Provider } from "@lexical/yjs";
 import {

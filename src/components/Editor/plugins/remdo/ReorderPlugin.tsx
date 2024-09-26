@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
-import { Note } from "../api";
+import { Note } from "./utils/api";
 import { $getSelection, $isRangeSelection } from "lexical";
-import { useRemdoLexicalComposerContext } from "../ComposerContext";
+import { useRemdoLexicalComposerContext } from "./ComposerContext";
 
 export function ReorderPlugin() {
   const [editor] = useRemdoLexicalComposerContext();

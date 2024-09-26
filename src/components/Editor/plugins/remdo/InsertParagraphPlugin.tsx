@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { useRemdoLexicalComposerContext } from "../ComposerContext";
+import { useRemdoLexicalComposerContext } from "./ComposerContext";
 import { $getSelection, $isRangeSelection, COMMAND_PRIORITY_HIGH, INSERT_PARAGRAPH_COMMAND } from "lexical";
-import { Note } from "../api";
+import { Note } from "./utils/api";
 import { $createListItemNode } from "@lexical/list";
 
 export function InsertParagraphPlugin() {

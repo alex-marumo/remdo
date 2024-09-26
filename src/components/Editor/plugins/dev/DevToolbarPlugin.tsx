@@ -1,5 +1,5 @@
-import { useRemdoLexicalComposerContext } from "../../ComposerContext";
-import { SPACER_COMMAND } from "../../commands";
+import { useRemdoLexicalComposerContext } from "../remdo/ComposerContext";
+import { SPACER_COMMAND } from "../remdo/utils/commands";
 import { YjsDebug } from "./YjsDebug";
 import { useDebug } from "@/DebugContext";
 import { useDocumentSelector } from "../../DocumentSelector/DocumentSelector";

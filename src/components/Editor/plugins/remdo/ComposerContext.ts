@@ -4,7 +4,7 @@ import {
 } from "@lexical/react/LexicalComposerContext";
 import { LexicalEditor } from "lexical";
 import { EditorUpdateOptions } from "@lexical/LexicalEditor";
-import { FULL_RECONCILE } from "./plugins/NotesPlugin/utils/unexported";
+import { FULL_RECONCILE } from "./utils/unexported";
 
 export interface RemdoLexicalEditor extends LexicalEditor {
   fullUpdate(updateFunction: () => void, options?: EditorUpdateOptions): void;

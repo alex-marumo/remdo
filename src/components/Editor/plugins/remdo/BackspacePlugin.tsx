@@ -1,5 +1,5 @@
-import { useRemdoLexicalComposerContext } from "@/components/Editor/ComposerContext";
-import { Note } from "@/components/Editor/api";
+import { useRemdoLexicalComposerContext } from "@/components/Editor/plugins/remdo/ComposerContext";
+import { Note } from "@/components/Editor/plugins/remdo/utils/api";
 import { $isListItemNode } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
 import {
@@ -14,7 +14,7 @@ import {
 } from "lexical";
 import { COMMAND_PRIORITY_CRITICAL } from "lexical";
 import { useEffect } from "react";
-import { $isTargetWithinDecorator } from "./NotesPlugin/utils/unexported";
+import { $isTargetWithinDecorator } from "./utils/unexported";
 
 export function BackspacePlugin() {
   const [editor] = useRemdoLexicalComposerContext();

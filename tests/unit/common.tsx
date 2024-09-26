@@ -1,9 +1,8 @@
 import { collabEnabled, debugEnabled, getDataPath } from '../common';
 import { Logger } from './logger';
-import Editor from '@/components/Editor/Editor';
-import { RemdoLexicalEditor } from '@/components/Editor/ComposerContext';
-import { Note } from '@/components/Editor/api';
-import { TestContext as ComponentTestContext } from '@/components/Editor/plugins/Dev/DevComponentTestPlugin';
+import { RemdoLexicalEditor } from '@/components/Editor/plugins/remdo/ComposerContext';
+import { Note } from '@/components/Editor/plugins/remdo/utils/api';
+import { TestContext as ComponentTestContext } from '@/components/Editor/plugins/dev/DevComponentTestPlugin';
 import { Routes } from '@/Routes';
 import {
   BoundFunctions,
@@ -14,7 +13,7 @@ import {
   within,
 } from '@testing-library/react';
 import { NodeSnapshotEnvironment } from '@vitest/snapshot/environment';
-import fs, { promises, readFile, readFileSync } from 'fs';
+import fs from 'fs';
 import yaml from 'js-yaml';
 import { $getRoot, CLEAR_HISTORY_COMMAND } from 'lexical';
 import { LexicalEditor } from 'lexical';

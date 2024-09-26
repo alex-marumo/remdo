@@ -1,9 +1,9 @@
-import { useRemdoLexicalComposerContext } from "@/components/Editor/ComposerContext";
-import { Note, NotesState } from "@/components/Editor/api";
+import { useRemdoLexicalComposerContext } from "@/components/Editor/plugins/remdo/ComposerContext";
+import { Note, NotesState } from "@/components/Editor/plugins/remdo/utils/api";
 import {
   NOTES_SET_FOLD_LEVEL_COMMAND,
   NOTES_TOGGLE_FOLD_COMMAND,
-} from "../commands";
+} from "./utils/commands";
 import { mergeRegister } from "@lexical/utils";
 import {
   COMMAND_PRIORITY_LOW,

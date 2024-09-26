@@ -1,4 +1,4 @@
-import { useRemdoLexicalComposerContext } from "@/components/Editor/ComposerContext";
+import { useRemdoLexicalComposerContext } from "@/components/Editor/plugins/remdo/ComposerContext";
 import {
   $getRoot,
   RootNode,
@@ -10,7 +10,7 @@ import {
   $isListItemNode,
   $isListNode,
 } from "@lexical/list";
-import { mergeLists } from "./NotesPlugin/utils/unexported";
+import { mergeLists } from "./utils/unexported";
 
 /**
  *  forces the right editor structure:

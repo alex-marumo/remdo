@@ -1,5 +1,5 @@
 import "../common";
-import { Note } from "@/components/Editor/api";
+import { Note } from "@/components/Editor/plugins/remdo/utils/api";
 import { $isListItemNode } from "@lexical/list";
 import { $getEditor, $isTextNode } from "lexical";
 import { it } from "vitest";

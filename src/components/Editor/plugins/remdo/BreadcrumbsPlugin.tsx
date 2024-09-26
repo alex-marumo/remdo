@@ -1,9 +1,9 @@
-import { useRemdoLexicalComposerContext } from "../ComposerContext";
-import { Note } from "../api";
-import { DocumentSelector } from "../DocumentSelector/DocumentSelector";
+import { useRemdoLexicalComposerContext } from "./ComposerContext";
+import { Note } from "./utils/api";
 import { useEffect, useState } from "react";
 import Breadcrumb from "react-bootstrap/Breadcrumb";
 import { Link, useParams } from "react-router-dom";
+import { DocumentSelector } from "@/components/Editor/DocumentSelector/DocumentSelector";
 
 type Breadcrumb = {
   text: string;

@@ -1,6 +1,6 @@
 import { createChildren } from "../common";
 import { Timer, adjustDeltaToGetRoundedTotal, countNotes, getCount } from "./utils";
-import { Note } from "@/components/Editor/api";
+import { Note } from "@/components/Editor/plugins/remdo/utils/api";
 import { $getRoot, $createTextNode } from "lexical";
 import { it } from "vitest";
 
