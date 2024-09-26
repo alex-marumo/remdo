@@ -3,26 +3,22 @@ import {
   useDocumentSelector,
 } from "./DocumentSelector/DocumentSelector";
 import "./Editor.scss";
-import { useEditorConfig } from "./config";
+import LexicalClickableLinkPlugin from "@lexical/react/LexicalClickableLinkPlugin";
+import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
+import { useRef } from "react";
+import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
+import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
+import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { DevComponentTestPlugin } from "./plugins/dev/DevComponentTestPlugin";
 import { DevToolbarPlugin } from "./plugins/dev/DevToolbarPlugin";
-import { IndentationPlugin } from "./plugins/remdo/IndentationPlugin";
-import { NoteControlsPlugin } from "./plugins/remdo/NoteControlsPlugin";
-import { NotesPlugin } from "./plugins/RemdoPlugin";
-import { QuickMenuPlugin } from "./plugins/remdo/QuickMenuPlugin";
-import { RemdoAutoLinkPlugin } from "./plugins/remdo/RemdoAutoLinkPlugin";
-import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
-import LexicalClickableLinkPlugin from "@lexical/react/LexicalClickableLinkPlugin";
-import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
+import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { RemdoPlugin } from "./plugins/RemdoPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
-import React, { useRef } from "react";
+import { useEditorConfig } from "./config";
 
 function LexicalEditor() {
   const editorContainerRef = useRef();
@@ -37,8 +33,7 @@ function LexicalEditor() {
     >
       <div className="editor-container editor-shell">
         <DevToolbarPlugin editorBottomRef={editorBottomRef} />
-        <QuickMenuPlugin />
-        <NotesPlugin
+        <RemdoPlugin
           anchorRef={editorContainerRef}
           documentID={documentSelector.documentID}
         />
@@ -51,15 +46,12 @@ function LexicalEditor() {
           placeholder={<div />}
           ErrorBoundary={LexicalErrorBoundary}
         />
-        <NoteControlsPlugin anchorRef={editorContainerRef} />
         <DevComponentTestPlugin />
         <ClearEditorPlugin />
         <ListPlugin />
         <LinkPlugin />
-        <RemdoAutoLinkPlugin />
         <LexicalClickableLinkPlugin />
         <TabIndentationPlugin />
-        <IndentationPlugin />
         {editorConfig.disableCollab ? (
           <HistoryPlugin />
         ) : (
