@@ -1,6 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-import { debugEnabled } from '../common';
+import { debugEnabled } from '../../common';
+
+declare global {
+  // let/const won't work here
+  // eslint-disable-next-line no-var
+  var logger: Logger;
+}
 
 const _info = console.info;
 const _warn = console.warn;
