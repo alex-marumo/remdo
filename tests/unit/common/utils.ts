@@ -40,6 +40,7 @@ export function getMinimizedState(editor: LexicalEditor) {
           checked: false,
           folded: false,
           value: SKIP,
+          id: SKIP,
         },
         text: {
           detail: 0,
