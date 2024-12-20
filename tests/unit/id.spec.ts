@@ -48,10 +48,9 @@ it('reorder', async ({ load, editor, expect, lexicalUpdate }) => {
   {
     const { note0, note1 } = getNotes(editor);
     lexicalUpdate(() => {
-    expect([note0.id, note0.text]).toEqual([id0, text0]);
-    expect([note1.id, note1.text]).toEqual([id1, text1]);
+      expect([note0.id, note0.text]).toEqual([id0, text0]);
+      expect([note1.id, note1.text]).toEqual([id1, text1]);
     });
   }
-  //await logger.preview();
 });
 

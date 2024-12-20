@@ -5,9 +5,9 @@ import prettier from "prettier";
 import { getDataPath } from "tests/common.js";
 
 export class Notebook {
-  constructor(private readonly page: Page) {}
+  constructor(private readonly page: Page) { }
 
-  locator(selector=""): Locator {
+  locator(selector = ""): Locator {
     const editorSelector = ".editor-input" + (selector ? " " + selector : "");
     return this.page.locator(editorSelector);
   }
@@ -31,12 +31,12 @@ export class Notebook {
   }
 
   async html() {
-    return prettier
+    return (await prettier
       .format(await this.locator().innerHTML(), {
-        //@ts-ignore
-        attributeSort: "ASC",
         parser: "html",
-      })
+        plugins: ["prettier-plugin-organize-attributes"],
+        attributeSort: "ASC",
+      }))
       .trim();
   }
 
@@ -59,7 +59,7 @@ export class Notebook {
   async clickBeginningOfNote(title: string) {
     const noteLocator = this.noteLocator(title);
     await noteLocator.click({
-      position: { x: 1, y: 1 }, 
+      position: { x: 1, y: 1 },
     });
   }
 
@@ -79,7 +79,7 @@ class Menu {
   constructor(
     private readonly page: Page,
     private readonly notebook: Notebook
-  ) {}
+  ) { }
 
   locator(selector = "") {
     return this.page.locator(`#quick-menu ${selector}`.trim());
@@ -101,12 +101,12 @@ class Menu {
   }
 
   async fold() {
-    await this.page.keyboard.press("f"); 
+    await this.page.keyboard.press("f");
     await this.page.waitForTimeout(20);
   }
 }
 
-export let test = base.extend<{ notebook: Notebook}>({
+export let test = base.extend<{ notebook: Notebook }>({
   notebook: async ({ baseURL, page }, use) => {
     const notebook = new Notebook(page);
     await page.goto(baseURL);
@@ -115,7 +115,7 @@ export let test = base.extend<{ notebook: Notebook}>({
   },
 });
 
-test = test.extend<{menu: Menu }>({
+test = test.extend<{ menu: Menu }>({
   menu: async ({ page, notebook }, use) => {
     await use(new Menu(page, notebook));
   },

@@ -3,6 +3,7 @@ import { test as base } from "@playwright/test";
 
 const SKIP_CONSOLE_MESSAGES = [
   "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+  "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
   "Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools",
   "[vite] connecting...",
   "[vite] connected.",
