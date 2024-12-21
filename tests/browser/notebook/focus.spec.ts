@@ -24,6 +24,9 @@ test("focus on a particular note", async ({ page, notebook }) => {
   const noteBox = (await notebook.noteLocator("note12").boundingBox())!;
   await page.mouse.click(noteBox.x - 1, noteBox.y + noteBox.height / 2);
 
+  //focus is an async event, so let's wait until root note is filtered
+  await page.waitForSelector("div.editor-input ul.filtered");
+
   expect(await notebook.html()).toMatchSnapshot("focused");
   expect(urlPath(page)).not.toBe("/"); //TODO can be more specific once note ID is implemented
   //check breadcrumbs after changing root
