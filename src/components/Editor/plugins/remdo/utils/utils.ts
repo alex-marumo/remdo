@@ -18,8 +18,8 @@ globalThis.remdoGenerateNoteID = () => {
 
 //TODO limit to dev
 globalThis.printStack = (message: string | undefined) => {
-  //TODO make the path easy to copy & paste
   let res = message ? message + "\n" : "";
+  const styles: string[] = [];
   const stack = new Error().stack;
   if (!stack) {
     console.log("No stack available");
@@ -38,6 +38,13 @@ globalThis.printStack = (message: string | undefined) => {
             const url = new URL(word.slice(1, -1));
             const pathnameParts = url.pathname.split(":");
             path = pathnameParts[0];
+            if(path.startsWith("/lexical")) {
+              styles.push("color:yellow");
+            } else if (path.startsWith("/node_modules")) {
+              styles.push("color:lightgray");
+            } else {
+              styles.push("color:green");
+            }
             row = pathnameParts[1];
           }
           catch {
@@ -46,7 +53,7 @@ globalThis.printStack = (message: string | undefined) => {
           }
         });
       //query arg "a" is added, so chrome includes row in the link
-      res += `\t${functionName || '(anonymous)'} file://.${path}:${row}?a\n`;
+      res += `\t%c${functionName || '(anonymous)'} file://.${path}:${row}?a\n`;
     });
-  console.log(res);
+  console.log(res, ...styles);
 };
