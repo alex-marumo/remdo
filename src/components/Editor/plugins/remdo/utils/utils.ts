@@ -35,17 +35,18 @@ globalThis.printStack = (message: string | undefined) => {
         .filter(word => word.trim() && word.trim() !== "at")
         .forEach((word) => {
           try {
-            const url = new URL(word.slice(1, -1));
-            const pathnameParts = url.pathname.split(":");
-            path = pathnameParts[0];
-            if(path.startsWith("/lexical")) {
+            const urlString = word.slice(1, -1);
+            const url = new URL(urlString);
+            path = url.pathname.split(":")[0];
+            if (path.startsWith("/lexical")) {
               styles.push("color:yellow");
             } else if (path.startsWith("/node_modules")) {
               styles.push("color:lightgray");
             } else {
               styles.push("color:green");
             }
-            row = pathnameParts[1];
+            const urlStringParts = urlString.split(":");
+            row = urlStringParts[urlStringParts.length - 2];
           }
           catch {
             //not an URL, so it's likely a function name
