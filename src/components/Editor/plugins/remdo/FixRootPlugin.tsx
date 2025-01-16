@@ -53,6 +53,7 @@ export function FixRootPlugin() {
   const [editor] = useRemdoLexicalComposerContext();
 
   useEffect(() => {
+    //TODO consider using https://lexical.dev/docs/react/plugins#lexicalonchangeplugin
     return editor.registerNodeTransform(RootNode, $fixRoot);
   }, [editor]);
 
