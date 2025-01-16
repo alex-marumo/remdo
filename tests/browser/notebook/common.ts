@@ -27,6 +27,7 @@ export class Notebook {
 
     //FIXME - wait for lexical to fully update the editor
     //perhabs the whole loading mechanism should be improved
+    //consider following the Tip from https://lexical.dev/docs/intro
     await this.page.waitForTimeout(200);
   }
 
