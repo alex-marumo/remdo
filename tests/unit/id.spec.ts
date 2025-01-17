@@ -3,7 +3,7 @@ import { it } from 'vitest';
 import { getNotes } from './common';
 import { Note } from '@/components/Editor/plugins/remdo/utils/api';
 
-it.only('get by ID', async ({ load, expect, lexicalUpdate }) => {
+it('get by ID', async ({ load, expect, lexicalUpdate }) => {
   const { note0, note00 } = load("basic");
   logger.preview();
   lexicalUpdate(() => {
