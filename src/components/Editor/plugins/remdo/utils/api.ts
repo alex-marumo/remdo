@@ -18,6 +18,7 @@ import {
 } from "lexical";
 
 import { $findNearestListItemNode, getElementByKeyOrThrow } from "./unexported";
+import { $getNodeByID } from "./utils";
 
 //TODO
 //create folder api and split this to Note and NotesState
@@ -90,6 +91,7 @@ export class NotesState {
 export class Note {
   _lexicalKey: string;
 
+  //TODO remove
   static from(keyOrNode: LexicalNode | string): Note {
     const baseNode =
       typeof keyOrNode === "string"
@@ -98,6 +100,16 @@ export class Note {
     const liNode = $findNearestListItemNode(baseNode);
 
     return liNode ? new Note(liNode.getKey()) : new Note("root");
+  }
+
+  static fromLexicalNode(node: LexicalNode): Note {
+    //@ts-ignore
+    return new Note($findNearestListItemNode(node).getKey());
+  }
+
+  static fromID(id: string): Note {
+    //@ts-ignore
+    return new Note($getNodeByID(id).getKey());
   }
 
   constructor(key: string) {

@@ -1,6 +1,24 @@
 import './common';
 import { it } from 'vitest';
 import { getNotes } from './common';
+import { Note } from '@/components/Editor/plugins/remdo/utils/api';
+
+it.only('get by ID', async ({ load, expect, lexicalUpdate }) => {
+  const { note0, note00 } = load("basic");
+  logger.preview();
+  lexicalUpdate(() => {
+    expect(note0.id).not.toEqual(note00.id);
+
+    const { id: found0ID, text: found0Text } = Note.fromID(note0.id);
+    expect(found0ID).toEqual(note0.id);
+    expect(found0Text).toEqual(note0.text);
+
+    const { id: found00ID, text: found00Text } = Note.fromID(note00.id);
+    expect(found00ID).toEqual(note00.id);
+    expect(found00Text).toEqual(note00.text);
+  });
+
+});
 
 it('new notes', async ({ editor, expect, lexicalUpdate }) => {
   const { root } = getNotes(editor);

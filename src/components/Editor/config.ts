@@ -38,7 +38,7 @@ export function useEditorConfig(): EditorConfig {
       },
     },
     editorState: null,
-    disableCollab: disableCollab,
+    disableCollab: disableCollab, //TODO remove
   };
 }
 

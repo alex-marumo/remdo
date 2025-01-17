@@ -75,10 +75,17 @@ export default defineConfig(({ command }) => {
     //},
     resolve: {
       alias: [...moduleResolution(command === 'serve' ? 'source' : 'development'),
-      {
-        find: "@",
-        replacement: path.resolve("./src"),
-      }]
+        {
+          find: "@",
+          replacement: path.resolve("./src"),
+        },
+        {
+          find: "@lexical/LexicalUpdates",
+          replacement: path.resolve(
+            "./lexical/packages/lexical/src/LexicalUpdates.ts"
+          ),
+        },
+      ]
     },
     build: {
       outDir: "data/build",
