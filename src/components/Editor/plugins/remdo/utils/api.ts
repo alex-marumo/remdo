@@ -1,4 +1,5 @@
 import "lexical";
+//TODO merge and remove alias
 import {
   $createListItemNode,
   $createListNode,
@@ -19,6 +20,7 @@ import {
 
 import { $findNearestListItemNode, getElementByKeyOrThrow } from "./unexported";
 import { $getNodeByID } from "./utils";
+import { NOTES_FOCUS_COMMAND } from "./commands";
 
 //TODO
 //create folder api and split this to Note and NotesState
@@ -102,14 +104,24 @@ export class Note {
     return liNode ? new Note(liNode.getKey()) : new Note("root");
   }
 
+  static fromLexicalKey(key: string): Note {
+    return new Note(key);
+  }
+
   static fromLexicalNode(node: LexicalNode): Note {
-    //@ts-ignore
-    return new Note($findNearestListItemNode(node).getKey());
+    const listItemNode = $findNearestListItemNode(node);
+    if(!listItemNode) {
+      throw new Error(`No list item node found for: ${node.getKey()}`);
+    }
+    return new Note(listItemNode.getKey());
   }
 
   static fromID(id: string): Note {
-    //@ts-ignore
-    return new Note($getNodeByID(id).getKey());
+    const node = $getNodeByID(id);
+    if (!node) {
+      throw new Error(`Node not found for id: ${id}`);
+    }
+    return new Note(node.getKey());
   }
 
   constructor(key: string) {
@@ -280,7 +292,7 @@ export class Note {
   }
 
   focus() {
-    $getEditor()._remdoState.setFocus(this.lexicalNode);
+    $getEditor().dispatchCommand(NOTES_FOCUS_COMMAND, { key: this.lexicalKey });
   }
 
   get folded() {

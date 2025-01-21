@@ -1,6 +1,8 @@
 import {
   $getEditor,
+  $getRoot,
   $setSelection,
+  EditorState,
 } from "lexical";
 import { nanoid } from "nanoid";
 import { FULL_RECONCILE } from "./unexported";
@@ -14,10 +16,13 @@ export function $setSearchFilter(filter: string) {
   $setSelection(null);
 };
 
-export function $getNodeByID(id: string) {
-  const nodeMap = getActiveEditorState()._nodeMap;
+export function $getNodeByID(id: string, _editorState?: EditorState)  {
+  const editorState = _editorState || getActiveEditorState();
+  if (id === "root") {
+    return $getRoot();
+  }
   return Array.from(
-    nodeMap.values()
+    editorState._nodeMap.values()
   ).find(node => (node as ListItemNode).getID?.() === id);
 }
 

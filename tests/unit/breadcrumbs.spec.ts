@@ -15,3 +15,11 @@ it("breadcrumbs", async ({ load, expect, component }) => {
   load("basic");
   expect(getBreadcrumbs(component)).toEqual(['Documents', 'main']);
 });
+
+it("breadcrumbs", async ({ load, expect, component, lexicalUpdate }) => {
+  const { note00 } = load("basic");
+  lexicalUpdate(() => {
+    note00.focus();
+  });
+  expect(getBreadcrumbs(component)).toEqual(['Documents', 'main']);
+});
