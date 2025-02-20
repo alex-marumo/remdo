@@ -105,18 +105,41 @@ class Menu {
     await this.page.keyboard.press("f");
     await this.page.waitForTimeout(20);
   }
+
+  async focus() {
+    await this.page.keyboard.press("z");
+    await this.page.waitForTimeout(20);
+  }
 }
 
-export let test = base.extend<{ notebook: Notebook }>({
-  notebook: async ({ baseURL, page }, use) => {
+export const test = base.extend<{
+  notebook: Notebook,
+  urlPath: string,
+  takeScreenshot: (name?: string, page?: Page) => Promise<void>,
+  menu: Menu
+}>({
+  // eslint-disable-next-line no-empty-pattern
+  urlPath: async ({ }, use) => {
+    await use('');
+  },
+  notebook: async ({ baseURL, urlPath, page }, use) => {
     const notebook = new Notebook(page);
-    await page.goto(baseURL);
+    const baseUrlObj = new URL(baseURL ?? "");
+    if (urlPath) {
+      baseUrlObj.pathname = urlPath;
+    }
+    await page.goto(baseUrlObj.toString());
     await notebook.locator().focus();
     await use(notebook);
   },
-});
-
-test = test.extend<{ menu: Menu }>({
+  takeScreenshot: async ({ page }, use, testInfo) => {
+    let i = 0;
+    await use(async (name?: string, page_?: Page) => {
+      const screenshot = await (page_ ?? page).screenshot();
+      await testInfo.attach(`screenshot-${i++}${name ? "-"+name : ""}.png`,
+        { body: screenshot, contentType: 'image/png' });
+    });
+  },
   menu: async ({ page, notebook }, use) => {
     await use(new Menu(page, notebook));
   },
