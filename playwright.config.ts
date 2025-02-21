@@ -9,7 +9,7 @@ import * as envalid from "envalid";
  */
 
 const env = envalid.cleanEnv(process.env, {
-  VITE_COLLAB: envalid.bool({ default: false }),
+  VITE_WS: envalid.bool({ default: false }),
   CI: envalid.bool({ default: false }),
 });
 
@@ -35,7 +35,7 @@ const config: PlaywrightTestConfig = {
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!env.CI,
   retries: 0,
-  workers: env.VITE_COLLAB || env.CI ? 1 : 7,
+  workers: env.VITE_WS || env.CI ? 1 : 7,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ["html", { open: "never", outputFolder: "./data/playwright-report" }],
@@ -45,7 +45,7 @@ const config: PlaywrightTestConfig = {
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
     actionTimeout: 0,
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: `http://localhost:${port}/?debug=true&collab=${env.VITE_COLLAB}`,
+    baseURL: `http://localhost:${port}/?debug=true&ws=${env.VITE_WS}`,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
