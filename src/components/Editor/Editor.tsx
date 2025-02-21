@@ -52,15 +52,16 @@ function LexicalEditor() {
         <LinkPlugin />
         <LexicalClickableLinkPlugin />
         <TabIndentationPlugin />
-        {editorConfig.disableCollab ? (
-          <HistoryPlugin />
-        ) : (
-          <CollaborationPlugin
-            id={documentSelector.documentID}
-            providerFactory={documentSelector.yjsProviderFactory}
-            shouldBootstrap={true}
-          />
-        )}
+        {
+          //TODO extract to config (all occurences)
+          "__vitest_environment__" in globalThis ?
+            (<HistoryPlugin />) : (
+            <CollaborationPlugin
+              id={documentSelector.documentID}
+              providerFactory={documentSelector.yjsProviderFactory}
+              shouldBootstrap={true}
+            />
+          )}
         <div id="editor-bottom" ref={editorBottomRef} />
       </div>
     </LexicalComposer>

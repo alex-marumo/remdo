@@ -131,7 +131,7 @@ export function YjsDebug() {
     };
   }, [documentSelector, refreshDocumentElements]);
 
-  return !editorConfig.disableCollab && (
+  return (
     <div>
       <div className="text-white font-weight-bold">Yjs Info</div>
       <div>DocumentID: {documentSelector.documentID}</div>

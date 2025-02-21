@@ -13,6 +13,7 @@ import { useNavigate } from "react-router";
 import { useSearchParams } from "react-router-dom";
 import { WebsocketProvider } from "y-websocket";
 import * as Y from "yjs";
+import { useEditorConfig } from "../config";
 
 //import conditionally, because it breaks unit tests, where indexedDB is
 //neither available nor used
@@ -44,6 +45,7 @@ export const DocumentSelectorProvider = ({ children }) => {
   const [documentID, setDocumentID] = useState(searchParams.get("documentID") ?? "main");
   const yjsDoc = useRef<Y.Doc | null>(null);
   const yjsProvider = useRef<Provider | null>(null);
+  const editorConfig = useEditorConfig();
 
   const yjsProviderFactory: ProviderFactory = useMemo((): ProviderFactory => {
     const factory: ProviderFactory = (
@@ -62,7 +64,7 @@ export const DocumentSelectorProvider = ({ children }) => {
 
       if (yIDB) {
         yIDB.then(({ IndexeddbPersistence }) => {
-          new IndexeddbPersistence(id, doc);
+          yjsProvider.current = new IndexeddbPersistence(id, doc);
         });
       } else if (!("__vitest_environment__" in globalThis)) {
         console.warn(
@@ -70,27 +72,28 @@ export const DocumentSelectorProvider = ({ children }) => {
         );
       }
 
-      const wsURL = `ws://${window.location.hostname}:8080`;
-      const roomName = "notes/0/" + id;
-      //console.log(`WebSocket URL: ${wsURL}/${roomName}`)
-      const wsProvider = new WebsocketProvider(wsURL, roomName, doc, {
-        connect: true,
-      });
-      wsProvider.shouldConnect = true; //reconnect after disconnecting
-
-      /*
-      const events = ["status", "synced", "sync", "update", "error", "destroy", "reload"];
-      events.forEach((event) => {
-        wsProvider.on(event, () => {
-          console.log("wsProvider", event);
+      if (!editorConfig.disableWS) {
+        const wsURL = `ws://${window.location.hostname}:8080`;
+        const roomName = "notes/0/" + id;
+        //console.log(`WebSocket URL: ${wsURL}/${roomName}`)
+        const wsProvider = new WebsocketProvider(wsURL, roomName, doc, {
+          connect: true,
         });
-      });
-      */
+        wsProvider.shouldConnect = true; //reconnect after disconnecting
 
-      // @ts-ignore
-      yjsProvider.current = wsProvider;
-      // @ts-ignore
-      return wsProvider;
+        /*
+        const events = ["status", "synced", "sync", "update", "error", "destroy", "reload"];
+        events.forEach((event) => {
+          wsProvider.on(event, () => {
+            console.log("wsProvider", event);
+          });
+        });
+        */
+
+        // @ts-ignore
+        yjsProvider.current = wsProvider;
+      }
+      return yjsProvider.current;
     };
     return factory;
   }, []);

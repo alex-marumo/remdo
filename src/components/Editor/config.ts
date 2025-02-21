@@ -4,7 +4,7 @@ import { InitialConfigType } from "@lexical/react/LexicalComposer";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 
-type EditorConfig = InitialConfigType & { disableCollab: boolean };
+type EditorConfig = InitialConfigType & { disableWS: boolean };
 
 export function useEditorConfig(): EditorConfig {
   const [searchParams] = useSearchParams();
@@ -13,7 +13,7 @@ export function useEditorConfig(): EditorConfig {
   // like focusing on a particular node, won't impact the setting even if the
   // url changes
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const disableCollab = useMemo(() => searchParams.get("collab") === "false", []);
+  const disableWS = useMemo(() => searchParams.get("ws") === "false", []);
 
   return {
     onError(error: any) {
@@ -38,7 +38,7 @@ export function useEditorConfig(): EditorConfig {
       },
     },
     editorState: null,
-    disableCollab: disableCollab, //TODO remove
+    disableWS: disableWS, //TODO remove or rename
   };
 }
 
