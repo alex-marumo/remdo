@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { Dropdown, NavDropdown } from "react-bootstrap";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { WebsocketProvider } from "y-websocket";
 import * as Y from "yjs";
