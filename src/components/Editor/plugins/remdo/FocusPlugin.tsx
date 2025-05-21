@@ -12,30 +12,30 @@ export function FocusPlugin({ anchorRef }:
   { anchorRef: React.RefObject<HTMLElement> }) {
   const [editor] = useRemdoLexicalComposerContext();
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { noteID } = useParams();
 
   useEffect(() => {
     return editor.registerCommand(
       NOTES_FOCUS_COMMAND,
       ({ key }) => {
         const node = key && $getNodeByKey(key);
-        if (!id && (!key || key === "root")) {
+        if (!noteID && (!key || key === "root")) {
           //both expected and current focus are on root
           return false;
         }
         const listItemNode = node && $findNearestListItemNode(node);
 
         if (listItemNode) {
-          if (id === listItemNode.getID()) {
+          if (noteID === listItemNode.getID()) {
             return false;
           }
           $getEditor()._remdoState.setFocus(listItemNode);
-          if (id !== listItemNode.getID()) {
+          if (noteID !== listItemNode.getID()) {
             navigate(`/note/${listItemNode.getID()}`);
           }
         } else {
           $getEditor()._remdoState.setFocus(null);
-          if (id) {
+          if (noteID) {
             navigate(`/`);
           }
         }
@@ -43,15 +43,16 @@ export function FocusPlugin({ anchorRef }:
       },
       COMMAND_PRIORITY_LOW
     );
-  }, [editor, id, navigate]);
+  }, [editor, noteID, navigate]);
 
   useEffect(() => {
-    if (!id) {
+    //focus on note given in URL once document is loaded
+    if (!noteID) {
       return;
     }
     const unregister = editor.registerUpdateListener(
       ({ editorState }) => {
-        const entry = Array.from(editorState._nodeMap.entries()).find(([, node]) => $isListItemNode(node) && (node).getID() === id);
+        const entry = Array.from(editorState._nodeMap.entries()).find(([, node]) => $isListItemNode(node) && (node).getID() === noteID);
         if (entry) {
           editor.fullUpdate(() => {
             //lexical documentation discourages using waterfall updates
@@ -64,12 +65,12 @@ export function FocusPlugin({ anchorRef }:
         }
       });
     return unregister;
-    // this effect is needed on load to focus on note specified in URL
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
   useEffect(() => {
+    //handle click on li::before to focus on a particular note
     const anchor = anchorRef.current;
     if (!anchor) {
       return;
@@ -99,10 +100,10 @@ export function FocusPlugin({ anchorRef }:
 
   useEffect(() => {
     editor.read(() => {
-      const node = $getNodeByID(id ?? "root");
+      const node = $getNodeByID(noteID ?? "root");
       editor.dispatchCommand(NOTES_FOCUS_COMMAND, { key: node?.getKey() });
     });
-  }, [editor, id]);
+  }, [editor, noteID]);
 
   return null;
 }

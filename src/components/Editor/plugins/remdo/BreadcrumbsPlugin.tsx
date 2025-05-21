@@ -7,7 +7,7 @@ import { DocumentSelector } from "@/components/Editor/DocumentSelector/DocumentS
 
 type Breadcrumb = {
   text: string;
-  key: string;
+  id: string;
 };
 
 export function BreadcrumbPlugin({ documentID }: { documentID: string }) {
@@ -17,9 +17,15 @@ export function BreadcrumbPlugin({ documentID }: { documentID: string }) {
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
 
   useEffect(() => {
-    const key = locationParams["noteID"];
+    const id = locationParams["noteID"] || "root";
     editor.fullUpdate(() => {
-      const note = Note.from(key ?? "root");
+      let note: Note;
+      try {
+        note = Note.fromID(id);
+      }
+      catch {
+        note = Note.fromID("root");
+      }
 
       setBreadcrumbs(
         [note, ...note.parents]
@@ -27,19 +33,19 @@ export function BreadcrumbPlugin({ documentID }: { documentID: string }) {
           .reverse()
           .map((note) => ({
             text: note.text,
-            key: note.lexicalKey,
+            id: note.id,
           }))
       );
     });
   }, [editor, locationParams]);
 
   const breadcrumbItems = breadcrumbs.map(
-    ({ text, key }, index, { length }) => (
+    ({ text, id }, index, { length }) => (
       <Breadcrumb.Item
-        key={key}
+        key={id}
         active={index === length - 1}
         linkAs={Link}
-        linkProps={{ to: `/note/${key}` }}
+        linkProps={{ to: `/note/${id}` }}
       >
         {text}
       </Breadcrumb.Item>
