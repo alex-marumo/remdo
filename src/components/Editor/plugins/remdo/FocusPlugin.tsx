@@ -17,7 +17,6 @@ export function FocusPlugin({ anchorRef }:
     return editor.registerCommand(
       NOTES_FOCUS_COMMAND,
       ({ key }) => {
-        console.log("NOTES_FOCUS_COMMAND", key, editor.getEditorState()._nodeMap.size);
         const focusNode = $getNodeByKey(key);
 
         if (key == "root") {

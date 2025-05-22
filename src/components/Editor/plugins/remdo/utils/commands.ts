@@ -33,3 +33,6 @@ export const NOTES_SET_FOLD_LEVEL_COMMAND: LexicalCommand<{ level: number }> =
 
 export const SPACER_COMMAND: LexicalCommand<void> =
   createCommand("*** SPACER ***");
+
+export const YJS_SYNCED_COMMAND: LexicalCommand<void> =
+  createCommand("YJS_SYNCED_COMMAND");

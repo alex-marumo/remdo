@@ -24,8 +24,8 @@ interface DocumentSelectorType {
   documentID: string;
   setDocumentID: (id: string) => void;
   yjsProviderFactory: ProviderFactory;
-  getYjsDoc: () => Y.Doc;
-  getYjsProvider: () => Provider;
+  getYjsDoc: () => Y.Doc | null;
+  yjsProvider: WebsocketProvider | null;
 }
 
 const DocumentSelectorContext = createContext<DocumentSelectorType>(null);
@@ -44,7 +44,9 @@ export const DocumentSelectorProvider = ({ children }) => {
   const [searchParams] = useSearchParams();
   const [documentID, setDocumentID] = useState(searchParams.get("documentID") ?? "main");
   const yjsDoc = useRef<Y.Doc | null>(null);
+  //FIXME remove the duplication
   const yjsProvider = useRef<Provider | null>(null);
+  const [currentProvider, setCurrentProvider] = useState<Provider | null>(null);
   const editorConfig = useEditorConfig();
 
   const yjsProviderFactory: ProviderFactory = useMemo((): ProviderFactory => {
@@ -64,7 +66,9 @@ export const DocumentSelectorProvider = ({ children }) => {
 
       if (yIDB) {
         yIDB.then(({ IndexeddbPersistence }) => {
-          yjsProvider.current = new IndexeddbPersistence(id, doc);
+          const idbProvider = new IndexeddbPersistence(id, doc);
+          yjsProvider.current = idbProvider;
+          setCurrentProvider(idbProvider);
         });
       } else if (!("__vitest_environment__" in globalThis)) {
         console.warn(
@@ -75,11 +79,10 @@ export const DocumentSelectorProvider = ({ children }) => {
       if (!editorConfig.disableWS) {
         const wsURL = `ws://${window.location.hostname}:8080`;
         const roomName = "notes/0/" + id;
-        //console.log(`WebSocket URL: ${wsURL}/${roomName}`)
         const wsProvider = new WebsocketProvider(wsURL, roomName, doc, {
           connect: true,
         });
-        wsProvider.shouldConnect = true; //reconnect after disconnecting
+        wsProvider.shouldConnect = true; // reconnect after disconnecting
 
         /*
         const events = ["status", "synced", "sync", "update", "error", "destroy", "reload"];
@@ -90,8 +93,10 @@ export const DocumentSelectorProvider = ({ children }) => {
         });
         */
 
+        //TODO remove duplicated provider
         // @ts-ignore
         yjsProvider.current = wsProvider;
+        setCurrentProvider(wsProvider);
       }
       return yjsProvider.current;
     };
@@ -123,8 +128,9 @@ export const DocumentSelectorProvider = ({ children }) => {
         setDocumentID,
         yjsProviderFactory,
         //yjsProviderFactory: hocuspocusProviderFactory, //currently doesn't support persistance, even between page reloads
+        //TODO make it a property, same as provider
         getYjsDoc: () => yjsDoc.current,
-        getYjsProvider: () => yjsProvider.current,
+        yjsProvider: currentProvider,
       }}
     >
       {children}

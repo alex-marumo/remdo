@@ -16,6 +16,7 @@ import { ReorderPlugin } from "./remdo/ReorderPlugin";
 import { SearchPlugin } from "./remdo/SearchPlugin";
 import { TextNode } from "lexical";
 import { applyNodePatches } from "./remdo/utils/patches";
+import { YjsPlugin } from "./remdo/YjsPlugin";
 
 applyNodePatches(ListItemNode);
 applyNodePatches(ListNode);
@@ -39,6 +40,7 @@ export function RemdoPlugin({ anchorRef, documentID }:
       <RemdoAutoLinkPlugin />
       <ReorderPlugin />
       <SearchPlugin />
+      <YjsPlugin />
     </>
   );
 }

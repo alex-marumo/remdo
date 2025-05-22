@@ -2,7 +2,6 @@ import { useDocumentSelector } from "../../DocumentSelector/DocumentSelector";
 import ReactJson from "@microlink/react-json-view";
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as Y from "yjs";
-import { useEditorConfig } from "../../config";
 
 type YElement = Y.AbstractType<any>;
 
@@ -43,7 +42,7 @@ function addUnlessDefault(
 }
 
 function yXmlTextToJSON(value: Y.XmlText) {
-  const result = {__yType: "XmlText"}
+  const result = { __yType: "XmlText" };
   value.toDelta().forEach((delta: { insert: YElement }) => {
     const sharedType = delta.insert as Y.XmlText;
     const attrs = sharedType.getAttributes && sharedType.getAttributes();
@@ -57,7 +56,7 @@ function yXmlTextToJSON(value: Y.XmlText) {
   });
 
   //flatten if there is only one child
-  if(result["children"]?.length === 1) {
+  if (result["children"]?.length === 1) {
     result['child'] = result["children"][0];
     delete result["children"];
   }
@@ -66,7 +65,7 @@ function yXmlTextToJSON(value: Y.XmlText) {
 
 function yMapToJSON(value: Y.Map<any>) {
   const result = new Map();
-  result["__yType"] =  "Map";
+  result["__yType"] = "Map";
 
   const lexicalType = value.get("__type");
   value._map.forEach((item, key) => {
@@ -98,7 +97,6 @@ export function YjsDebug() {
   const documentSelector = useDocumentSelector();
   const documentElements = useRef(new Map());
   const [documentData, setDocumentData] = useState({});
-  const editorConfig = useEditorConfig();
 
   const refreshDocumentElements = useCallback(() => {
     const newDocumentElements = documentSelector.getYjsDoc()?.share;
@@ -135,7 +133,7 @@ export function YjsDebug() {
     <div>
       <div className="text-white font-weight-bold">Yjs Info</div>
       <div>DocumentID: {documentSelector.documentID}</div>
-      <div style={{fontSize: "0.75rem"}}>
+      <div style={{ fontSize: "0.75rem" }}>
         <ReactJson
           src={documentData}
           name={null}

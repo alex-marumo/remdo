@@ -85,10 +85,10 @@ export const DevToolbarPlugin = ({ editorBottomRef }) => {
 
   const clearContent = () => {
     editor.update(() => {
-      editor.dispatchCommand(SPACER_COMMAND, null);
-      editor.dispatchCommand(SPACER_COMMAND, null);
-      editor.dispatchCommand(SPACER_COMMAND, null);
-      editor.dispatchCommand(CLEAR_EDITOR_COMMAND, null);
+      editor.dispatchCommand(SPACER_COMMAND, undefined);
+      editor.dispatchCommand(SPACER_COMMAND, undefined);
+      editor.dispatchCommand(SPACER_COMMAND, undefined);
+      editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
     });
     const yjsDoc = documentSelector.getYjsDoc();
     if (yjsDoc) {
