@@ -68,6 +68,7 @@ export class NotesState {
     getNotesEditorState()._notesFilterChanged = true;
   }
 
+  //TODO unused, check other focus related things from this class
   setFocus(note: Note) {
     //change notes state
     this._element.dataset.focusNodeKey = note.lexicalKey;

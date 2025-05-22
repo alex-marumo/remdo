@@ -5,7 +5,6 @@ import { useRemdoLexicalComposerContext } from "./ComposerContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { isBeforeEvent } from "@/utils";
 import { $isListItemNode } from "@lexical/list";
-import { $findNearestListItemNode } from "./utils/unexported";
 import { $getNodeByID } from "./utils/utils";
 
 export function FocusPlugin({ anchorRef }:
@@ -18,27 +17,26 @@ export function FocusPlugin({ anchorRef }:
     return editor.registerCommand(
       NOTES_FOCUS_COMMAND,
       ({ key }) => {
-        const node = key && $getNodeByKey(key);
-        if (!noteID && (!key || key === "root")) {
-          //both expected and current focus are on root
-          return false;
-        }
-        const listItemNode = node && $findNearestListItemNode(node);
+        console.log("NOTES_FOCUS_COMMAND", key, editor.getEditorState()._nodeMap.size);
+        const focusNode = $getNodeByKey(key);
 
-        if (listItemNode) {
-          if (noteID === listItemNode.getID()) {
-            return false;
-          }
-          $getEditor()._remdoState.setFocus(listItemNode);
-          if (noteID !== listItemNode.getID()) {
-            navigate(`/note/${listItemNode.getID()}`);
-          }
-        } else {
-          $getEditor()._remdoState.setFocus(null);
+        if (key == "root") {
           if (noteID) {
             navigate(`/`);
           }
+        } else {
+          if (!$isListItemNode(focusNode)) {
+            throw new Error(`called NOTES_FOCUS_COMMAND on a non ListItemNode, key: ${key}, type: ${focusNode?.getType()}`);
+          }
+          if (noteID !== focusNode.getID()) {
+            navigate(`/note/${focusNode.getID()}`);
+          }
         }
+
+        editor.fullUpdate(() => {
+          $getEditor()._remdoState.setFocusKey(key);
+        });
+
         return true;
       },
       COMMAND_PRIORITY_LOW
@@ -100,8 +98,10 @@ export function FocusPlugin({ anchorRef }:
 
   useEffect(() => {
     editor.read(() => {
-      const node = $getNodeByID(noteID ?? "root");
-      editor.dispatchCommand(NOTES_FOCUS_COMMAND, { key: node?.getKey() });
+      const focusKey = $getNodeByID(noteID ?? "root")?.getKey();
+      if (focusKey && $getEditor()._remdoState.getFocus()?.getKey() !== focusKey) {
+        editor.dispatchCommand(NOTES_FOCUS_COMMAND, { key: focusKey });
+      }
     });
   }, [editor, noteID]);
 
