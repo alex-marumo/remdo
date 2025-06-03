@@ -76,7 +76,9 @@ export function FocusPlugin({ anchorRef }:
       //TODO read or just passing editor state should be enough, re-check in a newer lexical version
       editor.update(() => {
         const node = $getNearestNodeFromDOMNode(target);
-        editor.dispatchCommand(NOTES_FOCUS_COMMAND, { key: node?.getKey() });
+        if (node) {
+          editor.dispatchCommand(NOTES_FOCUS_COMMAND, { key: node.getKey() });
+        }
       });
     }
 
