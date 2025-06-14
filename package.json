@@ -38,6 +38,7 @@
     "eject": "react-scripts eject",
     "test-browser": "npx playwright test --project=chromium",
     "test-browser-collab": "VITE_WS=true npm run test-browser",
+    "test-browser-collab-watch": "VITE_WS=true npm run test-browser-watch",
     "test-browser-watch": "sh -c 'ARGS=\"$@\"; ./utils.sh watch_repo \"npm run test-browser -- $ARGS && echo \\\"\\x1b[32mDone, waiting for file changes...\\x1b[0m\\\"\"' --",
     "test-unit": "npx vitest run",
     "test-performance": "VITE_PERFORMANCE_TESTS=true VITE_LOG_LEVEL=info time -f 'Time: %es' npx vitest run performance/performance --reporter ./tests/unit/performance/reporter.ts -t",
