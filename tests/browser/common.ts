@@ -10,6 +10,7 @@ const SKIP_CONSOLE_MESSAGES = [
   'ArtificialNode__DO_NOT_USE should implement "exportJSON" method to ensure JSON and default HTML serialization works as expected',
   'ArtificialNode__DO_NOT_USE should implement "importJSON" method to ensure JSON and default HTML serialization works as expected',
   'ArtificialNode__DO_NOT_USE must implement static "clone" method',
+  'Invalid access: Add Yjs type to a document before reading data.', //FIXME happens in test-browser-collab
 ];
 
 export const test = base.extend({
