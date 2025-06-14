@@ -18,6 +18,9 @@ export function InsertParagraphPlugin() {
           return false;
         }
         const anchor = selection.anchor.getNode();
+        if (selection.anchor.offset != anchor.getTextContentSize()) {
+          return false;
+        }
 
         const note = Note.from(anchor);
 
