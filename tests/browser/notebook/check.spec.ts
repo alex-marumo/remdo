@@ -2,26 +2,32 @@ import { test } from './common';
 import { expect } from '@playwright/test';
 
 test("check/uncheck", async ({ page, notebook }) => {
-  // Load a single note
+  // Load notebook with a single note, ready to vibe
   await notebook.load("single");
 
-  // Verify initial state: one note with text "note0", not checked
-  await expect(page.locator('ul > li')).toHaveCount(1);
-  await expect(page.locator('ul > li span[data-lexical-text="true"]')).toHaveText('note0');
-  await expect(page.locator('li.li-checked')).toHaveCount(0);
+  // Locator for note0's <li> with its text span
+  const note0 = page.locator('ul > li:has(span[data-lexical-text="true"]:text-is("note0"))');
 
-  // Click end of note0 and toggle check with meta+Enter
+  // Initial state: one note, "note0", no check mark
+  await expect(page.locator('ul > li')).toHaveCount(1);
+  await expect(note0.locator('span[data-lexical-text="true"]')).toHaveText('note0');
+  await expect(note0).not.toHaveClass(/li-checked/);
+  expect(await notebook.html()).toMatchSnapshot("base");
+
+  // Click note0’s end, hit Meta+Enter to check it
   await notebook.clickEndOfNote("note0");
   await page.keyboard.press("Meta+Enter");
 
-  // Verify checked state: note0 has li-checked class
-  await expect(page.locator('li.li-checked')).toHaveCount(1);
-  await expect(page.locator('li.li-checked span[data-lexical-text="true"]')).toHaveText('note0');
+  // Checked state: note0 rocks the li-checked class
+  await expect(note0).toHaveClass(/li-checked/);
+  await expect(note0.locator('span[data-lexical-text="true"]')).toHaveText('note0');
+  expect(await notebook.html()).toMatchSnapshot("checked");
 
-  // Toggle uncheck with meta+Enter
+  // Hit Meta+Enter again to uncheck the vibe
   await page.keyboard.press("Meta+Enter");
 
-  // Verify unchecked state: no li-checked class, text unchanged
-  await expect(page.locator('li.li-checked')).toHaveCount(0);
-  await expect(page.locator('ul > li span[data-lexical-text="true"]')).toHaveText('note0');
+  // Unchecked state: no li-checked, note0 still chill
+  await expect(note0).not.toHaveClass(/li-checked/);
+  await expect(note0.locator('span[data-lexical-text="true"]')).toHaveText('note0');
+  expect(await notebook.html()).toMatchSnapshot("base");
 });
