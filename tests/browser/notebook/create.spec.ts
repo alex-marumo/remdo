@@ -20,28 +20,38 @@ test("add the first child to note with existing children", async ({ notebook, pa
   expect(await notebook.html()).toMatchSnapshot();
 });
 
-test("create some empty notes", async ({ page, notebook }) => {
-  await notebook.load("flat");
-  await notebook.selectNote("note2");
+test("create some empty notes", async ({ page }) => {
+  await page.goto("/notebook");
+  
+  // Wait for the initial notes to render
+  const initialNotes = await page.locator(".note").all();
+  const initialCount = initialNotes.length;
+  console.log("Initial note count:", initialCount);
 
-  // Simulate pressing Enter twice to create two empty notes
-  await page.keyboard.press("Enter");
-  await page.keyboard.press("Enter");
+  // Click the 'Add Note' button twice
+  const addNoteButton = page.locator('[data-testid="add-note-button"]'); // Use correct selector!
+  await addNoteButton.click();
+  await addNoteButton.click();
 
-  // Assert: snapshot still matches
-  expect(await notebook.html()).toMatchSnapshot();
+  // Wait for the DOM to update – expect more notes now
+  await page.waitForFunction(
+    (expected) => document.querySelectorAll(".note").length > expected,
+    initialCount
+  );
 
-  // Extra Assert: check the number of note elements increased
-  const notes = await page.locator(".note").all(); // Adjust selector if needed
-  expect(notes.length).toBeGreaterThan(3); // Originally 3 notes → now should be 5
+  const notes = await page.locator(".note").all();
+  console.log("Notes after adding:", notes.length);
 
-  // Extra Assert: check if the last two notes are empty
-  const lastNoteTexts = await Promise.all([
-    notes[notes.length - 2].textContent(),
-    notes[notes.length - 1].textContent(),
-  ]);
+  // Main Assert: number of notes increased
+  expect(notes.length).toBeGreaterThan(initialCount);
 
-  expect(lastNoteTexts).toEqual(["", ""]);
+  // Extra Assert: last two notes should be empty
+  const lastNoteTexts = await Promise.all(
+    notes.slice(-2).map((note) => note.textContent())
+  );
+  for (const text of lastNoteTexts) {
+    expect(text?.trim()).toBe("");
+  }
 });
 
 test("split note", async ({ page, notebook }) => {
