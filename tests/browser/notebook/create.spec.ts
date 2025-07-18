@@ -14,7 +14,7 @@ test("add the first child to note with existing children", async ({ notebook, pa
   // Expect new structure: note0 should now have another child
   const notes = await notebook.getNotes();
   expect(notes).toContain("note0");
-  expect(notes.length).toBeGreaterThan(1); // Rough check
+     expect(notes.length).toBeGreaterThan(1); // Rough check
 
   // Final state snapshot
   expect(await notebook.html()).toMatchSnapshot();
