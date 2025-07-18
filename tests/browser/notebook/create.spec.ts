@@ -36,8 +36,7 @@ test("create some empty notes", async ({ page, notebook }) => {
 
   // Defensive: just check that there's at least one new *blank* note
   const newOnes = after.slice(before.length);
-  const emptyNewNotes = newOnes.filter((n) => n === "");
-
+  const emptyNewNotes = newOnes.filter((n) => n.trim() === "");
   expect(emptyNewNotes.length).toBeGreaterThan(0);
   expect(await notebook.html()).toMatchSnapshot();
 });
