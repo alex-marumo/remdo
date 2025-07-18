@@ -26,26 +26,24 @@ test("create some empty notes", async ({ page, notebook }) => {
   const notesBefore = await notebook.getNotes();
   await notebook.selectNote("note1");
 
-  const editor = await page.locator('[contenteditable]');
+  const editor = page.locator('[contenteditable]');
   await editor.click();
-  await page.keyboard.press("End");
 
-  // Nudge cursor out of any list funk
-  await page.keyboard.press("ArrowDown"); // move outside list if inside
-  await page.keyboard.press("ArrowRight"); // extra precaution
-  await page.keyboard.press("Enter");      // create empty note
-  await page.keyboard.type(" ");           // make it count
+  // Move cursor to the end and nudge it out of any weird structure
+  await page.keyboard.press("End");
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type(" ");
   await page.keyboard.press("Backspace");
 
-  await page.waitForTimeout(200);
-
+  // Click the add note button (this replaces the broken notebook.addNote())
   await page.locator('[data-testid="add-note"]').click();
-  console.log("Notebook keys:", Object.keys(notebook));
+  await page.waitForTimeout(300); // allow any debounce/render delay
 
   const notesAfter = await notebook.getNotes();
-  console.log("Notes after:", notesAfter);
-  const newOnes = notesAfter.slice(notesBefore.length);
-  const emptyNewNotes = newOnes.filter((n) => n.trim() === "");
+  const newNotes = notesAfter.slice(notesBefore.length);
+  const emptyNewNotes = newNotes.filter((n) => n.trim() === "");
  expect(emptyNewNotes.length).toBeGreaterThan(0);
   expect(await notebook.html()).toMatchSnapshot();
 });
