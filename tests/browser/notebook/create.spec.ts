@@ -24,27 +24,23 @@ test("create some empty notes", async ({ page, notebook }) => {
   await notebook.load("flat");
 
   const before = await notebook.getNotes();
-
-  // Click into note2 explicitly using its test ID or position
   await notebook.selectNote("note2");
+
   const editor = page.locator('[contenteditable]');
   await editor.click();
 
-  // Move caret to end (safe) and press Enter twice
-  await page.keyboard.press("ArrowDown"); // fallback if note2 isn't focused
+  // Carefully move caret to end of editor content
   await page.keyboard.press("End");
+
+  // Instead of double Enter (which may invoke plugins), use Shift+Enter or a safer single Enter
   await page.keyboard.press("Enter");
+  await page.waitForTimeout(200); // Let Lexical chill
   await page.keyboard.press("Enter");
 
   const after = await notebook.getNotes();
-
-  console.log("Before notes:", before);
-  console.log("After notes:", after);
-
   const newOnes = after.slice(before.length);
-  console.log("New ones:", newOnes);
-
   const emptyNewNotes = newOnes.filter((n) => n.trim() === "");
+
   expect(emptyNewNotes.length).toBeGreaterThan(0);
   expect(await notebook.html()).toMatchSnapshot();
 });
