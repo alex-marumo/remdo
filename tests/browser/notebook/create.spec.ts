@@ -29,22 +29,31 @@ test("create some empty notes", async ({ page, notebook }) => {
   const editor = page.locator('[contenteditable]');
   await editor.click();
 
-  // Move cursor to the end and nudge it out of any weird structure
+  // Nudge the cursor out of list elements or structures
   await page.keyboard.press("End");
   await page.keyboard.press("ArrowDown");
   await page.keyboard.press("ArrowRight");
   await page.keyboard.press("Enter");
-  await page.keyboard.type(" ");
+  await page.keyboard.type(" "); // trigger change
   await page.keyboard.press("Backspace");
 
-  // Click the add note button (this replaces the broken notebook.addNote())
-  await page.locator('[data-testid="add-note"]').click();
-  await page.waitForTimeout(300); // allow any debounce/render delay
+  await page.waitForTimeout(200); // let Lexical settle
+
+  // Safely click the add note button with proper wait
+  const addNoteButton = page.locator('[data-testid="add-note"]');
+  await expect(addNoteButton).toBeVisible({ timeout: 5000 });
+  await addNoteButton.click();
+
+  await page.waitForTimeout(300); // debounce render delay
 
   const notesAfter = await notebook.getNotes();
   const newNotes = notesAfter.slice(notesBefore.length);
   const emptyNewNotes = newNotes.filter((n) => n.trim() === "");
- expect(emptyNewNotes.length).toBeGreaterThan(0);
+
+  console.log("New notes:", newNotes);
+  console.log("Empty new notes:", emptyNewNotes);
+
+  expect(emptyNewNotes.length).toBeGreaterThan(0);
   expect(await notebook.html()).toMatchSnapshot();
 });
 
