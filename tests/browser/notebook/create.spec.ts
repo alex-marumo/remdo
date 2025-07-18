@@ -80,8 +80,8 @@ test("split note", async ({ page, notebook }) => {
     "e1",
     "note2",
   ]);
-  // NOTE: This will fail in CI on the first run.
-  // You need to run `npx playwright test --update-snapshots` locally and commit the new files.
+  // NOTE: This fails in CI on the first run.
+  // need to run `npx playwright test --update-snapshots` locally and commit the new files.
   expect(await notebook.html()).toMatchSnapshot("flat-split");
 });
 
