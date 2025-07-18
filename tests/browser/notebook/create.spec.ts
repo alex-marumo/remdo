@@ -39,7 +39,11 @@ test("create some empty notes", async ({ page, notebook }) => {
 
   await page.waitForTimeout(200);
 
+  await notebook.addNote();
+  console.log("Clicked addNote");
+
   const notesAfter = await notebook.getNotes();
+  console.log("Notes after:", notesAfter);
   const newOnes = notesAfter.slice(notesBefore.length);
   const emptyNewNotes = newOnes.filter((n) => n.trim() === "");
  expect(emptyNewNotes.length).toBeGreaterThan(0);
