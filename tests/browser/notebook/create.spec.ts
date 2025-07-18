@@ -28,13 +28,8 @@ test("create some empty notes", async ({ page, notebook }) => {
 
   const editor = page.locator('[contenteditable]');
   await editor.click();
-
-  // Carefully move caret to end of editor content
   await page.keyboard.press("End");
-
-  // Instead of double Enter (which may invoke plugins), use Shift+Enter or a safer single Enter
   await page.keyboard.press("Enter");
-  await page.waitForTimeout(200); // Let Lexical chill
   await page.keyboard.press("Enter");
 
   const after = await notebook.getNotes();
