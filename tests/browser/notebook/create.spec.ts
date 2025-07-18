@@ -26,6 +26,8 @@ test("create some empty notes", async ({ page, notebook }) => {
   const before = await notebook.getNotes();
   await notebook.selectNote("note2");
   await page.evaluate(() => {
+    const noteEl = document.querySelector('[data-test-id="note"]');
+    if (noteEl) noteEl.textContent = 'note0';
     const editor = document.querySelector('[contenteditable]');
     const range = document.createRange();
     const sel = window.getSelection();
