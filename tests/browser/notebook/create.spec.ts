@@ -30,21 +30,19 @@ test("create some empty notes", async ({ page, notebook }) => {
   await editor.click();
   await page.keyboard.press("End");
 
-  // Create new notes like a user would
-  await page.keyboard.press("Enter"); // new note
-  await page.keyboard.type(" ");      // trigger Lexical
-  await page.keyboard.press("Backspace"); // make it visually empty
-  await page.waitForTimeout(200);     // give Lexical time to register
-
-  await page.keyboard.press("Enter"); // another empty note
+  // Nudge cursor out of any list funk
+  await page.keyboard.press("ArrowDown"); // move outside list if inside
+  await page.keyboard.press("ArrowRight"); // extra precaution
+  await page.keyboard.press("Enter");      // create empty note
+  await page.keyboard.type(" ");           // make it count
   await page.keyboard.press("Backspace");
+
   await page.waitForTimeout(200);
 
   const notesAfter = await notebook.getNotes();
   const newOnes = notesAfter.slice(notesBefore.length);
   const emptyNewNotes = newOnes.filter((n) => n.trim() === "");
-
-  expect(emptyNewNotes.length).toBeGreaterThan(0);
+ expect(emptyNewNotes.length).toBeGreaterThan(0);
   expect(await notebook.html()).toMatchSnapshot();
 });
 
