@@ -24,9 +24,18 @@ test("create some empty notes", async ({ page, notebook }) => {
   await notebook.load("flat");
 
   const before = await notebook.getNotes();
-
   await notebook.selectNote("note2");
-  await notebook.clickEndOfNote("note2");
+  await page.evaluate(() => {
+    const editor = document.querySelector('[contenteditable]');
+    const range = document.createRange();
+    const sel = window.getSelection();
+    if (editor && sel && editor.firstChild) {
+      range.setStart(editor.firstChild, editor.firstChild.textContent?.length ?? 0);
+      range.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  });
   await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
 
