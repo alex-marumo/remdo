@@ -27,7 +27,9 @@ test("create some empty notes", async ({ page, notebook }) => {
   await notebook.selectNote("note1");
 
   // Dirty the note reliably
-  await page.locator('[data-testid="notebook"]').click();
+  const notebookLocator = page.locator('[data-testid="notebook"]');
+  await notebookLocator.click(); // Correct usage, avoid undefined click
+
   await page.keyboard.type(" ");
   await page.keyboard.press("Backspace");
 
