@@ -21,7 +21,7 @@ test("add the first child to note with existing children", async ({ notebook, pa
 });
 
 test("create some empty notes", async ({ page }) => {
-  await page.goto("/notebook");
+  await page.goto("notebook");
   
   // Wait for the initial notes to render
   const initialNotes = await page.locator(".note").all();
