@@ -1,4 +1,5 @@
-import { test, expect } from "@playwright/test";
+import { test } from "./common";
+import { expect } from "@playwright/test"; // You still need expect from playwright
 
 test("add the first child to note with existing children", async ({
   notebook,
