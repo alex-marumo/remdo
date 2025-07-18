@@ -29,21 +29,28 @@ test("create some empty notes", async ({ page, notebook }) => {
   const editor = page.locator('[contenteditable]');
   await editor.click();
 
-  // Nudge the cursor out of list elements or structures
+  // Wiggle the cursor to get out of lists or structured blocks
   await page.keyboard.press("End");
   await page.keyboard.press("ArrowDown");
   await page.keyboard.press("ArrowRight");
   await page.keyboard.press("Enter");
-  await page.keyboard.type(" "); // trigger change
+  await page.keyboard.type(" "); // fake edit to trigger note change
   await page.keyboard.press("Backspace");
 
-  await page.waitForTimeout(200); // let Lexical settle
+  await page.waitForTimeout(300); // Lexical needs a breather
 
-  // Safely click the add note button with proper wait
+  // Retry-safe click for [data-testid="add-note"]
   const addNoteButton = page.locator('[data-testid="add-note"]');
+
+  if (!(await addNoteButton.count())) {
+    console.error(" 'add-note' button not found at all. Is the test rendering the right UI?");
+    console.log("Current URL:", page.url());
+    console.log("Page content:", await page.content());
+    throw new Error("Missing [data-testid='add-note'] button");
+  }
+
   await expect(addNoteButton).toBeVisible({ timeout: 5000 });
   await addNoteButton.click();
-
   await page.waitForTimeout(300); // debounce render delay
 
   const notesAfter = await notebook.getNotes();
