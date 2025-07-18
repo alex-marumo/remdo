@@ -31,9 +31,11 @@ test("create some empty notes", async ({ page, notebook }) => {
   await page.keyboard.press("End");
 
   // Create two empty notes
+  await notebook.selectNote("note1"); // flat layout
+  await page.keyboard.press("ArrowDown"); // get out of list if any
   await page.keyboard.press("Enter");
-  await page.keyboard.press("Enter");
-
+  await page.keyboard.press(" ' ' "); // insert a space
+  await page.keyboard.press("Backspace");
   await page.waitForTimeout(200); // let Lexical settle
 
   const after = await notebook.getNotes();
