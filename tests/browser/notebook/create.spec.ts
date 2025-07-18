@@ -39,8 +39,8 @@ test("create some empty notes", async ({ page, notebook }) => {
 
   await page.waitForTimeout(200);
 
-  await notebook.addNote();
-  console.log("Clicked addNote");
+  await page.locator('[data-testid="add-note"]').click();
+  console.log("Notebook keys:", Object.keys(notebook));
 
   const notesAfter = await notebook.getNotes();
   console.log("Notes after:", notesAfter);
