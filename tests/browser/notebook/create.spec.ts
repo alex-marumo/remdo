@@ -32,11 +32,13 @@ test("create some empty notes", async ({ page, notebook }) => {
   await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
 
+  // ✅ Wait for DOM to settle before calling .getNotes()
+  await page.locator(".editor-input li span:has-text('')").first().waitFor();
+
   const after = await notebook.getNotes();
   const newOnes = after.slice(before.length);
   const emptyNewNotes = newOnes.filter((n) => n.trim() === "");
-
-  expect(emptyNewNotes.length).toBeGreaterThan(0);
+ expect(emptyNewNotes.length).toBeGreaterThan(0);
   expect(await notebook.html()).toMatchSnapshot();
 });
 
