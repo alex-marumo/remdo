@@ -28,6 +28,8 @@ test("create some empty notes", async ({ page, notebook }) => {
 
   // Dirty the note reliably
   await notebook.insertText(" ");
+  await notebook.click();
+  await page.keyboard.type(" ");
   await page.keyboard.press("Backspace");
 
   // Wait for Lexical to react
