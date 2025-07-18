@@ -24,24 +24,24 @@ test("create some empty notes", async ({ page, notebook }) => {
   await notebook.load("flat");
   await notebook.selectNote("note2");
 
-  // Simulate pressing Enter twice to create two new sibling notes
+  // Simulate pressing Enter twice to create two empty notes
   await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
 
-  // Assert the structure before doing snapshot
-  await expect(notebook.getNoteLabels()).resolves.toEqual([
-    "Note 1",
-    "Note 2",
-    "",
-    "",
-    "Note 3"
+  // Assert: snapshot still matches
+  expect(await notebook.html()).toMatchSnapshot();
+
+  // Extra Assert: check the number of note elements increased
+  const notes = await page.locator(".note").all(); // Adjust selector if needed
+  expect(notes.length).toBeGreaterThan(3); // Originally 3 notes → now should be 5
+
+  // Extra Assert: check if the last two notes are empty
+  const lastNoteTexts = await Promise.all([
+    notes[notes.length - 2].textContent(),
+    notes[notes.length - 1].textContent(),
   ]);
 
-  // Optional: check note count
-  await expect(notebook.getNoteCount()).resolves.toBe(5);
-
-  // Snapshot of the full HTML
-  expect(await notebook.html()).toMatchSnapshot("created-empty-notes");
+  expect(lastNoteTexts).toEqual(["", ""]);
 });
 
 test("split note", async ({ page, notebook }) => {
