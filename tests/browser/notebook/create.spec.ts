@@ -30,7 +30,7 @@ test("create some empty notes", async ({ page, notebook }) => {
     const range = document.createRange();
     const sel = window.getSelection();
     if (editor && sel && editor.firstChild) {
-      range.setStart(editor.firstChild, editor.firstChild.textContent?.length ?? 0);
+      range.setStart(noteEl.firstChild, Math.min(15, noteEl.firstChild.length));
       range.collapse(true);
       sel.removeAllRanges();
       sel.addRange(range);
