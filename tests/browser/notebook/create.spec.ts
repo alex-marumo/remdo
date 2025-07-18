@@ -22,27 +22,27 @@ test("add the first child to note with existing children", async ({ notebook, pa
 
 test("create some empty notes", async ({ page, notebook }) => {
   await notebook.load("flat");
-
-  const before = await notebook.getNotes();
   await notebook.selectNote("note1");
 
-  const editor = await page.locator('[contenteditable]');
+  const notesBefore = await notebook.getNotes();
+
+  const editor = page.locator('[contenteditable]');
   await editor.click();
   await page.keyboard.press("End");
 
-  // Create two empty notes
-  await notebook.selectNote("note1"); // flat layout
-  await page.keyboard.press("ArrowDown"); // get out of list if any
+  // Simulate creating a new note
+  await page.keyboard.press("ArrowDown"); // exit list
   await page.keyboard.press("Enter");
-  await page.keyboard.type(" "); // insert a space
+  await page.keyboard.press(" "); // trigger Lexical
   await page.keyboard.press("Backspace");
   await page.waitForTimeout(200); // let Lexical settle
 
-  const before = await getNoteContents();
   await notebook.addNote();
-  const after = await getNoteContents();
-  const newOnes = after.slice(before.length);
+
+  const notesAfter = await notebook.getNotes();
+  const newOnes = notesAfter.slice(notesBefore.length);
   const emptyNewNotes = newOnes.filter((n) => n.trim() === "");
+
   expect(emptyNewNotes.length).toBeGreaterThan(0);
   expect(await notebook.html()).toMatchSnapshot();
 });
