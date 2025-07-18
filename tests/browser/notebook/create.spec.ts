@@ -38,6 +38,9 @@ test("create some empty notes", async ({ page, notebook }) => {
   await page.keyboard.press("Backspace");
   await page.waitForTimeout(200); // let Lexical settle
 
+  const before = await getNoteContents();
+  await notebook.addNote();
+  const after = await getNoteContents();
   const after = await notebook.getNotes();
   const newOnes = after.slice(before.length);
   const emptyNewNotes = newOnes.filter((n) => n.trim() === "");
