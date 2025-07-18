@@ -20,26 +20,28 @@ test("add the first child to note with existing children", async ({ notebook, pa
   expect(await notebook.html()).toMatchSnapshot();
 });
 
-test("creates a new note and verifies content", async () => {
-  await page.click("[data-testid='new-note-button']");
-  await page.waitForSelector("[data-testid='notebook']");
+test("create some empty notes", async ({ page, notebook }) => {
+  await notebook.load("flat");
+  await notebook.selectNote("note2");
 
-  const noteTitle = "Test Note";
-  await page.fill("[data-testid='note-title']", noteTitle);
+  // Simulate pressing Enter twice to create two new sibling notes
+  await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
 
-  // Wait for Lexical/Yjs to stabilize via meaningful selector or event
-  await page.waitForFunction(() => {
-    const note = document.querySelector("[data-testid='note-title']");
-    return note && note.textContent === "Test Note";
-  });
+  // Assert the structure before doing snapshot
+  await expect(notebook.getNoteLabels()).resolves.toEqual([
+    "Note 1",
+    "Note 2",
+    "",
+    "",
+    "Note 3"
+  ]);
 
-  // Explicit expectation before snapshot
-  const titleText = await page.textContent("[data-testid='note-title']");
-  expect(titleText).toBe(noteTitle);
+  // Optional: check note count
+  await expect(notebook.getNoteCount()).resolves.toBe(5);
 
-  const html = await notebook.html();
-  expect(html).toMatchSnapshot("create-note");
+  // Snapshot of the full HTML
+  expect(await notebook.html()).toMatchSnapshot("created-empty-notes");
 });
 
 test("split note", async ({ page, notebook }) => {
