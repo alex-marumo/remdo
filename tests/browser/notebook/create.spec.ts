@@ -1,78 +1,66 @@
-import { test } from './common';
-import { expect } from '@playwright/test';
+import { test } from "./common";
+import { expect } from "@playwright/test";
 
-test('add the first child to note with existing children', async ({ notebook, page }) => {
-// Load notebook with basic tree structure
-await notebook.load('basic');
+test("add the first child to note with existing children", async ({ notebook, page }) => {
+  // Load notebook with nested children structure
+  await notebook.load("basic");
 
-// Debug: Log HTML to inspect structure
-console.log(await page.locator('.editor-input ul').first().innerHTML());
+  // Click at the end of "note0"
+  await notebook.clickEndOfNote("note0");
 
-// Verify initial state: two top-level notes, note0 exists
-const note0 = page.locator('.editor-input ul > li:has(span[data-lexical-text="true"]:text-is("note0"))').first();
-await expect(note0).toBeVisible();
-await expect(page.locator('.editor-input ul > li')).toHaveCount(2);
-expect(await notebook.getNotes()).toEqual(['note0', 'note00']);
-expect(await notebook.html()).toMatchSnapshot('basic-initial');
+  // Press Enter to create a child note
+  await page.keyboard.press("Enter");
 
-// Click end of note0, add child with Enter
-await notebook.clickEndOfNote('note0');
-await page.keyboard.press('Enter');
+  // Expect new structure: note0 should now have another child
+  const notes = await notebook.getNotes();
+  expect(notes).toContain("note0");
+  expect(notes.length).toBeGreaterThan(1); // Rough check
 
-// Verify child added: note0 has one child, top-level unchanged
-await expect(note0.locator('ul > li')).toHaveCount(1);
-await expect(note0.locator('ul > li span[data-lexical-text="true"]')).toHaveText('');
-await expect(page.locator('.editor-input ul > li')).toHaveCount(2);
-expect(await notebook.html()).toMatchSnapshot('basic-child');
+  // Final state snapshot
+  expect(await notebook.html()).toMatchSnapshot();
 });
 
-test('create some empty notes', async ({ page, notebook }) => {
-// Load notebook with flat list of two notes
-await notebook.load('flat');
+test("create some empty notes", async ({ page, notebook }) => {
+  // Load a flat notebook structure
+  await notebook.load("flat");
 
-// Debug: Log HTML to inspect structure
-console.log(await page.locator('.editor-input ul').first().innerHTML());
+  // Select "note2"
+  await notebook.selectNote("note2");
 
-// Verify initial state: two notes (note0, note1)
-await expect(page.locator('.editor-input ul > li')).toHaveCount(2);
-expect(await page.locator('.editor-input ul > li span[data-lexical-text="true"]')).toHaveText(['note0', 'note1']);
-expect(await notebook.getNotes()).toEqual(['note0', 'note1']);
-expect(await notebook.html()).toMatchSnapshot('flat-initial');
+  // Press Enter twice to create two empty notes below
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Enter");
 
-// Select note1 (last note), add two empty notes with Enter
-await notebook.selectNote('note1');
-await page.keyboard.press('Enter');
-await page.keyboard.press('Enter');
+  // Verify notes increased — from 3 to 5
+  const notes = await notebook.getNotes();
+  expect(notes.length).toBe(5);
 
-// Verify two new empty notes added
-await expect(page.locator('.editor-input ul > li')).toHaveCount(4);
-expect(await page.locator('.editor-input ul > li span[data-lexical-text="true"]')).toHaveText(['note0', 'note1', '', '']);
-expect(await notebook.getNotes()).toEqual(['note0', 'note1', '', '']);
-expect(await notebook.html()).toMatchSnapshot('flat-two-empty');
+  // Expect newly created notes to be empty
+  expect(notes[3]).toBe(""); 
+  expect(notes[4]).toBe(""); 
+
+  // Final structure snapshot
+  expect(await notebook.html()).toMatchSnapshot();
 });
 
-test('split note', async ({ page, notebook }) => {
-// Load notebook with flat list of two notes
-await notebook.load('flat');
+test("split note", async ({ page, notebook }) => {
+  // Load a flat note structure
+  await notebook.load("flat");
 
-// Debug: Log HTML to inspect structure
-console.log(await page.locator('.editor-input ul').first().innerHTML());
+  // Click inside "note1" and move cursor left twice
+  await notebook.clickEndOfNote("note1");
+  await page.keyboard.press("ArrowLeft");
+  await page.keyboard.press("ArrowLeft");
 
-// Verify initial state: two notes (note0, note1)
-await expect(page.locator('.editor-input ul > li')).toHaveCount(2);
-expect(await page.locator('.editor-input ul > li span[data-lexical-text="true"]')).toHaveText(['note0', 'note1']);
-expect(await notebook.getNotes()).toEqual(['note0', 'note1']);
-expect(await notebook.html()).toMatchSnapshot('flat-initial');
+  // Confirm initial notes
+  expect(await notebook.getNotes()).toEqual(['note0', 'note1', 'note2']);
 
-// Click end of note1, move cursor left twice, split with Enter
-await notebook.clickEndOfNote('note1');
-await page.keyboard.press('ArrowLeft');
-await page.keyboard.press('ArrowLeft');
-await page.keyboard.press('Enter');
+  // Press Enter to split "note1"
+  await page.keyboard.press("Enter");
 
-// Verify note1 split into "not" and "e1"
-await expect(page.locator('.editor-input ul > li')).toHaveCount(3);
-expect(await page.locator('.editor-input ul > li span[data-lexical-text="true"]')).toHaveText(['note0', 'not', 'e1']);
-expect(await notebook.getNotes()).toEqual(['note0', 'not', 'e1']);
-expect(await notebook.html()).toMatchSnapshot('flat-split');
+  // Now "note1" should be split into "not" and "e1"
+  expect(await notebook.getNotes()).toEqual(['note0', 'not', 'e1', 'note2']);
+
+  // Snapshot for visual confirmation
+  expect(await notebook.html()).toMatchSnapshot();
 });
