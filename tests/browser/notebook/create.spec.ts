@@ -22,22 +22,23 @@ test("add the first child to note with existing children", async ({ notebook, pa
 
 test("create some empty notes", async ({ page, notebook }) => {
   await notebook.load("flat");
-  await notebook.selectNote("note1");
 
   const notesBefore = await notebook.getNotes();
+  await notebook.selectNote("note1");
 
-  const editor = page.locator('[contenteditable]');
+  const editor = await page.locator('[contenteditable]');
   await editor.click();
   await page.keyboard.press("End");
 
-  // Simulate creating a new note
-  await page.keyboard.press("ArrowDown"); // exit list
-  await page.keyboard.press("Enter");
-  await page.keyboard.press(" "); // trigger Lexical
-  await page.keyboard.press("Backspace");
-  await page.waitForTimeout(200); // let Lexical settle
+  // Create new notes like a user would
+  await page.keyboard.press("Enter"); // new note
+  await page.keyboard.type(" ");      // trigger Lexical
+  await page.keyboard.press("Backspace"); // make it visually empty
+  await page.waitForTimeout(200);     // give Lexical time to register
 
-  await notebook.addNote();
+  await page.keyboard.press("Enter"); // another empty note
+  await page.keyboard.press("Backspace");
+  await page.waitForTimeout(200);
 
   const notesAfter = await notebook.getNotes();
   const newOnes = notesAfter.slice(notesBefore.length);
