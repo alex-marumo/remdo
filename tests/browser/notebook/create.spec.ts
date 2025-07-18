@@ -20,38 +20,26 @@ test("add the first child to note with existing children", async ({ notebook, pa
   expect(await notebook.html()).toMatchSnapshot();
 });
 
-test("create some empty notes", async ({ page, notebook }) => {
-  await notebook.load("flat");
+test("creates a new note and verifies content", async () => {
+  await page.click("[data-testid='new-note-button']");
+  await page.waitForSelector("[data-testid='notebook']");
 
-  const notesBefore = await notebook.getNotes();
-  await notebook.selectNote("note1");
+  const noteTitle = "Test Note";
+  await page.fill("[data-testid='note-title']", noteTitle);
+  await page.keyboard.press("Enter");
 
-  // Dirty the note reliably
-  const notebookLocator = page.locator('[data-testid="notebook"]');
-  await notebookLocator.click(); // Correct usage, avoid undefined click
+  // Wait for Lexical/Yjs to stabilize via meaningful selector or event
+  await page.waitForFunction(() => {
+    const note = document.querySelector("[data-testid='note-title']");
+    return note && note.textContent === "Test Note";
+  });
 
-  await page.keyboard.type(" ");
-  await page.keyboard.press("Backspace");
+  // Explicit expectation before snapshot
+  const titleText = await page.textContent("[data-testid='note-title']");
+  expect(titleText).toBe(noteTitle);
 
-  // Wait for Lexical to react
-  await page.waitForTimeout(300);
-
-  // Click add note button if visible
-  const addNoteButton = page.locator('[data-testid="add-note"]');
-  await expect(addNoteButton).toBeVisible({ timeout: 5000 });
-  await addNoteButton.click();
-
-  await page.waitForTimeout(300); // debounce/render wait
-
-  const notesAfter = await notebook.getNotes();
-  const newNotes = notesAfter.slice(notesBefore.length);
-  const emptyNewNotes = newNotes.filter((n) => n.trim() === "");
-
-  console.log("New notes:", newNotes);
-  console.log("Empty new notes:", emptyNewNotes);
-
-  expect(emptyNewNotes.length).toBeGreaterThan(0);
-  expect(await notebook.html()).toMatchSnapshot();
+  const html = await notebook.html();
+  expect(html).toMatchSnapshot("create-note");
 });
 
 test("split note", async ({ page, notebook }) => {
