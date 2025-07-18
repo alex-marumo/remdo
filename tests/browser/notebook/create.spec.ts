@@ -26,7 +26,7 @@ test("create some empty notes", async ({ page, notebook }) => {
   const before = await notebook.getNotes();
 
   await notebook.selectNote("note2");
-  await page.locator('[contenteditable]').click(); // target editor explicitly
+  await notebook.clickEndOfNote("note2");
   await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
 
