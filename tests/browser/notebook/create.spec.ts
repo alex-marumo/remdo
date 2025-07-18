@@ -5,11 +5,12 @@ test("add the first child to note with existing children", async ({
   notebook,
   page,
 }) => {
-  // ARRANGE: Load the 'basic' fixture. A single note, "note0", should exist.
+  // ARRANGE: Load the 'basic' fixture.
   await notebook.load("basic");
 
-  // Locate note0 specifically to make the test resilient to extra empty nodes.
-  const note0 = page.locator('ul > li:has-text("note0")');
+  // Use a more specific locator to avoid strict mode violations.
+  // This targets a `li` that directly contains a span with the exact text "note0".
+  const note0 = page.locator('ul > li:has(span[data-lexical-text="true"]:text-is("note0"))');
   await expect(note0).toBeVisible();
   expect(await notebook.html()).toMatchSnapshot("basic-initial");
 
@@ -21,7 +22,6 @@ test("add the first child to note with existing children", async ({
   // ASSERT: Verify that note0 now contains a nested list with one empty child note.
   const childNote = note0.locator("ul > li");
   await expect(childNote).toHaveCount(1);
-  // The child note's text content should be empty.
   await expect(childNote).toHaveText("");
   expect(await notebook.html()).toMatchSnapshot("basic-with-child");
 });
@@ -37,13 +37,13 @@ test("create some empty notes", async ({ page, notebook }) => {
   ]);
   expect(await notebook.html()).toMatchSnapshot("flat-initial");
 
-  // ACT: Select the last note and hit Enter twice to add two empty notes.
-  await notebook.selectNote("note2");
+  // ACT: Click the END of the last note, then hit Enter twice.
+  // This correctly adds new notes AFTER the target, instead of replacing it.
+  await notebook.clickEndOfNote("note2");
   await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
 
   // ASSERT: Check that there are now 5 notes.
-  // We use allTextContents() as a robust way to get text from all nodes, including empty ones.
   await expect(page.locator("ul > li")).toHaveCount(5);
   expect(await page.locator("ul > li").allTextContents()).toEqual([
     "note0",
@@ -80,8 +80,8 @@ test("split note", async ({ page, notebook }) => {
     "e1",
     "note2",
   ]);
-  // NOTE: This fails in CI on the first run.
-  // need to run `npx playwright test --update-snapshots` locally and commit the new files.
+  // NOTE: This will fail in CI on the first run.
+  // need to run `npx playwright test --update-snapshots` locally and commit the new file(will attend to that later)
   expect(await notebook.html()).toMatchSnapshot("flat-split");
 });
 
