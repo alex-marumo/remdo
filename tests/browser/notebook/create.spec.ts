@@ -20,8 +20,7 @@ test("add the first child to note with existing children", async ({ notebook, pa
   expect(await notebook.html()).toMatchSnapshot();
 });
 
-test("create some empty notes", async ({ page }) => {
-  await page.goto("notebook");
+test("create some empty notes", async ({ notebook, page }) => {
   
   // Wait for the initial notes to render
   const initialNotes = await page.locator(".note").all();
