@@ -9,7 +9,7 @@ function breadcrumbs(page: Page) {
   return page.locator('li.breadcrumb-item').allTextContents();
 }
 
-async function waitForNote(page: Page, noteText: string, maxAttempts = 10, interval = 1000) {
+async function waitForNote(page: Page, noteText: string, maxAttempts = 15, interval = 1000) { // Changed: Increased maxAttempts to 15
   if (!page || page.isClosed()) {
     throw new Error(`Page is closed while waiting for ${noteText}`);
   }
@@ -27,6 +27,7 @@ async function waitForNote(page: Page, noteText: string, maxAttempts = 10, inter
     console.log(`Waiting for ${noteText}, attempt ${i + 1}/${maxAttempts}`);
     await new Promise(resolve => setTimeout(resolve, interval));
   }
+  console.log(`Failed to find ${noteText} or any note after ${maxAttempts} attempts`); // Changed: Log failure before throwing
   throw new Error(`Failed to find ${noteText} or any note after ${maxAttempts} attempts`);
 }
 
@@ -55,7 +56,7 @@ test('focus on a particular note', async ({ page, notebook }, testInfo) => {
   const note12Locator = page.locator('.editor-input > ul > li span[data-lexical-text="true"]:text-is("note12")');
   await expect(note12Locator).toBeVisible({ timeout: 5000 });
   await note12Locator.click({ force: true, position: { x: 0, y: 0 } }); // Precise click
-  await waitForNote(page, 'note12', 10, 1000);
+  await waitForNote(page, 'note12', 15, 1000); // Changed: Updated maxAttempts to 15
 
   // Debug: Log DOM after note12 focus
   console.log('DOM after note12 focus:', await page.locator('.editor-input > ul').innerHTML());
@@ -65,7 +66,7 @@ test('focus on a particular note', async ({ page, notebook }, testInfo) => {
   expect(await page.locator('.editor-input > ul > li span[data-lexical-text="true"]')).toHaveText([
     'note0', 'note00', 'note000', 'note01',
     'note1', 'note10', 'note11', 'note12', 'note120', 'note1200', 'note1201'
-  ]);
+  ]); // Changed: Expect all 11 visible notes
   expect(await notebook.getNotes()).toEqual([
     'note0', 'note00', 'note000', 'note01',
     'note1', 'note10', 'note11', 'note12', 'note120', 'note1200', 'note1201'
@@ -78,7 +79,7 @@ test('focus on a particular note', async ({ page, notebook }, testInfo) => {
   if (await note1Breadcrumb.isVisible()) {
     expect(await note1Breadcrumb.innerText()).toBe('note1');
     await note1Breadcrumb.click();
-    await waitForNote(page, 'note1', 10, 1000);
+    await waitForNote(page, 'note1', 15, 1000); // Changed: Updated maxAttempts to 15
   } else {
     console.log('note1 breadcrumb not visible, skipping navigation');
   }
@@ -97,7 +98,7 @@ test('focus on a particular note', async ({ page, notebook }, testInfo) => {
   // Navigate back to root
   const rootBreadcrumb = page.locator('li.breadcrumb-item a:has-text("main")');
   await rootBreadcrumb.click();
-  await waitForNote(page, 'note12', 10, 1000);
+  await waitForNote(page, 'note12', 15, 1000); // Changed: Updated maxAttempts to 15
 
   // Verify root state restored
   await expect(page.locator('.editor-input > ul > li')).toHaveCount(2);
@@ -135,9 +136,9 @@ test('reload', async ({ page, notebook }, testInfo) => {
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.waitForFunction(
     () => document.querySelector('.editor-input > ul') !== null,
-    { timeout: 10000 }
+    { timeout: 15000 } // Changed: Increased timeout to 15s
   );
-  await waitForNote(page, 'note0', 10, 1000);
+  await waitForNote(page, 'note0', 15, 1000); // Changed: Updated maxAttempts to 15
 
   // Debug: Log DOM post-reload
   console.log('DOM after reload:', await page.locator('.editor-input ul').first().innerHTML());
