@@ -35,7 +35,7 @@ test("create some empty notes", async ({ notebook, page }) => {
   // Wait for the DOM to update – expect more notes now
   await page.waitForFunction(
     (expected) => document.querySelectorAll(".note").length > expected,
-    initialCount
+    [initialCount]
   );
 
   const notes = await page.locator(".note").all();
