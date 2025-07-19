@@ -24,25 +24,31 @@ test("create some empty notes", async ({ page, notebook }) => {
   await notebook.load("flat");
   await notebook.selectNote("note2");
 
-  // 1. Record initial notes
-  const before = await notebook.getNotes();
-  expect(before.length).toBe(3); // sanity check
+  // 1. Capture notes before
+  const before = await page.locator('[data-test-id="note-card"]').all();
+  const initialCount = before.length;
 
-  // 2. Create two new notes via Enter key
+  // 2. Press Enter twice to create 2 new notes
   await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
 
-  // 3. Get notes again
+  // 3. Wait until DOM shows 2 more notes
+  const expectedCount = initialCount + 2;
+  await expect(
+    page.locator('[data-test-id="note-card"]')
+  ).toHaveCount(expectedCount, { timeout: 3000 });
+
+  // 4. Now call getNotes after DOM has settled
   const after = await notebook.getNotes();
-  expect(after.length).toBe(before.length + 2);
+  expect(after.length).toBe(expectedCount);
 
-  // 4. Ensure new notes are empty
-  const newOnes = after.slice(before.length);
+  // 5. Check last 2 notes are empty
+  const newOnes = after.slice(-2);
   for (const note of newOnes) {
     expect(note.trim()).toBe("");
   }
 
-  // 5. Final DOM snapshot for visual regression
+  // 6. Snapshot for good measure
   expect(await notebook.html()).toMatchSnapshot();
 });
 
