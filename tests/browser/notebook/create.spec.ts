@@ -20,39 +20,31 @@ test("add the first child to note with existing children", async ({ notebook, pa
   expect(await notebook.html()).toMatchSnapshot();
 });
 
-test("create some empty notes", async ({ notebook, page }) => {
-  // Wait for initial notes
-  const initialNotes = await page.locator(".note").all();
-  const initialCount = initialNotes.length;
-  console.log("Initial note count:", initialCount);
+test("create some empty notes", async ({ page, notebook }) => {
+  await notebook.load("flat");
+  await notebook.selectNote("note2");
 
-  // Use the correct selector for 'Add Note' button
-  const addNoteButton = page.locator('[data-testid="add-note"]');
-  await expect(addNoteButton).toBeVisible({ timeout: 5000 });
+  // 1. Record initial notes
+  const before = await notebook.getNotes();
+  expect(before.length).toBe(3); // sanity: flat starts with 3
 
-  // Click the button twice
-  await addNoteButton.click();
-  await addNoteButton.click();
+  // 2. Create two new notes
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Enter");
 
-  // Wait until notes increase
-  await page.waitForFunction(
-    (expected) => document.querySelectorAll(".note").length > expected,
-    [initialCount]
-  );
+  // 3. Fetch updated notes
+  const after = await notebook.getNotes();
+  console.log("Before:", before, "After:", after);
 
-  const notes = await page.locator(".note").all();
-  console.log("Notes after adding:", notes.length);
+  // 4. Expect exactly +2 notes
+  expect(after.length).toBe(before.length + 2);
 
-  // Main Assert
-  expect(notes.length).toBeGreaterThan(initialCount);
+  // 5. New notes should be empty
+  const newOnes = after.slice(before.length);
+  newOnes.forEach(note => expect(note).toBe(""));
 
-  // Extra: last two notes are empty
-  const lastNoteTexts = await Promise.all(
-    notes.slice(-2).map((note) => note.textContent())
-  );
-  for (const text of lastNoteTexts) {
-    expect(text?.trim()).toBe("");
-  }
+  // 6. Final snapshot  
+  expect(await notebook.html()).toMatchSnapshot();
 });
 
 test("split note", async ({ page, notebook }) => {
