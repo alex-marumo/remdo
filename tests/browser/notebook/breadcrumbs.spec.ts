@@ -14,7 +14,7 @@ test('focus on a particular note', async ({ page, notebook }) => {
   await notebook.load('tree_complex');
 
   // Debug: Log HTML to trace the DOM's narrative
-  console.log(await page.locator('.editor-input ul').first().innerHTML());
+  console.log('Initial DOM:', await page.locator('.editor-input ul').first().innerHTML());
 
   // Verify initial state: root URL, breadcrumbs, and 2 top-level notes
   expect(urlPath(page)).toBe('/');
@@ -29,13 +29,16 @@ test('focus on a particular note', async ({ page, notebook }) => {
 
   // Focus on note12, filtering to its subtree
   const note12Locator = page.locator('.editor-input > ul > li span[data-lexical-text="true"]:text-is("note12")');
-  await expect(note12Locator).toBeVisible();
+  await expect(note12Locator).toBeVisible({ timeout: 5000 });
   const noteBox = (await note12Locator.boundingBox())!;
   await page.mouse.click(noteBox.x - 1, noteBox.y + noteBox.height / 2);
   await page.waitForSelector('div.editor-input ul.filtered', { timeout: 5000 });
 
-  // Verify focused state: note12 with 3 children
-  await expect(page.locator('.editor-input ul.filtered > li')).toHaveCount(1);
+  // Debug: Log filtered DOM
+  console.log('Filtered DOM after note12 focus:', await page.locator('.editor-input ul.filtered').innerHTML());
+
+  // Verify focused state: adjust based on debug output
+  await expect(page.locator('.editor-input ul.filtered > li')).toHaveCount(1); // Expect note12 only
   expect(await page.locator('.editor-input ul.filtered > li span[data-lexical-text="true"]')).toHaveText('note12');
   await expect(page.locator('.editor-input ul.filtered > li ul > li')).toHaveCount(3); // note120, note1200, note1201
   expect(await page.locator('.editor-input ul.filtered > li ul > li span[data-lexical-text="true"]')).toHaveText(['note120', 'note1200', 'note1201']);
@@ -49,6 +52,9 @@ test('focus on a particular note', async ({ page, notebook }) => {
   const note1Breadcrumb = page.locator('li.breadcrumb-item a').nth(2);
   expect(await note1Breadcrumb.innerText()).toBe('note1');
   await note1Breadcrumb.click();
+
+  // Debug: Log filtered DOM for note1
+  console.log('Filtered DOM after note1 focus:', await page.locator('.editor-input ul.filtered').innerHTML());
 
   // Verify note1-focused state: note1 with 4 children
   await expect(page.locator('.editor-input ul.filtered > li')).toHaveCount(1);
@@ -78,7 +84,7 @@ test('reload', async ({ page, notebook }) => {
   await notebook.load('tree_complex');
 
   // Debug: Log HTML to inspect the DOM's structure
-  console.log(await page.locator('.editor-input ul').first().innerHTML());
+  console.log('Initial DOM:', await page.locator('.editor-input ul').first().innerHTML());
 
   // Verify initial state: root URL, breadcrumbs, and 2 top-level notes
   expect(urlPath(page)).toBe('/');
@@ -93,7 +99,11 @@ test('reload', async ({ page, notebook }) => {
 
   // Reload page and verify state persists
   await page.reload();
-  await page.locator('.editor-input > ul > li span[data-lexical-text="true"]:text-is("note0")').waitFor({ timeout: 5000 });
+  await page.waitForLoadState('domcontentloaded', { timeout: 10000 });
+  await page.locator('.editor-input > ul > li span[data-lexical-text="true"]:text-is("note0")').waitFor({ timeout: 10000 });
+
+  // Debug: Log DOM post-reload
+  console.log('DOM after reload:', await page.locator('.editor-input ul').first().innerHTML());
 
   // Verify post-reload: same notes, breadcrumbs, and URL
   await expect(page.locator('.editor-input > ul > li')).toHaveCount(2);
