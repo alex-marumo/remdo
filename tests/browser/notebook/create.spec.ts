@@ -21,7 +21,7 @@ test("add the first child to note with existing children", async ({ notebook, pa
 });
 
 test("create some empty notes", async ({ notebook, page }) => {
-  
+
   // Wait for the initial notes to render
   const initialNotes = await page.locator(".note").all();
   const initialCount = initialNotes.length;
@@ -31,8 +31,17 @@ test("create some empty notes", async ({ notebook, page }) => {
   const addNoteButton = page.locator('[data-testid="add-note-button"]'); // Use correct selector!
   await addNoteButton.click();
   await addNoteButton.click();
+  // Click the 'Add Note' button twice (correct test-id is “add-note”)
+  const addNoteButton = page.locator('[data-testid="add-note"]');
+  await expect(addNoteButton).toBeVisible({ timeout: 5000 });
+  await addNoteButton.click();
+  await addNoteButton.click();
 
   // Wait for the DOM to update – expect more notes now
+  await page.waitForFunction(
+    (expected) => document.querySelectorAll(".note").length > expected,
+    initialCount
+  );
   await page.waitForFunction(
     (expected) => document.querySelectorAll(".note").length > expected,
     [initialCount]
