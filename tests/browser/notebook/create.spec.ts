@@ -20,45 +20,41 @@ test("add the first child to note with existing children", async ({ notebook, pa
   expect(await notebook.html()).toMatchSnapshot();
 });
 
-test("create some empty notes", async ({ notebook, page }) => {
+test("create some empty notes", async ({ page }) => {
+  const noteSelector = ".note";
+  const addNoteButton = page.locator('[data-testid="add-note"]'); // ✅ Confirmed correct
 
-  // Wait for the initial notes to render
-  const initialNotes = await page.locator(".note").all();
+  // Wait for initial notes to load
+  const initialNotes = await page.locator(noteSelector).all();
   const initialCount = initialNotes.length;
   console.log("Initial note count:", initialCount);
 
-  // Click the 'Add Note' button twice
-  const addNoteButton = page.locator('[data-testid="add-note-button"]'); // Use correct selector!
-  await addNoteButton.click();
-  await addNoteButton.click();
-  // Click the 'Add Note' button twice (correct test-id is “add-note”)
-  const addNoteButton = page.locator('[data-testid="add-note"]');
+  // Click 'Add Note' button twice
   await expect(addNoteButton).toBeVisible({ timeout: 5000 });
   await addNoteButton.click();
   await addNoteButton.click();
 
-  // Wait for the DOM to update – expect more notes now
+  // Wait for notes to be added
   await page.waitForFunction(
-    (expected) => document.querySelectorAll(".note").length > expected,
+    (count) => document.querySelectorAll(".note").length > count,
     initialCount
   );
-  await page.waitForFunction(
-    (expected) => document.querySelectorAll(".note").length > expected,
-    [initialCount]
+
+  const updatedNotes = await page.locator(noteSelector).all();
+  const updatedCount = updatedNotes.length;
+  console.log("Notes after adding:", updatedCount);
+
+  // Assert notes increased by 2
+  expect(updatedCount).toBe(initialCount + 2);
+
+  // Assert last two notes are empty
+  const lastTwoTexts = await Promise.all(
+    updatedNotes.slice(-2).map((note) => note.textContent())
   );
 
-  const notes = await page.locator(".note").all();
-  console.log("Notes after adding:", notes.length);
-
-  // Main Assert: number of notes increased
-  expect(notes.length).toBeGreaterThan(initialCount);
-
-  // Extra Assert: last two notes should be empty
-  const lastNoteTexts = await Promise.all(
-    notes.slice(-2).map((note) => note.textContent())
-  );
-  for (const text of lastNoteTexts) {
+  for (const [i, text] of lastTwoTexts.entries()) {
     expect(text?.trim()).toBe("");
+    console.log(`Note ${updatedCount - 1 + i}: "${text}"`);
   }
 });
 
