@@ -37,7 +37,10 @@ test("create some empty notes", async ({ page, notebook }) => {
   console.log("Before:", before, "After:", after);
 
   // 4. Expect exactly +2 notes
-  await expect(page.locator('[data-test-id="note-card"]')).toHaveCount(before.length + 2);
+  await
+console.log('Before:', before.length);
+console.log('After:', after.length);
+page.locator('[data-test-id="note-card"]').allTextContents()); expect(page.locator('[data-test-id="note-card"]')).toHaveCount(before.length + 2);
 
   // 5. New notes should be empty
   const newOnes = after.slice(before.length);
@@ -68,6 +71,5 @@ test("split note", async ({ page, notebook }) => {
   const hasSplit = notes.some(n => n.includes("note1") || n === "not" || n === "e1");
   expect(hasSplit).toBe(true);
 
-  // Skip snapshot for now until we understand Lexical’s weirdness
-  // expect(await notebook.html()).toMatchSnapshot();
+  expect(await notebook.html()).toMatchSnapshot();
 });
