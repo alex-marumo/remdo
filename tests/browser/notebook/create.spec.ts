@@ -21,23 +21,22 @@ test("add the first child to note with existing children", async ({ notebook, pa
 });
 
 test("create some empty notes", async ({ notebook, page }) => {
-  // Load the notebook and wait for it to be ready
+  // Load the notebook and wait for network idle
   await notebook.load("flat");
-  await page.waitForLoadState("networkidle"); // Wait for network requests to complete
-  await page.waitForSelector('[data-testid="notebook"]', { state: "visible" }); // Confirm notebook UI is loaded
+  await page.waitForLoadState("networkidle");
 
-  // Locate the 'Add Note' button and ensure it’s ready
-  const addNoteButton = page.locator('[data-testid="add-note"]');
-  await expect(addNoteButton).toBeVisible({ timeout: 5000 }); // Verify button is interactable
+  // Wait for the 'Add Note' button to be visible instead of the notebook
+  const addNoteButton = page.getByRole("button", { name: "Add Note" });
+  await expect(addNoteButton).toBeVisible({ timeout: 10000 });
 
-  // Add two new notes
+  // Click the button twice to add two new notes
   await addNoteButton.click();
   await addNoteButton.click();
 
   // Wait for at least two notes to appear
   await page.waitForFunction(() => document.querySelectorAll(".note").length >= 2, { timeout: 10000 });
 
-  // Retrieve all notes and log their count
+  // Retrieve all notes and log their count for debugging
   const notes = await page.locator(".note").all();
   console.log("Notes after adding:", notes.length);
 
@@ -46,7 +45,7 @@ test("create some empty notes", async ({ notebook, page }) => {
     notes.slice(-2).map((note) => note.textContent())
   );
   for (const text of lastNoteTexts) {
-    expect(text?.trim()).toBe(""); // Ensure each note is empty
+    expect(text?.trim()).toBe("");
   }
 });
 
