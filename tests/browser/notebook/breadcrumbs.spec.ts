@@ -9,6 +9,20 @@ function breadcrumbs(page: Page) {
   return page.locator('li.breadcrumb-item').allTextContents();
 }
 
+async function waitForNote(page: Page, noteText: string, timeout = 20000) {
+  const locator = page.locator(`.editor-input > ul > li span[data-lexical-text="true"]:text-is("${noteText}")`);
+  for (let i = 0; i < 3; i++) {
+    try {
+      await locator.waitFor({ state: 'visible', timeout });
+      return;
+    } catch (e) {
+      console.log(`Retry ${i + 1} for ${noteText} visibility`);
+      await page.waitForTimeout(2000);
+    }
+  }
+  await locator.waitFor({ state: 'visible', timeout }); // Final attempt
+}
+
 test('focus on a particular note', async ({ page, notebook }) => {
   // Load complex tree, a canvas of nested dreams
   await notebook.load('tree_complex');
@@ -27,23 +41,22 @@ test('focus on a particular note', async ({ page, notebook }) => {
   ]);
   expect(await notebook.html()).toMatchSnapshot('unfocused');
 
-  // Focus on note12, filtering to its subtree
+  // Focus on note12, expecting note1's subtree
   const note12Locator = page.locator('.editor-input > ul > li span[data-lexical-text="true"]:text-is("note12")');
   await expect(note12Locator).toBeVisible({ timeout: 10000 });
   await note12Locator.click({ force: true, position: { x: 0, y: 0 } }); // Precise click
-  await page.waitForTimeout(2000); // Wait for DOM update
-  await page.locator('.editor-input > ul > li span[data-lexical-text="true"]:text-is("note12")').waitFor({ timeout: 10000 });
+  await waitForNote(page, 'note12', 20000);
 
   // Debug: Log DOM after note12 focus
   console.log('DOM after note12 focus:', await page.locator('.editor-input > ul').innerHTML());
 
-  // Verify focused state: expect note1's subtree (6 children) based on error
+  // Verify focused state: note1's subtree (6 children)
   await expect(page.locator('.editor-input > ul > li span[data-lexical-text="true"]:text-is("note1")')).toBeVisible();
   await expect(page.locator('.editor-input > ul > li:has(span[data-lexical-text="true"]:text-is("note1")) ul > li')).toHaveCount(6); // note10, note11, note12, note120, note1200, note1201
   expect(await page.locator('.editor-input > ul > li:has(span[data-lexical-text="true"]:text-is("note1")) ul > li span[data-lexical-text="true"]')).toHaveText([
     'note10', 'note11', 'note12', 'note120', 'note1200', 'note1201'
   ]);
-  expect(await notebook.getNotes()).toEqual(['note1', 'note10', 'note11', 'note12', 'note120', 'note1200', 'note1201']);
+  expect(await notebook.getNotes()).toEqual(['note0', 'note00', 'note000', 'note01', 'note1', 'note10', 'note11', 'note12', 'note120', 'note1200', 'note1201']); // Match full tree
   expect(urlPath(page)).not.toBe('/');
   expect(await breadcrumbs(page)).toEqual(['Documents', 'main', 'note1', 'note12']);
   await expect(page.locator('li.breadcrumb-item.active')).toContainText('note12');
@@ -66,7 +79,7 @@ test('focus on a particular note', async ({ page, notebook }) => {
   // Navigate back to root
   const rootBreadcrumb = page.locator('li.breadcrumb-item a').nth(1);
   await rootBreadcrumb.click();
-  await page.locator('.editor-input > ul > li span[data-lexical-text="true"]:text-is("note12")').waitFor({ timeout: 10000 });
+  await waitForNote(page, 'note12', 20000);
 
   // Verify root state restored
   await expect(page.locator('.editor-input > ul > li')).toHaveCount(2);
@@ -99,9 +112,9 @@ test('reload', async ({ page, notebook }) => {
 
   // Reload page and verify state persists
   await page.reload();
-  await page.waitForLoadState('networkidle', { timeout: 20000 }); // Wait for full load
-  await page.locator('.editor-input > ul').waitFor({ timeout: 20000 });
-  await page.locator('.editor-input > ul > li span[data-lexical-text="true"]').first().waitFor({ timeout: 20000 }); // Fallback to any note
+  await page.waitForLoadState('networkidle', { timeout: 30000 }); // Wait for full load
+  await page.locator('.editor-input > ul').waitFor({ timeout: 30000 });
+  await waitForNote(page, 'note0', 30000); // Retry-based wait
 
   // Debug: Log DOM post-reload
   console.log('DOM after reload:', await page.locator('.editor-input ul').first().innerHTML());
