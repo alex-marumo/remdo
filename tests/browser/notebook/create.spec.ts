@@ -37,7 +37,7 @@ test("create some empty notes", async ({ page, notebook }) => {
   console.log("Before:", before, "After:", after);
 
   // 4. Expect exactly +2 notes
-  expect(after.length).toBe(before.length + 2);
+  await expect(page.locator('[data-test-id="note-card"]')).toHaveCount(before.length + 2);
 
   // 5. New notes should be empty
   const newOnes = after.slice(before.length);
