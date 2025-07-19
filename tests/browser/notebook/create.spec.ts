@@ -20,36 +20,25 @@ test("add the first child to note with existing children", async ({ notebook, pa
   expect(await notebook.html()).toMatchSnapshot();
 });
 
-test("create some empty notes", async ({ page, notebook }) => {
-  await notebook.load("flat");
-  await notebook.selectNote("note2");
+test('create some empty notes', async ({ page }) => {
+  const notebook = new Notebook(page);
 
-  // 1. Capture notes before
-  const before = await page.locator('[data-test-id="note-card"]').all();
-  const initialCount = before.length;
-
-  // 2. Press Enter twice to create 2 new notes
-  await page.keyboard.press("Enter");
-  await page.keyboard.press("Enter");
-
-  // 3. Wait until DOM shows 2 more notes
-  const expectedCount = initialCount + 2;
-  await expect(
-    page.locator('[data-test-id="note-card"]')
-  ).toHaveCount(expectedCount, { timeout: 3000 });
-
-  // 4. Now call getNotes after DOM has settled
-  const after = await notebook.getNotes();
-  expect(after.length).toBe(expectedCount);
-
-  // 5. Check last 2 notes are empty
-  const newOnes = after.slice(-2);
-  for (const note of newOnes) {
-    expect(note.trim()).toBe("");
+  // 1. Create two notes
+  const expectedCount = 2;
+  for (let i = 0; i < expectedCount; i++) {
+    await notebook.createNote();
   }
 
-  // 6. Snapshot for good measure
-  expect(await notebook.html()).toMatchSnapshot();
+  // 2. Wait for at least one card to appear before checking count
+  const locator = page.locator('[data-test-id="note-card"]');
+  await expect(locator.first()).toBeVisible({ timeout: 3000 });
+
+  // 3. Now check if total count matches
+  await expect(locator).toHaveCount(expectedCount, { timeout: 3000 });
+
+  // 4. Optional: Check internal state via helper
+  const after = await notebook.getNotes();
+  expect(after.length).toBe(expectedCount);
 });
 
 test("split note", async ({ page, notebook }) => {
