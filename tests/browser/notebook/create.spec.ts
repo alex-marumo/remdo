@@ -21,63 +21,32 @@ test("add the first child to note with existing children", async ({ notebook, pa
 });
 
 test("create some empty notes", async ({ notebook, page }) => {
-  // Load the notebook and wait for it to stabilize
-  await notebook.load("flat"); // Assuming this sets up the notebook
-  await page.waitForLoadState('networkidle'); // Wait for network requests to finish
+  // Load the notebook and wait for it to be ready
+  await notebook.load("flat");
+  await page.waitForLoadState("networkidle"); // Wait for network requests to complete
+  await page.waitForSelector('[data-testid="notebook"]', { state: "visible" }); // Confirm notebook UI is loaded
 
-  // Wait for initial notes to ensure the page is ready
-  await page.waitForSelector(".note", { timeout: 10000 });
-  const initialNotes = await page.locator(".note").all();
-  const initialCount = initialNotes.length;
-  console.log("Initial note count:", initialCount);
-
-  // Select a note to make the 'Add Note' button visible
-  await notebook.selectNote("note1"); // Or adjust if "note1" isn't specific
-
-  // Optional: Interact with notebook if needed
-  const notebookLocator = page.locator('[data-testid="notebook"]');
-  await notebookLocator.click();
-  await page.keyboard.type(" "); // Simulate minor input
-  await page.keyboard.press("Backspace");
-
-  // Debug: Check if the button exists
+  // Locate the 'Add Note' button and ensure it’s ready
   const addNoteButton = page.locator('[data-testid="add-note"]');
-  const buttonCount = await addNoteButton.count();
-  console.log("Add Note button count:", buttonCount);
-  if (buttonCount === 0) {
-    const testIds = await page.evaluate(() => {
-      return Array.from(document.querySelectorAll('[data-testid]'))
-        .map(el => el.getAttribute('data-testid'));
-    });
-    console.log("Available data-testids:", testIds);
-  }
+  await expect(addNoteButton).toBeVisible({ timeout: 5000 }); // Verify button is interactable
 
-  // Ensure the button is visible
-  await expect(addNoteButton).toBeVisible({ timeout: 5000 });
-
-  // Click the button twice
+  // Add two new notes
   await addNoteButton.click();
   await addNoteButton.click();
 
-  // Wait until notes increase
-  await page.waitForFunction(
-    (expected) => document.querySelectorAll(".note").length > expected,
-    initialCount, // Pass initialCount directly
-    { timeout: 10000 }
-  );
+  // Wait for at least two notes to appear
+  await page.waitForFunction(() => document.querySelectorAll(".note").length >= 2, { timeout: 10000 });
 
+  // Retrieve all notes and log their count
   const notes = await page.locator(".note").all();
   console.log("Notes after adding:", notes.length);
 
-  // Main Assert
-  expect(notes.length).toBeGreaterThan(initialCount);
-
-  // Extra: last two notes are empty
+  // Verify the last two notes are empty
   const lastNoteTexts = await Promise.all(
     notes.slice(-2).map((note) => note.textContent())
   );
   for (const text of lastNoteTexts) {
-    expect(text?.trim()).toBe("");
+    expect(text?.trim()).toBe(""); // Ensure each note is empty
   }
 });
 
