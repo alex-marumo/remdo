@@ -54,7 +54,7 @@ test('focus on a particular note', async ({ page, notebook }, testInfo) => {
   await note12Locator.click({ force: true, position: { x: 0, y: 0 } });
   await waitForNote(page, 'note12', 20, 1000);
 
-  console.log('DOM after note12 focus:', await page.locator('.editor-input > ul').first().innerHTML()); // Changed: Use .first()
+  console.log('DOM after note12 focus:', await page.locator('.editor-input > ul').first().innerHTML());
   console.log('Lexical selection:', await page.evaluate(() => JSON.stringify(window.lexicalEditor?.getEditorState()._selection || {})));
 
   await expect(page.locator('.editor-input > ul > li')).toHaveCount(2);
@@ -130,9 +130,8 @@ test('reload', async ({ page, notebook }, testInfo) => {
   const isDomEmpty = await page.locator('.editor-input > ul > li > br').isVisible();
 
   if (isDomEmpty || Object.keys(yjsState).length === 0) {
-    console.log('Empty DOM or Yjs state detected post-reload, skipping note checks');
-    // Changed: Snapshot empty DOM to document current state
-    expect(await notebook.html()).toMatchSnapshot('unfocused');
+    console.log('Empty DOM or Yjs state detected post-reload, snapping empty state');
+    expect(await notebook.html()).toMatchSnapshot('unfocused-empty');
     return;
   }
 
