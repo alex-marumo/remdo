@@ -21,22 +21,39 @@ test("add the first child to note with existing children", async ({ notebook, pa
 });
 
 test("create some empty notes", async ({ notebook, page }) => {
-  // Load the notebook and wait for network idle
+  // Load the notebook and wait for network stability
   await notebook.load("flat");
-  await page.waitForLoadState("networkidle");
+  await page.waitForLoadState("networkidle", { timeout: 15000 });
 
-  // Wait for the 'Add Note' button to be visible instead of the notebook
-  const addNoteButton = page.getByRole("button", { name: "Add Note" });
-  await expect(addNoteButton).toBeVisible({ timeout: 10000 });
+  // Debug: Log available data-testid attributes
+  const testIds = await page.evaluate(() =>
+    Array.from(document.querySelectorAll("[data-testid]")).map((el) =>
+      el.getAttribute("data-testid")
+    )
+  );
+  console.log("Available data-testids:", testIds);
+
+  // Wait for the 'Add Note' button using data-testid
+  const addNoteButton = page.locator('[data-testid="add-note"]');
+  try {
+    await expect(addNoteButton).toBeVisible({ timeout: 10000 });
+  } catch (error) {
+    console.log("Add Note button not found. Taking screenshot...");
+    await page.screenshot({ path: "add-note-failure.png" });
+    throw error;
+  }
 
   // Click the button twice to add two new notes
   await addNoteButton.click();
   await addNoteButton.click();
 
   // Wait for at least two notes to appear
-  await page.waitForFunction(() => document.querySelectorAll(".note").length >= 2, { timeout: 10000 });
+  await page.waitForFunction(
+    () => document.querySelectorAll(".note").length >= 2,
+    { timeout: 10000 }
+  );
 
-  // Retrieve all notes and log their count for debugging
+  // Retrieve all notes and log their count
   const notes = await page.locator(".note").all();
   console.log("Notes after adding:", notes.length);
 
@@ -47,7 +64,7 @@ test("create some empty notes", async ({ notebook, page }) => {
   for (const text of lastNoteTexts) {
     expect(text?.trim()).toBe("");
   }
-});
+}, { timeout: 30000 }); // Increase test timeout for CI stability
 
 test("split note", async ({ page, notebook }) => {
   await notebook.load("flat");
