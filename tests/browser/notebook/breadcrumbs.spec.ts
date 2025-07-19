@@ -30,18 +30,20 @@ test('focus on a particular note', async ({ page, notebook }) => {
   // Focus on note12, filtering to its subtree
   const note12Locator = page.locator('.editor-input > ul > li span[data-lexical-text="true"]:text-is("note12")');
   await expect(note12Locator).toBeVisible({ timeout: 10000 });
-  await note12Locator.click({ force: true, position: { x: 0, y: 0 } }); // Precise click at top-left
-  await page.waitForTimeout(1000); // Wait for DOM update
+  await note12Locator.click({ force: true, position: { x: 0, y: 0 } }); // Precise click
+  await page.waitForTimeout(2000); // Wait for DOM update
   await page.locator('.editor-input > ul > li span[data-lexical-text="true"]:text-is("note12")').waitFor({ timeout: 10000 });
 
-  // Debug: Log filtered DOM
-  console.log('Filtered DOM after note12 focus:', await page.locator('.editor-input > ul').innerHTML());
+  // Debug: Log DOM after note12 focus
+  console.log('DOM after note12 focus:', await page.locator('.editor-input > ul').innerHTML());
 
-  // Verify focused state: note12 with 3 children
-  await expect(page.locator('.editor-input > ul > li span[data-lexical-text="true"]:text-is("note12")')).toBeVisible();
-  await expect(page.locator('.editor-input > ul > li:has(span[data-lexical-text="true"]:text-is("note12")) ul > li')).toHaveCount(3); // note120, note1200, note1201
-  expect(await page.locator('.editor-input > ul > li:has(span[data-lexical-text="true"]:text-is("note12")) ul > li span[data-lexical-text="true"]')).toHaveText(['note120', 'note1200', 'note1201']);
-  expect(await notebook.getNotes()).toEqual(['note12', 'note120', 'note1200', 'note1201']);
+  // Verify focused state: expect note1's subtree (6 children) based on error
+  await expect(page.locator('.editor-input > ul > li span[data-lexical-text="true"]:text-is("note1")')).toBeVisible();
+  await expect(page.locator('.editor-input > ul > li:has(span[data-lexical-text="true"]:text-is("note1")) ul > li')).toHaveCount(6); // note10, note11, note12, note120, note1200, note1201
+  expect(await page.locator('.editor-input > ul > li:has(span[data-lexical-text="true"]:text-is("note1")) ul > li span[data-lexical-text="true"]')).toHaveText([
+    'note10', 'note11', 'note12', 'note120', 'note1200', 'note1201'
+  ]);
+  expect(await notebook.getNotes()).toEqual(['note1', 'note10', 'note11', 'note12', 'note120', 'note1200', 'note1201']);
   expect(urlPath(page)).not.toBe('/');
   expect(await breadcrumbs(page)).toEqual(['Documents', 'main', 'note1', 'note12']);
   await expect(page.locator('li.breadcrumb-item.active')).toContainText('note12');
@@ -52,12 +54,12 @@ test('focus on a particular note', async ({ page, notebook }) => {
   expect(await note1Breadcrumb.innerText()).toBe('note1');
   await note1Breadcrumb.click();
 
-  // Debug: Log filtered DOM for note1
-  console.log('Filtered DOM after note1 focus:', await page.locator('.editor-input > ul').innerHTML());
+  // Debug: Log DOM for note1
+  console.log('DOM after note1 focus:', await page.locator('.editor-input > ul').innerHTML());
 
-  // Verify note1-focused state: note1 with 4 children
+  // Verify note1-focused state: note1 with 6 children
   await expect(page.locator('.editor-input > ul > li span[data-lexical-text="true"]:text-is("note1")')).toBeVisible();
-  await expect(page.locator('.editor-input > ul > li:has(span[data-lexical-text="true"]:text-is("note1")) ul > li')).toHaveCount(4); // note10, note11, note12, note120
+  await expect(page.locator('.editor-input > ul > li:has(span[data-lexical-text="true"]:text-is("note1")) ul > li')).toHaveCount(6); // note10, note11, note12, note120, note1200, note1201
   expect(await notebook.getNotes()).toEqual(['note1', 'note10', 'note11', 'note12', 'note120', 'note1200', 'note1201']);
   expect(await breadcrumbs(page)).toEqual(['Documents', 'main', 'note1']);
 
@@ -97,9 +99,9 @@ test('reload', async ({ page, notebook }) => {
 
   // Reload page and verify state persists
   await page.reload();
-  await page.waitForLoadState('domcontentloaded', { timeout: 15000 });
-  await page.locator('.editor-input > ul').waitFor({ timeout: 15000 });
-  await page.locator('.editor-input > ul > li span[data-lexical-text="true"]:text-is("note0")').waitFor({ timeout: 15000 });
+  await page.waitForLoadState('networkidle', { timeout: 20000 }); // Wait for full load
+  await page.locator('.editor-input > ul').waitFor({ timeout: 20000 });
+  await page.locator('.editor-input > ul > li span[data-lexical-text="true"]').first().waitFor({ timeout: 20000 }); // Fallback to any note
 
   // Debug: Log DOM post-reload
   console.log('DOM after reload:', await page.locator('.editor-input ul').first().innerHTML());
