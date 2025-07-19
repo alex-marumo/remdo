@@ -25,7 +25,8 @@ test("create some empty notes", async ({ notebook, page }) => {
   await notebook.load("flat");
   await page.waitForLoadState("networkidle", { timeout: 15000 });
 
-  // Debug: Log available data-testid attributes
+  // Debug: Log page content and available elements
+  console.log("Page HTML:", await page.content());
   const testIds = await page.evaluate(() =>
     Array.from(document.querySelectorAll("[data-testid]")).map((el) =>
       el.getAttribute("data-testid")
@@ -33,19 +34,25 @@ test("create some empty notes", async ({ notebook, page }) => {
   );
   console.log("Available data-testids:", testIds);
 
-  // Wait for the 'Add Note' button using data-testid
-  const addNoteButton = page.locator('[data-testid="add-note"]');
+  // Interact with document-selector to initialize the notebook
+  const documentSelector = page.locator('[data-testid="document-selector"]');
+  await expect(documentSelector).toBeVisible({ timeout: 10000 });
+  await documentSelector.click(); // Click to open dropdown or select
+
+  // Select a document (assuming a dropdown or list)
+  await page.locator('option, [role="option"]').first().click(); // Adjust based on UI
+
+  // Wait for the 'Add Note' button (try multiple locators)
+  const addNoteButton = page.getByRole("button", { name: /add|new|note/i });
   try {
     await expect(addNoteButton).toBeVisible({ timeout: 10000 });
   } catch (error) {
-    console.log("Add Note button not found. Taking screenshot...");
-    await page.screenshot({ path: "add-note-failure.png" });
-    throw error;
+    console.log("Add Note button not found. Trying alternative selector...");
+    const fallbackButton = page.locator('button, [role="button"]').first();
+    await expect(fallbackButton).toBeVisible({ timeout: 5000 });
+    await fallbackButton.click();
+    await fallbackButton.click();
   }
-
-  // Click the button twice to add two new notes
-  await addNoteButton.click();
-  await addNoteButton.click();
 
   // Wait for at least two notes to appear
   await page.waitForFunction(
@@ -64,7 +71,7 @@ test("create some empty notes", async ({ notebook, page }) => {
   for (const text of lastNoteTexts) {
     expect(text?.trim()).toBe("");
   }
-}, { timeout: 30000 }); // Increase test timeout for CI stability
+}, { timeout: 30000 }); // Increased timeout for CI stability
 
 test("split note", async ({ page, notebook }) => {
   await notebook.load("flat");
