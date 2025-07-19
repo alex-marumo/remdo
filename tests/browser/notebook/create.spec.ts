@@ -26,27 +26,23 @@ test("create some empty notes", async ({ page, notebook }) => {
 
   // 1. Record initial notes
   const before = await notebook.getNotes();
-  expect(before.length).toBe(3); // sanity: flat starts with 3
+  expect(before.length).toBe(3); // sanity check
 
-  // 2. Create two new notes
+  // 2. Create two new notes via Enter key
   await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
 
-  // 3. Fetch updated notes
+  // 3. Get notes again
   const after = await notebook.getNotes();
-  console.log("Before:", before, "After:", after);
+  expect(after.length).toBe(before.length + 2);
 
-  // 4. Expect exactly +2 notes
-  await
-console.log('Before:', before.length);
-console.log('After:', after.length);
-page.locator('[data-test-id="note-card"]').allTextContents()); expect(page.locator('[data-test-id="note-card"]')).toHaveCount(before.length + 2);
-
-  // 5. New notes should be empty
+  // 4. Ensure new notes are empty
   const newOnes = after.slice(before.length);
-  newOnes.forEach(note => expect(note).toBe(""));
+  for (const note of newOnes) {
+    expect(note.trim()).toBe("");
+  }
 
-  // 6. Final snapshot  
+  // 5. Final DOM snapshot for visual regression
   expect(await notebook.html()).toMatchSnapshot();
 });
 
