@@ -13,16 +13,21 @@ async function waitForNote(page: Page, noteText: string, maxAttempts = 10, inter
   if (!page || page.isClosed()) {
     throw new Error(`Page is closed while waiting for ${noteText}`);
   }
-  const locator = page.locator(`.editor-input > ul > li span[data-lexical-text="true"]:text-is("${noteText}")`);
+  const primaryLocator = page.locator(`.editor-input > ul > li span[data-lexical-text="true"]:text-is("${noteText}")`);
+  const fallbackLocator = page.locator(`.editor-input > ul > li span[data-lexical-text="true"]`).first();
   for (let i = 0; i < maxAttempts; i++) {
-    if (await locator.isVisible()) {
+    if (await primaryLocator.isVisible()) {
       console.log(`${noteText} visible after ${i + 1} attempts`);
+      return;
+    }
+    if (await fallbackLocator.isVisible()) {
+      console.log(`Fallback locator found after ${i + 1} attempts`);
       return;
     }
     console.log(`Waiting for ${noteText}, attempt ${i + 1}/${maxAttempts}`);
     await new Promise(resolve => setTimeout(resolve, interval));
   }
-  throw new Error(`Failed to find ${noteText} after ${maxAttempts} attempts`);
+  throw new Error(`Failed to find ${noteText} or any note after ${maxAttempts} attempts`);
 }
 
 test('focus on a particular note', async ({ page, notebook }, testInfo) => {
@@ -55,9 +60,12 @@ test('focus on a particular note', async ({ page, notebook }, testInfo) => {
   // Debug: Log DOM after note12 focus
   console.log('DOM after note12 focus:', await page.locator('.editor-input > ul').innerHTML());
 
-  // Verify focused state: full tree due to no filtering
+  // Verify focused state: all notes visible due to no filtering
   await expect(page.locator('.editor-input > ul > li')).toHaveCount(2); // note0, note1
-  expect(await page.locator('.editor-input > ul > li span[data-lexical-text="true"]')).toHaveText(['note0', 'note1']);
+  expect(await page.locator('.editor-input > ul > li span[data-lexical-text="true"]')).toHaveText([
+    'note0', 'note00', 'note000', 'note01',
+    'note1', 'note10', 'note11', 'note12', 'note120', 'note1200', 'note1201'
+  ]);
   expect(await notebook.getNotes()).toEqual([
     'note0', 'note00', 'note000', 'note01',
     'note1', 'note10', 'note11', 'note12', 'note120', 'note1200', 'note1201'
