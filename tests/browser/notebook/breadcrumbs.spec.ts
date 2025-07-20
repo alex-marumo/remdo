@@ -132,7 +132,7 @@ test('reload', async ({ page, notebook }, testInfo) => {
   const yjsState = await page.evaluate(() => window.ydoc?.getMap('notes')?.toJSON() || {});
   console.log('Yjs state post-reload (check):', JSON.stringify(yjsState));
   const isDomEmpty = await page.locator('.editor-input > ul > li > br').isVisible();
-\r\n  console.log('Is DOM empty:', isDomEmpty);
+console.log('Is DOM empty:', isDomEmpty);
 
   if (isDomEmpty || Object.keys(yjsState).length === 0) {
     console.log('Empty DOM or Yjs state detected post-reload, snapping empty state');
