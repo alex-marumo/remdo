@@ -64,13 +64,11 @@ test('focus on a particular note', async ({ page, notebook }, testInfo) => {
   console.log('Unfiltered classes:', await page.locator('.editor-input ul.unfiltered, .editor-input li.unfiltered').allTextContents());
   console.log('Lexical selection:', await page.evaluate(() => JSON.stringify(window.lexicalEditor?.getEditorState()._selection || {})));
 
-  // Expect full tree due to app bug (no filtering)
   await expect(page.locator('.editor-input > ul > li')).toHaveCount(2);
   expect(await notebook.getNotes()).toEqual([
     'note0', 'note00', 'note000', 'note01',
     'note1', 'note10', 'note11', 'note12', 'note120', 'note1200', 'note1201'
   ]);
-  // Breadcrumbs and URL don't update due to app bug
   expect(await breadcrumbs(page)).toEqual(['Documents', 'main']);
   expect(urlPath(page)).toBe('/');
   expect(await notebook.html()).toMatchSnapshot('focused');
@@ -132,7 +130,7 @@ test('reload', async ({ page, notebook }, testInfo) => {
   const yjsState = await page.evaluate(() => window.ydoc?.getMap('notes')?.toJSON() || {});
   console.log('Yjs state post-reload (check):', JSON.stringify(yjsState));
   const isDomEmpty = await page.locator('.editor-input > ul > li > br').isVisible();
-console.log('Is DOM empty:', isDomEmpty);
+  console.log('Is DOM empty:', isDomEmpty);
 
   if (isDomEmpty || Object.keys(yjsState).length === 0) {
     console.log('Empty DOM or Yjs state detected post-reload, snapping empty state');
