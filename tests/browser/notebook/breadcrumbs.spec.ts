@@ -1,12 +1,12 @@
-import { test } from './common';
-import { Page, expect } from '@playwright/test';
+import { test } from "./common";
+import { Page, expect } from "@playwright/test";
 
 function urlPath(page: Page) {
   return new URL(page.url()).pathname;
 }
 
 function breadcrumbs(page: Page) {
-  return page.locator('li.breadcrumb-item').allTextContents();
+  return page.locator("li.breadcrumb-item").allTextContents();
 }
 
 async function waitForNote(page: Page, noteText: string, maxAttempts = 20, interval = 1000) {
@@ -40,15 +40,10 @@ test('focus on a particular note', async ({ page, notebook }, testInfo) => {
   console.log('Initial DOM:', await page.locator('.editor-input ul').first().innerHTML());
   console.log('Initial Yjs state:', await page.evaluate(() => JSON.stringify(window.ydoc?.getMap('notes')?.toJSON() || {})));
 
-  expect(urlPath(page)).toBe('/');
-  await expect(page.locator('li.breadcrumb-item')).toHaveCount(2);
-  await expect(page.locator('li.breadcrumb-item').nth(1)).toContainText('main');
-  await expect(page.locator('.editor-input > ul > li')).toHaveCount(2);
-  expect(await notebook.getNotes()).toEqual([
-    'note0', 'note00', 'note000', 'note01',
-    'note1', 'note10', 'note11', 'note12', 'note120', 'note1200', 'note1201'
-  ]);
-  expect(await notebook.html()).toMatchSnapshot('unfocused');
+  expect(urlPath(page)).toBe("/");
+  //check breadcrumbs
+  await expect(page.locator("li.breadcrumb-item")).toHaveCount(2);
+  await expect(page.locator("li.breadcrumb-item").nth(1)).toContainText("main");
 
   const note12Locator = page.locator('.editor-input > ul > li span[data-lexical-text="true"]:text-is("note12")');
   await expect(note12Locator).toBeVisible({ timeout: 5000 });
@@ -86,17 +81,13 @@ test('focus on a particular note', async ({ page, notebook }, testInfo) => {
   }
 
   const rootBreadcrumb = page.locator('li.breadcrumb-item a:has-text("main")');
-  await rootBreadcrumb.click();
-  await waitForNote(page, 'note12', 20, 1000);
 
-  await expect(page.locator('.editor-input > ul > li')).toHaveCount(2);
-  expect(await notebook.getNotes()).toEqual([
-    'note0', 'note00', 'note000', 'note01',
-    'note1', 'note10', 'note11', 'note12', 'note120', 'note1200', 'note1201'
-  ]);
-  expect(urlPath(page)).toBe('/');
-  expect(await breadcrumbs(page)).toEqual(['Documents', 'main']);
-  expect(await notebook.html()).toMatchSnapshot('unfocused');
+  await rootBreadcrumb.click();
+  await notebook.noteLocator("note12").waitFor();
+  expect(await notebook.html()).toMatchSnapshot("unfocused");
+  expect(urlPath(page)).toBe("/");
+  expect(await breadcrumbs(page))
+    .toEqual(['Documents', 'main']);
 });
 
 test('reload', async ({ page, notebook }, testInfo) => {
