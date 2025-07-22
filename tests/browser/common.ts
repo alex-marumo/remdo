@@ -16,14 +16,17 @@ const SKIP_CONSOLE_MESSAGES = [
 export const test = base.extend({
   page: async ({ page }, use) => {
     page.on("console", (message) => {
-      if (!SKIP_CONSOLE_MESSAGES.includes(message.text())) {
-        console.log("Browser:", message);
-        if (["warning", "error"].includes(message.type())) {
-          console.error(`${message.type} inside the browser: `);
-          throw Error(message.text());
-        }
+      if (["warning", "error"].includes(message.type())) {
+        const text = message.text();
+
+        // Allow known font sanitizer error from Firefox
+        if (text.includes("bootstrap-icons.woff")) return;
+
+        console.error(`${message.type} inside the browser: `);
+        throw Error(text);
       }
     });
+
 
     page.on("pageerror", (err) => {
       console.error("Error inside the browser: ", err.message);
