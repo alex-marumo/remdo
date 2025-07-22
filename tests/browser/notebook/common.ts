@@ -5,7 +5,7 @@ import prettier from "prettier";
 import { getDataPath } from "tests/common.js";
 
 export class Notebook {
-  constructor(private readonly page: Page) { }
+  constructor(private readonly page: Page) {}
 
   locator(selector = ""): Locator {
     const editorSelector = ".editor-input" + (selector ? " " + selector : "");
@@ -16,44 +16,56 @@ export class Notebook {
     return this.locator("li span:text-is('" + title + "')");
   }
 
-  async load(file: string) {
-    await this.page.click("text=Load State");
-    const dataPath = getDataPath(file);
-    const serializedEditorState = fs.readFileSync(dataPath).toString();
-    await this.page.locator("#editor-state").fill(serializedEditorState);
-    await this.page.click("text=Submit Editor State");
-    await this.page.click("text=Load State");
-    await this.locator().focus();
-
-    //FIXME - wait for lexical to fully update the editor
-    //perhabs the whole loading mechanism should be improved
-    //consider following the Tip from https://lexical.dev/docs/intro
-    await this.page.waitForTimeout(200);
+  noteById(id: string): Locator {
+    return this.locator(`.note[data-id="${id}"]`);
   }
 
+async load(file: string) {
+  await this.page.click("text=Load State");
+
+  const dataPath = getDataPath(file);
+  const serializedEditorState = fs.readFileSync(dataPath, "utf-8");
+
+  console.log("Loading file:", file);
+  console.log("Serialized state:", serializedEditorState.slice(0, 300) + "...");
+
+  const stateInput = this.page.locator("#editor-state");
+  await stateInput.fill(""); // Clear first
+  await stateInput.fill(serializedEditorState);
+
+  // Trigger input event manually (Lexical might listen for it)
+  await stateInput.evaluate((el) => el.dispatchEvent(new Event("input", { bubbles: true })));
+
+  await this.page.click("text=Submit Editor State");
+
+  // Wait until at least one note appears
+  await this.page.waitForSelector(".editor-input .note");
+
+  await this.page.click("text=Load State"); // Possibly toggles modal closed
+  await this.locator().focus();
+  await this.page.waitForTimeout(200);
+}
+
   async html() {
-    return (await prettier
-      .format(await this.locator().innerHTML(), {
+    return (
+      await prettier.format(await this.locator().innerHTML(), {
         parser: "html",
         plugins: ["prettier-plugin-organize-attributes"],
         attributeSort: "ASC",
-      }))
-      .trim();
+      })
+    ).trim();
   }
 
   async selectNote(title: string) {
     await this.noteLocator(title).selectText();
-
-    //it takes some time for the selection to be visible and lexical to update
     await this.page.waitForTimeout(200);
   }
 
-  /** places cursor on the very end of given's note title */
   async clickEndOfNote(title: string) {
     const noteLocator = this.noteLocator(title);
     const { width, height } = await noteLocator.boundingBox();
     await noteLocator.click({
-      position: { x: width - 1, y: height - 1 }, //the idea is that bottom right corner should be the end of the title's text
+      position: { x: width - 1, y: height - 1 },
     });
   }
 
@@ -75,27 +87,38 @@ export class Notebook {
     return result;
   }
 
-    async state() {
+  async state() {
     return this.page.$$eval(".editor-input .note", (nodes) =>
-      nodes.map((el) => {
-        return {
+      nodes.map((el) => ({
+        id: el.getAttribute("data-id") ?? "",
+        text: el.querySelector(".note-content")?.textContent ?? "",
+        checked: el.classList.contains("is-checked"),
+        folded: el.classList.contains("is-folded"),
+        level: parseInt(el.getAttribute("data-level") || "0", 10),
+      }))
+    );
+  }
+
+  async visibleState() {
+    return this.page.$$eval(".editor-input .note", (nodes) =>
+      nodes
+        .filter((el) => el.offsetParent !== null)
+        .map((el) => ({
           id: el.getAttribute("data-id") ?? "",
           text: el.querySelector(".note-content")?.textContent ?? "",
           checked: el.classList.contains("is-checked"),
           folded: el.classList.contains("is-folded"),
           level: parseInt(el.getAttribute("data-level") || "0", 10),
-        };
-      })
+        }))
     );
   }
-
 }
 
 class Menu {
   constructor(
     private readonly page: Page,
     private readonly notebook: Notebook
-  ) { }
+  ) {}
 
   locator(selector = "") {
     return this.page.locator(`#quick-menu ${selector}`.trim());
@@ -128,14 +151,13 @@ class Menu {
 }
 
 export const test = base.extend<{
-  notebook: Notebook,
-  urlPath: string,
-  takeScreenshot: (name?: string, page?: Page) => Promise<void>,
-  menu: Menu
+  notebook: Notebook;
+  urlPath: string;
+  takeScreenshot: (name?: string, page?: Page) => Promise<void>;
+  menu: Menu;
 }>({
-  // eslint-disable-next-line no-empty-pattern
-  urlPath: async ({ }, use) => {
-    await use('');
+  urlPath: async ({}, use) => {
+    await use("");
   },
   notebook: async ({ baseURL, urlPath, page }, use) => {
     const notebook = new Notebook(page);
@@ -151,13 +173,13 @@ export const test = base.extend<{
     let i = 0;
     await use(async (name?: string, page_?: Page) => {
       const screenshot = await (page_ ?? page).screenshot();
-      await testInfo.attach(`screenshot-${i++}${name ? "-"+name : ""}.png`,
-        { body: screenshot, contentType: 'image/png' });
+      await testInfo.attach(`screenshot-${i++}${name ? "-" + name : ""}.png`, {
+        body: screenshot,
+        contentType: "image/png",
+      });
     });
   },
   menu: async ({ page, notebook }, use) => {
     await use(new Menu(page, notebook));
   },
 });
-
-
