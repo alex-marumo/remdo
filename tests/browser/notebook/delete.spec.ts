@@ -9,9 +9,9 @@ test("backspace at the beginning of a note", async ({ page, notebook }) => {
 
   const state = await notebook.state();
   const ids = state.map(n => n.id);
-
   expect(ids).not.toContain("note00");
 
+  expect(JSON.stringify(state, null, 2)).toMatchSnapshot("state-after-note00-delete");
   expect(await notebook.html()).toMatchSnapshot();
 });
 
@@ -29,9 +29,9 @@ test("backspace at the beginning of a note after a folded note", async ({
 
   const state = await notebook.state();
   const ids = state.map(n => n.id);
-
   expect(ids).not.toContain("note1");
 
+  expect(JSON.stringify(state, null, 2)).toMatchSnapshot("state-after-note1-delete");
   expect(await notebook.html()).toMatchSnapshot();
 });
 
@@ -51,13 +51,28 @@ test("backspace at the beginning of a folded note after another folded one", asy
 
   const state = await notebook.state();
   const ids = state.map(n => n.id);
-
   expect(ids).not.toContain("note1");
 
+  expect(JSON.stringify(state, null, 2)).toMatchSnapshot("state-after-nested-folded-delete");
   expect(await notebook.html()).toMatchSnapshot();
 });
 
-// FIXME: Add this next!
-test.skip("delete folded notes", async ({ page, notebook }) => {
-  // we'll implement this next
+test("delete folded notes", async ({ page, notebook, menu }) => {
+  await notebook.load("tree");
+
+  await menu.open("note0");
+  await menu.fold();
+
+  await notebook.clickBeginningOfNote("note0");
+  await page.keyboard.press("Backspace");
+
+  const state = await notebook.state();
+  const ids = state.map(n => n.id);
+
+  expect(ids).not.toContain("note0");
+  expect(ids).not.toContain("note1");
+  expect(ids).not.toContain("note2");
+
+  expect(JSON.stringify(state, null, 2)).toMatchSnapshot("state-after-folded-tree-delete");
+  expect(await notebook.html()).toMatchSnapshot();
 });
