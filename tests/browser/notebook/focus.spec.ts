@@ -35,8 +35,8 @@ test("focus on a particular note", async ({ page, notebook }) => {
   } catch (err) {
     console.error('Error getting fullState:', err);
   throw err; // Let the test fail, but with more details
-  }const fullState = await notebook.state();
-
+  }
+  
   console.log("visible notes:", visibleTexts);
   console.log("all notes:", fullState.map((n) => n.text));
 
