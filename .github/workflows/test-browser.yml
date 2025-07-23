@@ -23,6 +23,7 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run Playwright Tests
         run: |
+          npx playwright test tests/browser/notebook/focus.spec.ts
           npm run test-browser
       - uses: actions/upload-artifact@v4
         if: always()
