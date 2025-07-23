@@ -29,7 +29,13 @@ test("focus on a particular note", async ({ page, notebook }) => {
   const visible = await notebook.visibleState();
   const visibleTexts = visible.map((n) => n.text);
 
-  const fullState = await notebook.state();
+  let fullState;
+  try {
+    fullState = await notebook.state();
+  } catch (err) {
+    console.error('Error getting fullState:', err);
+  throw err; // Let the test fail, but with more details
+  }const fullState = await notebook.state();
 
   console.log("visible notes:", visibleTexts);
   console.log("all notes:", fullState.map((n) => n.text));
