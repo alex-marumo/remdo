@@ -23,7 +23,7 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run Playwright Tests
         run: |
-         npm run update-browser-snapshots
+         npx playwright test tests/browser/notebook/focus.spec.ts --update-snapshots
       - name: Commit Updated Snapshots
         if: success()
         run: |
