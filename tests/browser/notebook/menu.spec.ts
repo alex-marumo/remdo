@@ -65,7 +65,8 @@ test("trigger option by click", async ({ menu, notebook }) => {
      await menu.open(); 
      await menu.locator("button:has-text('Fold')").click();
      const html = await notebook.html(); 
-     expect(html).not.toContain("note1200"); // folded });
+     expect(html).not.toContain("note1200"); // folded 
+});
 
 test("arrows + hot key", async ({ notebook, menu, page }) => { 
      await notebook.load("tree"); 
@@ -111,5 +112,3 @@ test("open and click outside of editor", async ({ page, notebook, menu }) => {
      await page.locator("body").click(); 
      await expect(menu.locator()).not.toBeVisible(); 
 });
-
-     
