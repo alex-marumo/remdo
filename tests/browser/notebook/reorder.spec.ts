@@ -1,4 +1,5 @@
-import { test } from "./common"; import { expect } from "@playwright/test";
+import { test } from "./common"; 
+import { expect } from "@playwright/test";
 
 test("move", async ({ page, notebook, menu }) => { await notebook.load("flat");
 
