@@ -11,11 +11,9 @@ test("add new element after a folded one", async ({ page, notebook }) => {
 
   // Assert that original element still exists
   expect(htmlAfter).toContain('note0');
-  // Assert that a new element was added (e.g., note1 or an increased count)
-  // This line assumes the new note gets an incremental id, adjust as appropriate
+  // Assert that a new element was added (e.g., note1 or an increased count
   expect(htmlAfter).toMatch(/note\d+/);
   // Assert that the new element is added after the children list of the original one
-  // You might want to check for order, but snapshot will check this as well
   expect(htmlAfter).toMatchSnapshot();
 });
 
@@ -26,9 +24,8 @@ test("fold to a specific level", async ({ page, notebook }) => {
   const baseHtml = await notebook.html();
   expect(baseHtml).toMatchSnapshot("base");
   // Assert that tree structure contains expected notes/elements
-  expect(baseHtml).toContain('note'); // adjust to actual note id/class
-  expect(baseHtml).toContain('tree'); // adjust to actual tree class/id
-
+  expect(baseHtml).toContain('note'); 
+  expect(baseHtml).toContain('tree');
   // Fold to level 1
   await page.keyboard.press("Shift");
   await page.keyboard.press("Shift");
