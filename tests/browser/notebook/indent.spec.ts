@@ -4,68 +4,59 @@ import { expect } from "@playwright/test";
 test("indent outdent", async ({ page, notebook }) => {
   await notebook.load("flat");
 
-  let html = await notebook.html();
-  expect(html).toContain("note1");
-  expect(html).toMatch(/note0[\s\S]*note1[\s\S]*note2/);
+  expect(await notebook.html()).toMatchSnapshot("flat");
 
   await notebook.selectNote("note2");
+
+  //indent
   await page.keyboard.press("Tab");
 
-  html = await notebook.html();
-  expect(html).toMatch(/note1[\s\S]*<ul>[\s\S]*note2/); // note2 is child of note1
+  expect(await notebook.html()).toMatchSnapshot("indented");
 
+  //indent second time the same note with no effect
   await page.keyboard.press("Tab");
-  const noChangeHtml = await notebook.html();
-  expect(noChangeHtml).toBe(html); // No change after second Tab
+  expect(await notebook.html()).toMatchSnapshot("indented");
 
+  //outdent
   await page.keyboard.press("Shift+Tab");
-  html = await notebook.html();
-  expect(html).toMatch(/note1[\s\S]*note2/); // back to sibling
+  expect(await notebook.html()).toMatchSnapshot("flat");
 
+  //outdent second time with no effect
   await page.keyboard.press("Shift+Tab");
-  const againNoChange = await notebook.html();
-  expect(againNoChange).toBe(html); // Still same after extra outdent
+  expect(await notebook.html()).toMatchSnapshot("flat");
 });
 
 test("indent outdent with children", async ({ page, notebook }) => {
   await notebook.load("tree_complex");
 
-  let html = await notebook.html();
-  expect(html).toContain("note1");
-  expect(html).toContain("note01");
+  expect(await notebook.html()).toMatchSnapshot("base");
 
   await notebook.selectNote("note1");
+
+  //indent and make note1 sibling of note01
   await page.keyboard.press("Tab");
+  expect(await notebook.html()).toMatchSnapshot("indented once");
 
-  html = await notebook.html();
-  expect(html).toMatch(/note01[\s\S]*note1/); // note1 is sibling of note01
-
+  //indent one more time and make note1 a child of note01
   await page.keyboard.press("Tab");
-  html = await notebook.html();
-  expect(html).toMatch(/note01[\s\S]*<ul>[\s\S]*note1/); // note1 is child of note01
+  expect(await notebook.html()).toMatchSnapshot("indented twice");
 
+  //outdent
   await page.keyboard.press("Shift+Tab");
-  html = await notebook.html();
-  expect(html).toMatch(/note01[\s\S]*note1/); // back to sibling
+  expect(await notebook.html()).toMatchSnapshot("indented once");
 
+  //outdent for the second time to get back to the base state
   await page.keyboard.press("Shift+Tab");
-  html = await notebook.html();
-  expect(html).toMatch(/note0[\s\S]*note1[\s\S]*note2/); // base layout
+  expect(await notebook.html()).toMatchSnapshot("base");
 });
 
 test("tab not at the beginning", async ({ page, notebook }) => {
   await notebook.load("flat");
-
   await notebook.clickEndOfNote("note1");
+  expect(await notebook.html()).toMatchSnapshot("note1 indented");
   await page.keyboard.press("Tab");
-
-  let html = await notebook.html();
-  expect(html).toMatch(/note0[\s\S]*<ul>[\s\S]*note1/); // note1 nested
-
   await notebook.clickEndOfNote("note2");
-  await page.keyboard.press("ArrowLeft"); // move cursor to left
+  await page.keyboard.press("ArrowLeft");
   await page.keyboard.press("Tab");
-
-  html = await notebook.html();
-  expect(html).toMatch(/note1[\s\S]*<ul>[\s\S]*note2/); // note2 nested
+  expect(await notebook.html()).toMatchSnapshot("note2 indented");
 });
