@@ -25,7 +25,7 @@ test("fold to a specific level", async ({ page, notebook }) => {
   expect(baseHtml).toMatchSnapshot("base");
   // Assert that tree structure contains expected notes/elements
   expect(baseHtml).toContain('note'); 
-  expect(baseHtml).toContain('tree');
+  expect(baseHtml).toContain('<ul>');
   // Fold to level 1
   await page.keyboard.press("Shift");
   await page.keyboard.press("Shift");
