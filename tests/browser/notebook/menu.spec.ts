@@ -57,7 +57,7 @@ test("trigger option by hot key", async ({ page, notebook, menu }) => {
      await menu.open(); 
      await page.keyboard.press("f"); 
      const unfolded = await notebook.html(); 
-     expect(unfolded).toContain("note1200"); // check deep note 
+     expect(unfolded).toContain("sub note 1");// check deep note 
 });
 
 test("trigger option by click", async ({ menu, notebook }) => { 
