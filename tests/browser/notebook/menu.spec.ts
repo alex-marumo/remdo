@@ -53,7 +53,7 @@ test("trigger option by hot key", async ({ page, notebook, menu }) => {
      await menu.open(); 
      await page.keyboard.press("f"); 
      const folded = await notebook.html(); 
-     expect(folded.length).toBeLessThan(before.length); // folded means less content
+     expect(folded).not.toContain("note1200"); // folded means less content
      await menu.open(); 
      await page.keyboard.press("f"); 
      const unfolded = await notebook.html(); 
@@ -63,7 +63,7 @@ test("trigger option by hot key", async ({ page, notebook, menu }) => {
 test("trigger option by click", async ({ menu, notebook }) => { 
      await notebook.load("tree"); 
      await menu.open(); 
-     await menu.locator("button:has-text('Fold')").click();
+     await menu.locator("button.dropdown-item").filter({ hasText: "Fold" }).first().click();
      const html = await notebook.html(); 
      expect(html).not.toContain("note1200"); // folded 
 });
