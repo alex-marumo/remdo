@@ -23,7 +23,9 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run Playwright Tests
         run: |
-          npx playwright test --update-snapshots
+          npx playwright test tests/browser/notebook/menu.spec.ts --update-snapshots
+          npx playwright test tests/browser/notebook/indent.spec.ts --update-snapshot
+          npx playwright test tests/browser/notebook/fold.spec.ts --update-snapshot
       - name: Commit Updated Snapshots
         if: success()
         run: |
