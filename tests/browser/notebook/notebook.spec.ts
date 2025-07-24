@@ -1,4 +1,3 @@
-import { htmlToCommaSeparatedText } from "tests/common";
 import { test } from "./common";
 import { expect } from "@playwright/test";
 
