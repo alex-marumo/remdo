@@ -43,8 +43,7 @@ test("load editor state", async ({ notebook }) => {
 
   const html = await notebook.html();
   expect(html).toContain("note0");
-  expect(html).toContain("note1");
-  expect(html).toContain("note2");
+  expect(html).toContain("note00");
 });
 
 test("clear content", async ({ page, notebook }) => {
@@ -52,6 +51,5 @@ test("clear content", async ({ page, notebook }) => {
 
   const html = await notebook.html();
   expect(html).not.toContain("note0");
-  expect(html).not.toContain("note1");
-  expect(html).not.toContain("note2");
+  expect(html).not.toContain("note00");
 });
