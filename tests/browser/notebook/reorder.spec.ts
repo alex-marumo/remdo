@@ -61,7 +61,7 @@ test("reorder flat", async ({ page, notebook }) => {
   let html = await notebook.html(); 
   let notes = htmlToCommaSeparatedText(html);
   expect(notes).toBe("note0,note1,note2");
-
+  await notebook.clickEndOfNote("note2");
   await page.keyboard.press("Meta+ArrowUp"); 
   order = htmlToCommaSeparatedText(await notebook.html()); 
   expect(order).toBe("note0,note2,note1");
