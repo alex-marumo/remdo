@@ -43,7 +43,8 @@ test("trigger option by arrow", async ({ notebook, menu, page }) => {
      await expect(activeOption).toBeVisible(); 
      await expect(activeOption).toContainText("Fold");
      await page.keyboard.press("Enter");
-     const html = await notebook.html(); expect(html).toContain("note"); 
+     const html = await notebook.html(); 
+     expect(html).toContain("note"); 
 });
 
 test("trigger option by hot key", async ({ page, notebook, menu }) => { 
@@ -53,11 +54,11 @@ test("trigger option by hot key", async ({ page, notebook, menu }) => {
      await menu.open(); 
      await page.keyboard.press("f"); 
      const folded = await notebook.html(); 
-     expect(folded).not.toContain("note1200"); // folded means less content
+     expect(folded).not.toContain("note1200"); 
      await menu.open(); 
      await page.keyboard.press("f"); 
      const unfolded = await notebook.html(); 
-     expect(unfolded).toContain("sub note 1");// check deep note 
+     expect(unfolded).toContain("sub note 1");
 });
 
 test("trigger option by click", async ({ menu, notebook }) => { 
@@ -65,7 +66,7 @@ test("trigger option by click", async ({ menu, notebook }) => {
      await menu.open(); 
      await menu.locator("button.dropdown-item").filter({ hasText: "Fold" }).first().click();
      const html = await notebook.html(); 
-     expect(html).not.toContain("note1200"); // folded 
+     expect(html).not.toContain("note1200"); 
 });
 
 test("arrows + hot key", async ({ notebook, menu, page }) => { 
@@ -77,11 +78,12 @@ test("arrows + hot key", async ({ notebook, menu, page }) => {
      await page.keyboard.press("ArrowUp");
      await page.keyboard.press("f"); 
      const html = await notebook.html(); 
-     expect(html).not.toContain("note1200"); // folded 
+     expect(html).not.toContain("note1200"); 
 });
 
 test("esc", async ({ notebook, menu, page }) => { 
-     await notebook.load("tree"); await menu.open();
+     await notebook.load("tree"); 
+     await menu.open();
      await expect(menu.locator()).toBeVisible(); 
      await page.keyboard.press("Escape"); 
      await expect(menu.locator()).not.toBeVisible(); 

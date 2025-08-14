@@ -14,7 +14,7 @@ test("add the first child to note with existing children", async ({ notebook, pa
   // Expect new structure: note0 should now have another child
   const notes = await notebook.getNotes();
   expect(notes).toContain("note0");
-     expect(notes.length).toBeGreaterThan(1); // Rough check
+  expect(notes.length).toBeGreaterThan(1); // Rough check
 
   // Final state snapshot
   expect(await notebook.html()).toMatchSnapshot();
@@ -24,49 +24,24 @@ test("create some empty notes", async ({ page, notebook }) => {
   // Load the notebook
   await notebook.load("flat");
 
-  // Debug: Log initial notes
-  const initialNotes = await page.locator(".note").all();
-  console.log("Initial notes:", await Promise.all(initialNotes.map((note) => note.textContent())));
+  // Select a specific note — this should always exist in 'flat'
+  await notebook.selectNote("note2");
 
-  // Try selecting note2, fallback to first note if note2 doesn't exist
-  let noteSelected = false;
-  try {
-    await notebook.selectNote("note2");
-    noteSelected = true;
-  } catch (error) {
-    console.log("Failed to select note2, trying first note...");
-    const firstNote = page.locator(".note").first();
-    if (await firstNote.count() > 0) {
-      await firstNote.click();
-      noteSelected = true;
-    } else {
-      console.log("No notes available to select");
-    }
-  }
-
-  // Only press Enter if a note is selected
-  if (noteSelected) {
-    await page.keyboard.press("Enter");
-    await page.keyboard.press("Enter");
-  } else {
-    console.log("No note selected, attempting to create notes directly...");
-    await page.keyboard.press("Enter");
-    await page.keyboard.press("Enter");
-  }
-
-  // Debug: Log final notes
-  const finalNotes = await page.locator(".note").all();
-  console.log("Final notes:", await Promise.all(finalNotes.map((note) => note.textContent())));
+  // Create two new empty notes
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Enter");
 
   // Verify at least two new empty notes were created
-  const lastNoteTexts = await Promise.all(
-    finalNotes.slice(-2).map((note) => note.textContent())
+  const allNotes = await page.locator(".note").all();
+  const lastTwoTexts = await Promise.all(
+    allNotes.slice(-2).map((note) => note.textContent())
   );
-  for (const text of lastNoteTexts) {
+
+  for (const text of lastTwoTexts) {
     expect(text?.trim()).toBe("");
   }
 
-  // Optional: Snapshot for UI consistency
+  // Snapshot for UI consistency
   expect(await notebook.html()).toMatchSnapshot();
 });
 
@@ -91,5 +66,5 @@ test("split note", async ({ page, notebook }) => {
   const hasSplit = notes.some(n => n.includes("note1") || n === "not" || n === "e1");
   expect(hasSplit).toBe(true);
 
- expect(await notebook.html()).toMatchSnapshot();
+  expect(await notebook.html()).toMatchSnapshot();
 });
